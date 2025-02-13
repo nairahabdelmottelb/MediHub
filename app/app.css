@@ -1,15 +1,8 @@
-@import "tailwindcss";
+@import "bootstrap";
+@import "@fortawesome/fontawesome-free/css/all.css";
 
-@theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-}
-
-html,
-body {
-  @apply bg-white dark:bg-gray-950;
-
-  @media (prefers-color-scheme: dark) {
-    color-scheme: dark;
-  }
+:root {
+    --primary-blue: #1A5DAD;
+    --white: #E3F2FD;
+    --soft-blue: #81b2eb;
 }

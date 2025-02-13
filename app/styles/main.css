@@ -1,0 +1,156 @@
+:root {
+    --bs-primary: #1A5DAD;
+    --bs-success: #4CAF50;
+}
+
+/* Modal Fixes */
+.modal {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.modal-dialog {
+    margin: 1rem;
+    max-width: 500px;
+    width: 90%;
+}
+
+.modal-content {
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+/* Hero Section */
+.hero {
+    background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
+                url('../images/hero-bg.jpg') center/cover;
+    margin-top: 76px;
+}
+
+.mission-box {
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Card Hover Effect */
+.card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+}
+/* Facilities Section */
+.facility-card {
+    border: none;
+    border-radius: 15px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.facility-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 30px rgba(26, 93, 173, 0.15);
+}
+
+.facility-card img {
+    height: 250px;
+    object-fit: cover;
+    border-radius: 15px 15px 0 0;
+}
+
+.facility-features {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 0;
+}
+
+.facility-features li {
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.facility-features li:last-child {
+    border-bottom: none;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.card-text {
+    min-height: 60px;
+    margin-bottom: 1rem;
+}
+/* Loading Spinner */
+.loading-spinner {
+    display: inline-block;
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 0.25em solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: spinner 0.75s linear infinite;
+}
+
+@keyframes spinner {
+    to { transform: rotate(360deg); }
+}
+
+/* Password Toggle */
+.password-toggle {
+    min-width: 45px;
+}
+
+/* Responsive Fixes */
+@media (max-width: 768px) {
+    .hero {
+        height: auto;
+        padding: 100px 0;
+    }
+    
+    .mission-box {
+        margin: 20px;
+    }
+}
+/* In styles.css */
+.dashboard-hero {
+    background: linear-gradient(rgba(26, 93, 173, 0.8), rgba(26, 93, 173, 0.8)),
+        url('../images/medical-bg.jpg') center/cover fixed;
+    min-height: 60vh;
+    position: relative;
+    margin: -2rem -2rem 2rem -2rem;
+    padding: 2rem;
+}
+
+.dashboard-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+}
+
+.booking-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-light {
+    background: white;
+    color: var(--primary-blue);
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-light:hover {
+    background: var(--secondary-blue);
+    color: var(--primary-blue);
+    transform: translateY(-2px);
+}
