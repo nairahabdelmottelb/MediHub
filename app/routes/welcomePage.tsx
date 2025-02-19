@@ -1,4 +1,3 @@
-export default welcomePage(){
-
-
+export default function WelcomePage(){
+  return <>Welcome!</>
 }
