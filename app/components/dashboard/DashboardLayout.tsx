@@ -11,7 +11,7 @@ interface DashboardPageInfo {
 }
 
 export const dashboardPages: Record<string, DashboardPageInfo> = {
-  dashboard: { path: "/", bg: "/images/banner.png" },
+  dashboard: { bg: "/images/banner.png" },
   calendar: { bg: "/images/drpatient.jpg" },
   alerts: { bg: "/images/emergency.jpg" },
   tests: { bg: "/images/lab.jpg" },
