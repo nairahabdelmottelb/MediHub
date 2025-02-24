@@ -5,7 +5,7 @@ export default function LandingLayout() {
   return (
     <>
       <Navbar />
-      <div style={{ marginTop: 56 }}>
+      <div style={{ paddingTop: 56 }}>
         <Outlet />
       </div>
     </>

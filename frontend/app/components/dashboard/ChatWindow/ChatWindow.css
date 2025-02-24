@@ -1,0 +1,27 @@
+.chat-window {
+  pointer-events: none;
+  position: fixed;
+  bottom: 0;
+  right: 100px;
+  width: 300px;
+
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+  z-index: 1000;
+  background-color: #fff;
+}
+
+.chat-window.show {
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.chat-body {
+  height: 400px;
+  overflow-y: auto;
+  padding: 10px;
+}
+
+.chat-form {
+  padding: 0 10px 10px;
+}

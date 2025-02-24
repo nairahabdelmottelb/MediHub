@@ -2,25 +2,6 @@
     width: fit-content;
 }
 
-/* Modal Fixes */
-.modal {
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0, 0, 0, 0.5);
-}
-
-.modal-dialog {
-    margin: 1rem;
-    max-width: 500px;
-    width: 90%;
-}
-
-.modal-content {
-    max-height: 90vh;
-    overflow-y: auto;
-}
-
 /* Hero Section */
 .hero {
     background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
