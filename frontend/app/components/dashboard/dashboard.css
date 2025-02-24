@@ -24,7 +24,7 @@
 
 /* Hero Section with Background Image */
 .dashboard-hero {
-    background: no-repeat linear-gradient(rgba(130, 135, 142, 0),rgba(144, 174, 203, 0.358)),
+    background: no-repeat linear-gradient(rgba(130, 135, 142, 0), rgba(144, 174, 203, 0.358)),
         url('/images/medical-bg.jpg') center/cover fixed;
     background-size: cover;
     background-position: center;
