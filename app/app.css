@@ -2,6 +2,9 @@
 @import "@fortawesome/fontawesome-free/css/all.css";
 
 :root {
+    --bs-primary: #1A5DAD;
+    --bs-success: #4CAF50;
+
     --primary-blue: #1A5DAD;
     --white: #E3F2FD;
     --soft-blue: #81b2eb;

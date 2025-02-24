@@ -1,0 +1,7 @@
+{
+  "editor.tabSize": 2,
+  "path-intellisense.mappings": {
+    "@": "${workspaceRoot}/src",
+    "images": "${workspaceRoot}/public/images",
+  }
+}

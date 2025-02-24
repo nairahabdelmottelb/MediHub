@@ -1,10 +1,12 @@
+import { NavLink } from "react-router";
+
 export default function Navbar() {
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
       <div className="container">
-        <a className="navbar-brand text-primary fw-bold" href="#">
-          <i className="fa-hospital me-2"></i>MediHub
-        </a>
+        <NavLink className="navbar-brand text-primary fw-bold" to="/">
+          MediHub
+        </NavLink>
         <button
           className="navbar-toggler"
           type="button"
@@ -32,17 +34,14 @@ export default function Navbar() {
             </li>
           </ul>
           <div className="d-flex gap-2">
-            <button
+            <NavLink
               className="btn btn-outline-primary"
-              data-bs-toggle="modal"
-              data-bs-target="#loginModal"
+              to={"/login"}
             >
               Login
-            </button>
+            </NavLink>
             <button
               className="btn btn-primary"
-              data-bs-toggle="modal"
-              data-bs-target="#signupModal"
             >
               Sign Up
             </button>

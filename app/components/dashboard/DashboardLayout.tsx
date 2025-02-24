@@ -31,6 +31,7 @@ export default function DashboardLayout() {
   };
 
   return (
+    <>
     <div className="container-fluid home-page">
       <div className="row">
         {/* Sidebar Navigation */}
@@ -70,5 +71,41 @@ export default function DashboardLayout() {
         </main>
       </div>
     </div>
+
+    <div className="modal fade" id="chatModal" tabIndex={-1}>
+        <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+                <div className="modal-header bg-primary text-white">
+                    <h5 className="modal-title">
+                        <i className="fas fa-robot me-2"></i>MediBot
+                    </h5>
+                    <button type="button" className="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div className="modal-body bg-light" style={{ height: "400px", overflowY: "auto" }}>
+                  <div className="bot-message alert alert-secondary">
+                    Hello! I'm MediBot. How can I assist you today?
+                  </div>
+                </div>
+                <div className="modal-footer">
+                    <div className="input-group">
+                        <input type="text" className="form-control" placeholder="Type your message..." id="chatInput" />
+                        <button className="btn btn-success" type="button" id="btnSend">
+                            <i className="fas fa-paper-plane" />
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button
+      className="btn btn-primary rounded-circle position-fixed"
+      style={{ bottom: "2rem", right: "2rem", width: "56px", height: "56px" }}
+      data-bs-toggle="modal"
+      data-bs-target="#chatModal"
+    >
+      <i className="fas fa-comment-medical" />
+    </button>
+    </>
   );
 }

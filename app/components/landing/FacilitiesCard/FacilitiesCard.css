@@ -1,0 +1,41 @@
+.facility-card {
+  border: none;
+  border-radius: 15px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.facility-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 10px 30px rgba(26, 93, 173, 0.15);
+}
+
+.facility-card img {
+  height: 250px;
+  object-fit: cover;
+  border-radius: 15px 15px 0 0;
+}
+
+.facility-features {
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: 0;
+}
+
+.facility-features li {
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.facility-features li:last-child {
+  border-bottom: none;
+}
+
+.card-title {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.card-text {
+  min-height: 60px;
+  margin-bottom: 1rem;
+}

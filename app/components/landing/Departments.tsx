@@ -41,7 +41,7 @@ export default function Departments() {
           <div className="col-md-6 col-lg-4">
             <div className="card facility-card h-100">
               <img
-                src="images/surgery.jpg"
+                src="images/banner.png"
                 className="card-img-top"
                 alt="Surgical Suite"
               />
