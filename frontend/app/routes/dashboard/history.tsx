@@ -6,9 +6,11 @@ export default function HistoryPage() {
       </h4>
       <div className="list-group mt-3">
         <div className="list-group-item">
-          2023-09-15: Annual physical examination
+          2023-09-15: Annual physical examination.
         </div>
-        <div className="list-group-item">2023-07-01: Influenza vaccination</div>
+        <div className="list-group-item">
+          2023-07-01: Influenza vaccination.
+        </div>
       </div>
     </div>
   );
