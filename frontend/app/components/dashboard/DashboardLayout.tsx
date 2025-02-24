@@ -19,7 +19,6 @@ export const dashboardPages: Record<string, DashboardPageInfo> = {
   history: { bg: "/images/medical-bg.jpg" },
   medications: { bg: "/images/madications.jpg" },
   doctors: { bg: "/images/teamofdrs.jpg" },
-  settings: { bg: "/images/settings.jpg" },
 };
 
 export type PageTitle = keyof typeof dashboardPages;

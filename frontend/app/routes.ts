@@ -18,6 +18,5 @@ export default [
     route("history", "routes/dashboard/history.tsx"),
     route("medications", "routes/dashboard/medications.tsx"),
     route("doctors", "routes/dashboard/doctors.tsx"),
-    route("settings", "routes/dashboard/settings.tsx"),
   ]),
 ] satisfies RouteConfig;
