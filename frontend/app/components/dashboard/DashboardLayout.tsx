@@ -3,7 +3,7 @@ import Sidebar from "./Sidebar";
 import "./dashboard.css";
 import DashboardHero from "./DashboardHero";
 import Containers from "../Containers";
-import { Outlet } from "react-router";
+import { Outlet, Routes, useLocation } from "react-router";
 import ChatWindow from "./ChatWindow/ChatWindow";
 
 interface DashboardPageInfo {
@@ -27,6 +27,10 @@ export type PageTitle = keyof typeof dashboardPages;
 export default function DashboardLayout() {
   const [activeSection, setActiveSection] = useState<PageTitle>("dashboard");
   const [showChatModal, setShowChatModal] = useState(false);
+
+  const location = useLocation();
+  const page = location.pathname.split("/").pop() as PageTitle;
+  const bg = dashboardPages[page]?.bg;
 
   const handleNavClick = (section: PageTitle) => {
     setActiveSection(section);
@@ -54,7 +58,7 @@ export default function DashboardLayout() {
                       activeSection.slice(1)
                     }`
               }
-              bgSrc={dashboardPages[activeSection].bg}
+              bgSrc={bg}
             >
               {activeSection === "dashboard" && (
                 <button className="btn btn-light btn-lg px-5 py-3">
