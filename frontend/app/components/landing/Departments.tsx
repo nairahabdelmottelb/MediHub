@@ -41,7 +41,7 @@ export default function Departments() {
           <div className="col-md-6 col-lg-4">
             <FacilityCard
               title="Maternity Care"
-              cardImg="images/maternity.jpg"
+              cardImg="images/maternityCare.jpg"
               cardImgAlt="Maternity Ward"
               iconClasses="fas fa-baby-carriage"
               description="Family-centered care for mothers and newborns"
@@ -56,7 +56,7 @@ export default function Departments() {
           <div className="col-md-6 col-lg-4">
             <FacilityCard
               title="Diagnostic Imaging"
-              cardImg="images/imaging.jpg"
+              cardImg="images/diagnostic.jpg"
               cardImgAlt="Imaging Center"
               iconClasses="fas fa-x-ray"
               description="Advanced diagnostic technology for accurate results"
@@ -71,7 +71,7 @@ export default function Departments() {
           <div className="col-md-6 col-lg-4">
             <FacilityCard
               title="24-Hour Pharmacy"
-              cardImg="images/pharmacy.jpg"
+              cardImg="\images\pharmacy.jpg"
               cardImgAlt="Pharmacy"
               iconClasses="fas fa-prescription-bottle"
               description="Full-service pharmacy with medication counseling"
@@ -86,7 +86,7 @@ export default function Departments() {
           <div className="col-md-6 col-lg-4">
             <FacilityCard
               title="Rehabilitation"
-              cardImg="images/rehab.jpg"
+              cardImg="images\rehab.jpg"
               cardImgAlt="Rehabilitation Center"
               iconClasses="fas fa-wheelchair"
               description="Comprehensive physical therapy programs"
