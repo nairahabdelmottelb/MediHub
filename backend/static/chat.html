@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <title>MediHub Chat</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        
+        .app-container {
+            width: 100%;
+            max-width: 1200px;
+            height: 90vh;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .login-container {
+            padding: 40px;
+            max-width: 400px;
+            margin: auto;
+        }
+        
+        .login-title {
+            font-size: 24px;
+            margin-bottom: 30px;
+            text-align: center;
+            color: #2c3e50;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #34495e;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        .login-button {
+            width: 100%;
+            padding: 12px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .login-button:hover {
+            background-color: #2980b9;
+        }
+        
+        .login-error {
+            color: #e74c3c;
+            margin-top: 15px;
+        }
+        
+        .chat-container {
+            display: none;
+            height: 100%;
+            flex-direction: row;
+        }
+        
+        .sidebar {
+            width: 300px;
+            border-right: 1px solid #eee;
+            height: 100%;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .user-info {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            background-color: #f8f9fa;
+        }
+        
+        .user-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .user-email {
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+        
+        .contacts-header {
+            padding: 15px;
+            font-weight: 600;
+            color: #2c3e50;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .contacts-list {
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+        
+        .contact-item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .contact-item:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .contact-item.selected {
+            background-color: #ecf0f1;
+        }
+        
+        .contact-info {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .contact-name {
+            font-weight: 500;
+        }
+        
+        .unread-count {
+            background-color: #3498db;
+            color: white;
+            font-size: 12px;
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
+        
+        .contact-last-message {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-top: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .contact-time {
+            font-size: 12px;
+            color: #95a5a6;
+            margin-top: 5px;
+        }
+        
+        .chat-main {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .chat-header {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            background-color: #f8f9fa;
+            display: flex;
+            align-items: center;
+        }
+        
+        .contact-name-header {
+            font-weight: 600;
+            margin-right: 10px;
+        }
+        
+        .chat-messages {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .message {
+            max-width: 70%;
+            margin-bottom: 15px;
+            padding: 10px 15px;
+            border-radius: 10px;
+            position: relative;
+        }
+        
+        .message.sent {
+            align-self: flex-end;
+            background-color: #3498db;
+            color: white;
+            border-bottom-right-radius: 0;
+        }
+        
+        .message.received {
+            align-self: flex-start;
+            background-color: #ecf0f1;
+            color: #2c3e50;
+            border-bottom-left-radius: 0;
+        }
+        
+        .message.urgent {
+            border: 2px solid #e74c3c;
+        }
+        
+        .message-content {
+            word-wrap: break-word;
+        }
+        
+        .message-time {
+            font-size: 12px;
+            margin-top: 5px;
+            text-align: right;
+            opacity: 0.8;
+        }
+        
+        .empty-state {
+            color: #95a5a6;
+            text-align: center;
+            margin-top: 50px;
+        }
+        
+        .chat-input {
+            padding: 15px;
+            border-top: 1px solid #eee;
+            display: flex;
+            align-items: center;
+        }
+        
+        .message-input {
+            flex-grow: 1;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            resize: none;
+        }
+        
+        .urgent-checkbox {
+            margin: 0 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .urgent-checkbox input {
+            margin-right: 5px;
+        }
+        
+        .send-button {
+            padding: 12px 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .send-button:hover {
+            background-color: #2980b9;
+        }
+        
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div id="login-container" class="login-container">
+            <h2 class="login-title">MediHub Chat Login</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="username">Email/Username</label>
+                    <input type="text" id="username" placeholder="Enter your email or username">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="Enter your password">
+                </div>
+                <button type="submit" class="login-button">Login</button>
+                <div id="login-error" class="login-error"></div>
+            </form>
+        </div>
+        
+        <div id="chat-container" class="chat-container">
+            <div class="sidebar">
+                <div id="user-info" class="user-info">
+                    <div class="user-name"></div>
+                    <div class="user-email"></div>
+                </div>
+                <div class="contacts-header">Contacts</div>
+                <div id="contacts-list" class="contacts-list">
+                    <div class="loading">Loading contacts...</div>
+                </div>
+            </div>
+            
+            <div class="chat-main">
+                <div id="chat-header" class="chat-header">
+                    <div class="contact-name-header">Select a contact</div>
+                </div>
+                <div id="chat-messages" class="chat-messages">
+                    <div class="empty-state">Select a contact to start chatting</div>
+                </div>
+                <div class="chat-input">
+                    <textarea id="message-input" class="message-input" placeholder="Type a message..." rows="1"></textarea>
+                    <div class="urgent-checkbox">
+                        <input type="checkbox" id="urgent-checkbox">
+                        <label for="urgent-checkbox">Urgent</label>
+                    </div>
+                    <button id="send-button" class="send-button">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // API configuration
+        const API_URL = '/api/v1';
+        let accessToken = null;
+        let currentUser = null;
+        let selectedContact = null;
+        let socket = null;
+        let socketPingInterval = null;
+        
+        // Reference DOM elements
+        const loginContainer = document.getElementById('login-container');
+        const chatContainer = document.getElementById('chat-container');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const loginError = document.getElementById('login-error');
+        const userInfo = document.getElementById('user-info');
+        const contactsList = document.getElementById('contacts-list');
+        const chatMessages = document.getElementById('chat-messages');
+        const chatHeader = document.getElementById('chat-header');
+        const messageInput = document.getElementById('message-input');
+        const urgentCheckbox = document.getElementById('urgent-checkbox');
+        const sendButton = document.getElementById('send-button');
+        
+        // Event listeners
+        document.getElementById('login-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            login();
+        });
+        
+        sendButton.addEventListener('click', sendMessage);
+        
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+        
+        // Login function
+        async function login() {
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value.trim();
+            
+            if (!username || !password) {
+                loginError.textContent = 'Please enter both username and password';
+                return;
+            }
+            
+            try {
+                loginError.textContent = '';
+                
+                console.log('Attempting login with:', username);
+                
+                const response = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username,
+                        password
+                    })
+                });
+                
+                if (!response.ok) {
+                    let errorMessage = 'Login failed';
+                    try {
+                        const errorData = await response.json();
+                        errorMessage = errorData.detail || errorMessage;
+                    } catch (e) {
+                        console.error('Error parsing error response', e);
+                    }
+                    loginError.textContent = errorMessage;
+                    return;
+                }
+                
+                // Get token from response
+                const data = await response.json();
+                console.log('Login successful, received data:', data);
+                accessToken = data.access_token;
+                
+                // Extract user_id from JWT token
+                const tokenPayload = parseJwt(accessToken);
+                console.log('Token payload:', tokenPayload);
+                
+                // Create user info directly without calling /users/me
+                currentUser = {
+                    user_id: parseInt(tokenPayload.sub),
+                    email: username, // Use username as email fallback
+                    first_name: data.first_name || username,
+                    last_name: data.last_name || "",
+                    role_name: data.role_name || "user"
+                };
+                
+                console.log('Current user:', currentUser);
+                
+                // Display user info
+                document.querySelector('.user-name').textContent = `${currentUser.first_name} ${currentUser.last_name}`;
+                document.querySelector('.user-email').textContent = currentUser.email;
+                
+                // Show chat interface
+                loginContainer.style.display = 'none';
+                chatContainer.style.display = 'flex';
+                
+                // Load contacts and connect to WebSocket
+                loadContacts();
+                connectWebSocket();
+                
+            } catch (error) {
+                console.error('Login error:', error);
+                loginError.textContent = error.message;
+            }
+        }
+        
+        // Add this function to parse JWT tokens
+        function parseJwt(token) {
+            try {
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+                return JSON.parse(jsonPayload);
+            } catch (e) {
+                console.error('Error parsing JWT', e);
+                return { sub: "0" };
+            }
+        }
+        
+        // Load contacts
+        async function loadContacts() {
+            try {
+                const response = await fetch(`${API_URL}/chat/contacts`, {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    contactsList.innerHTML = '<div class="empty-state">Error loading contacts</div>';
+                    return;
+                }
+                
+                const contacts = await response.json();
+                console.log('Contacts loaded:', contacts);
+                
+                contactsList.innerHTML = '';
+                
+                if (contacts.length === 0) {
+                    contactsList.innerHTML = '<div class="empty-state">No contacts available</div>';
+                    return;
+                }
+                
+                contacts.forEach(contact => {
+                    const contactEl = document.createElement('div');
+                    contactEl.className = 'contact-item';
+                    if (selectedContact && selectedContact.user_id === contact.user_id) {
+                        contactEl.classList.add('selected');
+                    }
+                    
+                    // Format date if available
+                    let timeDisplay = '';
+                    if (contact.last_message_time) {
+                        const date = new Date(contact.last_message_time);
+                        timeDisplay = formatTime(date);
+                    }
+                    
+                    contactEl.innerHTML = `
+                        <div class="contact-info">
+                            <div class="contact-name">${contact.first_name} ${contact.last_name}</div>
+                            ${contact.unread_count > 0 ? `<span class="unread-count">${contact.unread_count}</span>` : ''}
+                        </div>
+                        <div class="contact-last-message">${contact.last_message || 'No messages yet'}</div>
+                        <div class="contact-time">${timeDisplay}</div>
+                    `;
+                    
+                    contactEl.addEventListener('click', () => {
+                        document.querySelectorAll('.contact-item.selected').forEach(el => {
+                            el.classList.remove('selected');
+                        });
+                        contactEl.classList.add('selected');
+                        
+                        selectedContact = contact;
+                        
+                        // Update header
+                        chatHeader.innerHTML = `
+                            <div class="contact-name-header">${contact.first_name} ${contact.last_name}</div>
+                        `;
+                        
+                        // Load messages
+                        loadMessages(contact.user_id);
+                        
+                        // Mark all messages as read
+                        if (contact.unread_count > 0) {
+                            markAllMessagesRead(contact.user_id);
+                        }
+                    });
+                    
+                    contactsList.appendChild(contactEl);
+                });
+                
+            } catch (error) {
+                console.error('Error loading contacts:', error);
+                contactsList.innerHTML = '<div class="empty-state">Error loading contacts</div>';
+            }
+        }
+        
+        // Load messages for a specific contact
+        async function loadMessages(userId) {
+            try {
+                chatMessages.innerHTML = '<div class="loading">Loading messages...</div>';
+                
+                const response = await fetch(`${API_URL}/chat/messages?contact_id=${userId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    chatMessages.innerHTML = '<div class="empty-state">Error loading messages</div>';
+                    return;
+                }
+                
+                const messages = await response.json();
+                console.log('Messages loaded:', messages);
+                
+                chatMessages.innerHTML = '';
+                
+                if (messages.length === 0) {
+                    chatMessages.innerHTML = '<div class="empty-state">No messages yet. Start the conversation!</div>';
+                    return;
+                }
+                
+                messages.forEach(message => {
+                    addMessageToUI(message);
+                });
+                
+                // Scroll to bottom
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                
+            } catch (error) {
+                console.error('Error loading messages:', error);
+                chatMessages.innerHTML = '<div class="empty-state">Error loading messages</div>';
+            }
+        }
+        
+        // Add a message to the UI
+        function addMessageToUI(message) {
+            const messageElement = document.createElement('div');
+            const isSentByMe = message.sender_id === currentUser.user_id;
+            
+            messageElement.className = `message ${isSentByMe ? 'sent' : 'received'}`;
+            if (message.is_urgent) {
+                messageElement.classList.add('urgent');
+            }
+            
+            const messageTime = new Date(message.sent_at);
+            
+            messageElement.innerHTML = `
+                <div class="message-content">${message.message}</div>
+                <div class="message-time">${formatTime(messageTime)}</div>
+            `;
+            
+            chatMessages.appendChild(messageElement);
+            
+            // Scroll to the bottom to show new message
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        // Send a message
+        async function sendMessage() {
+            const message = messageInput.value.trim();
+            const isUrgent = urgentCheckbox.checked;
+            
+            if (!message || !selectedContact) {
+                return;
+            }
+            
+            try {
+                // Clear input immediately for better UX
+                messageInput.value = '';
+                urgentCheckbox.checked = false;
+                
+                // Create message object
+                const messageObj = {
+                    receiver_id: selectedContact.user_id,
+                    message,
+                    is_urgent: isUrgent,
+                    message_type: 'Text'
+                };
+                
+                // Try to send via WebSocket first for real-time delivery
+                let sentViaWebSocket = false;
+                if (socket && socket.readyState === WebSocket.OPEN) {
+                    try {
+                        socket.send(JSON.stringify({
+                            type: 'chat_message',
+                            ...messageObj
+                        }));
+                        sentViaWebSocket = true;
+                        console.log('Message sent via WebSocket');
+                    } catch (wsError) {
+                        console.error('Error sending via WebSocket, falling back to HTTP:', wsError);
+                    }
+                }
+                
+                // If WebSocket failed or wasn't available, use HTTP API
+                if (!sentViaWebSocket) {
+                    const response = await fetch(`${API_URL}/chat/send`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${accessToken}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(messageObj)
+                    });
+                    
+                    if (!response.ok) {
+                        console.error('Error sending message:', await response.json());
+                        return;
+                    }
+                    
+                    const newMessage = await response.json();
+                    console.log('Message sent via HTTP API:', newMessage);
+                    
+                    // Manually add the message to UI since it wasn't sent via WebSocket
+                    addMessageToUI(newMessage);
+                }
+                
+                // Reload contacts to update last message
+                loadContacts();
+                
+                // Scroll to bottom
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                
+            } catch (error) {
+                console.error('Error sending message:', error);
+            }
+        }
+        
+        // Connect to WebSocket for real-time messaging
+        function connectWebSocket() {
+            // Close existing connection if any
+            if (socket && socket.readyState !== WebSocket.CLOSED) {
+                console.log('Closing existing WebSocket connection');
+                socket.close();
+            }
+            
+            // Create new WebSocket connection
+            const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsBase = window.location.host;
+            const wsUrl = `${wsProtocol}//${wsBase}${API_URL}/chat/ws/${currentUser.user_id}?token=${accessToken}`;
+            
+            console.log('Connecting to WebSocket at:', wsUrl);
+            socket = new WebSocket(wsUrl);
+            
+            socket.onopen = function(e) {
+                console.log('WebSocket connection established');
+                // Send a ping to keep the connection alive
+                socketPingInterval = setInterval(() => {
+                    if (socket.readyState === WebSocket.OPEN) {
+                        socket.send(JSON.stringify({ type: 'ping' }));
+                    }
+                }, 30000); // every 30 seconds
+            };
+            
+            socket.onmessage = function(event) {
+                try {
+                    const data = JSON.parse(event.data);
+                    console.log('WebSocket message received:', data);
+                    
+                    if (data.type === 'chat_message') {
+                        const message = data.data;
+                        
+                        // Check if this is a message relevant to the current chat
+                        const isRelevantMessage = selectedContact && (
+                            (message.sender_id === selectedContact.user_id && message.receiver_id === currentUser.user_id) || 
+                            (message.sender_id === currentUser.user_id && message.receiver_id === selectedContact.user_id)
+                        );
+                        
+                        if (isRelevantMessage) {
+                            console.log('Adding new message to UI:', message);
+                            addMessageToUI(message);
+                            
+                            // Scroll to the bottom to show new message
+                            chatMessages.scrollTop = chatMessages.scrollHeight;
+                            
+                            // If the message is from the selected contact, mark it as read
+                            if (message.sender_id === selectedContact.user_id) {
+                                markMessageRead(message.message_id);
+                            }
+                        } else {
+                            console.log('Message not relevant to current chat');
+                        }
+                        
+                        // Always reload contacts to update unread counts and last messages
+                        loadContacts();
+                    } else if (data.type === 'pong') {
+                        console.log('Received pong from server');
+                    } else if (data.type === 'error') {
+                        console.error('Received error from server:', data.message);
+                    }
+                } catch (e) {
+                    console.error('Error processing WebSocket message:', e, event.data);
+                }
+            };
+            
+            socket.onclose = function(event) {
+                console.log('WebSocket connection closed:', event);
+                
+                // Clear ping interval
+                if (socketPingInterval) {
+                    clearInterval(socketPingInterval);
+                }
+                
+                // Try to reconnect after a delay (if not a clean close)
+                if (!event.wasClean) {
+                    console.log('Connection died, attempting to reconnect in 5 seconds...');
+                    setTimeout(connectWebSocket, 5000);
+                }
+            };
+            
+            socket.onerror = function(error) {
+                console.error('WebSocket error:', error);
+            };
+        }
+        
+        // Mark a message as read
+        async function markMessageRead(messageId) {
+            try {
+                await fetch(`${API_URL}/chat/messages/${messageId}/read`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`
+                    }
+                });
+            } catch (error) {
+                console.error('Error marking message as read:', error);
+            }
+        }
+        
+        // Mark all messages from a sender as read
+        async function markAllMessagesRead(senderId) {
+            try {
+                await fetch(`${API_URL}/chat/messages/read-all?sender_id=${senderId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`
+                    }
+                });
+                
+                // Reload contacts to update unread counts
+                loadContacts();
+            } catch (error) {
+                console.error('Error marking messages as read:', error);
+            }
+        }
+        
+        // Format time for display
+        function formatTime(date) {
+            const now = new Date();
+            const yesterday = new Date(now);
+            yesterday.setDate(yesterday.getDate() - 1);
+            
+            const isToday = date.getDate() === now.getDate() && 
+                          date.getMonth() === now.getMonth() && 
+                          date.getFullYear() === now.getFullYear();
+                          
+            const isYesterday = date.getDate() === yesterday.getDate() && 
+                              date.getMonth() === yesterday.getMonth() && 
+                              date.getFullYear() === yesterday.getFullYear();
+            
+            if (isToday) {
+                return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            } else if (isYesterday) {
+                return 'Yesterday';
+            } else {
+                return date.toLocaleDateString();
+            }
+        }
+        
+        // Add this function to refresh the connection when it fails
+        function refreshWebSocketConnection() {
+            if (socket && socket.readyState !== WebSocket.OPEN) {
+                console.log('WebSocket connection not open, reconnecting...');
+                connectWebSocket();
+            }
+        }
+        
+        // Call this function periodically to ensure connection is maintained
+        setInterval(refreshWebSocketConnection, 60000); // Check every minute
+    </script>
+</body>
+</html>

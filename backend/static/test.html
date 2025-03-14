@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediHub Chat Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .chat-container {
+            display: none;
+            height: 80vh;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .chat-sidebar {
+            width: 300px;
+            float: left;
+            height: 100%;
+            border-right: 1px solid #eaeaea;
+            overflow-y: auto;
+        }
+        
+        .chat-main {
+            margin-left: 300px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chat-header {
+            padding: 15px;
+            border-bottom: 1px solid #eaeaea;
+            background-color: #f9f9f9;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+        }
+        
+        .chat-input {
+            padding: 15px;
+            border-top: 1px solid #eaeaea;
+            background-color: #f9f9f9;
+            display: flex;
+        }
+        
+        .contact-item {
+            padding: 15px;
+            border-bottom: 1px solid #eaeaea;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .contact-item:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .contact-item.active {
+            background-color: #e6f7ff;
+            border-left: 3px solid #1890ff;
+        }
+        
+        .contact-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .contact-role {
+            font-size: 12px;
+            color: #888;
+        }
+        
+        .unread-badge {
+            float: right;
+            background-color: #1890ff;
+            color: white;
+            border-radius: 10px;
+            padding: 2px 8px;
+            font-size: 12px;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            clear: both;
+            max-width: 70%;
+        }
+        
+        .message-sent {
+            float: right;
+            background-color: #dcf8c6;
+            border-radius: 10px 0 10px 10px;
+            padding: 10px;
+        }
+        
+        .message-received {
+            float: left;
+            background-color: #f1f0f0;
+            border-radius: 0 10px 10px 10px;
+            padding: 10px;
+        }
+        
+        .message-time {
+            font-size: 11px;
+            color: #888;
+            margin-top: 5px;
+            text-align: right;
+        }
+        
+        .message-urgent {
+            border-left: 3px solid #ff4d4f;
+        }
+        
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        
+        button {
+            background-color: #1890ff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        button:hover {
+            background-color: #40a9ff;
+        }
+        
+        .chat-input input {
+            flex: 1;
+            margin-right: 10px;
+            margin-bottom: 0;
+        }
+        
+        .urgent-checkbox {
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        h2 {
+            margin-top: 0;
+            color: #1890ff;
+        }
+        
+        .error-message {
+            color: #ff4d4f;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="login-container" id="loginContainer">
+            <h2>MediHub Chat Login</h2>
+            <div class="error-message" id="loginError"></div>
+            <input type="text" id="username" placeholder="Username">
+            <input type="password" id="password" placeholder="Password">
+            <button id="loginButton">Login</button>
+        </div>
+        
+        <div class="chat-container" id="chatContainer">
+            <div class="chat-sidebar" id="chatSidebar">
+                <!-- Contacts will be loaded here -->
+            </div>
+            
+            <div class="chat-main">
+                <div class="chat-header" id="chatHeader">
+                    <h3>Select a contact to start chatting</h3>
+                </div>
+                
+                <div class="chat-messages" id="chatMessages">
+                    <!-- Messages will be loaded here -->
+                </div>
+                
+                <div class="chat-input">
+                    <div class="urgent-checkbox">
+                        <input type="checkbox" id="urgentCheckbox">
+                        <label for="urgentCheckbox">Urgent</label>
+                    </div>
+                    <input type="text" id="messageInput" placeholder="Type a message..." disabled>
+                    <button id="sendButton" disabled>Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Configuration
+        const API_URL = 'http://localhost:8000/api/v1';
+        
+        // State
+        let currentUser = null;
+        let accessToken = null;
+        let selectedContact = null;
+        let socket = null;
+        
+        // DOM Elements
+        const loginContainer = document.getElementById('loginContainer');
+        const chatContainer = document.getElementById('chatContainer');
+        const chatSidebar = document.getElementById('chatSidebar');
+        const chatHeader = document.getElementById('chatHeader');
+        const chatMessages = document.getElementById('chatMessages');
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+        const loginButton = document.getElementById('loginButton');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const loginError = document.getElementById('loginError');
+        const urgentCheckbox = document.getElementById('urgentCheckbox');
+        
+        // Event Listeners
+        loginButton.addEventListener('click', login);
+        sendButton.addEventListener('click', sendMessage);
+        messageInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+        
+        // Functions
+        async function login() {
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value.trim();
+            
+            if (!username || !password) {
+                loginError.textContent = 'Please enter both username and password';
+                return;
+            }
+            
+            try {
+                // Clear previous error
+                loginError.textContent = '';
+                
+                console.log('Attempting login with:', { username });
+                
+                // Send login request
+                const response = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: username,
+                        password: password
+                    })
+                });
+                
+                console.log('Login response status:', response.status);
+                
+                if (!response.ok) {
+                    let errorMessage = `Login failed: ${response.status} ${response.statusText}`;
+                    
+                    try {
+                        const errorData = await response.json();
+                        console.error('Login error details:', errorData);
+                        
+                        if (errorData.detail) {
+                            if (Array.isArray(errorData.detail)) {
+                                errorMessage = errorData.detail.map(err => err.msg || JSON.stringify(err)).join(', ');
+                            } else {
+                                errorMessage = errorData.detail;
+                            }
+                        }
+                    } catch (e) {
+                        console.error('Error parsing error response:', e);
+                    }
+                    
+                    loginError.textContent = errorMessage;
+                    return;
+                }
+                
+                // Get token from response
+                const data = await response.json();
+                console.log('Login successful, received token');
+                accessToken = data.access_token;
+                
+                // Get current user info
+                const userResponse = await fetch(`${API_URL}/users/me`, {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                console.log('User info response status:', userResponse.status);
+                
+                if (!userResponse.ok) {
+                    let errorMessage = 'Failed to get user info';
+                    
+                    try {
+                        const errorData = await userResponse.json();
+                        console.error('User info error details:', errorData);
+                        
+                        if (errorData.detail) {
+                            errorMessage = errorData.detail;
+                        }
+                    } catch (e) {
+                        console.error('Error parsing user info error response:', e);
+                    }
+                    
+                    loginError.textContent = errorMessage;
+                    return;
+                }
+                
+                currentUser = await userResponse.json();
+                console.log('User info retrieved:', currentUser);
+                
+                // Show chat interface
+                loginContainer.style.display = 'none';
+                chatContainer.style.display = 'block';
+                
+                // Load contacts
+                loadContacts();
+                
+                // Connect to WebSocket
+                connectWebSocket();
+                
+            } catch (error) {
+                console.error('Login error:', error);
+                loginError.textContent = `Error: ${error.message}`;
+            }
+        }
+        
+        async function loadContacts() {
+            try {
+                const response = await fetch(`${API_URL}/chat/contacts`, {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    console.error('Error loading contacts:', await response.json());
+                    return;
+                }
+                
+                const contacts = await response.json();
+                
+                chatSidebar.innerHTML = '';
+                
+                contacts.forEach(contact => {
+                    const contactElement = document.createElement('div');
+                    contactElement.className = 'contact-item';
+                    contactElement.dataset.userId = contact.user_id;
+                    
+                    let html = `
+                        <div class="contact-name">${contact.first_name} ${contact.last_name}</div>
+                        <div class="contact-role">${contact.role_name}</div>
+                    `;
+                    
+                    if (contact.unread_count > 0) {
+                        html += `<span class="unread-badge">${contact.unread_count}</span>`;
+                    }
+                    
+                    contactElement.innerHTML = html;
+                    
+                    contactElement.addEventListener('click', () => {
+                        selectContact(contact);
+                    });
+                    
+                    chatSidebar.appendChild(contactElement);
+                });
+                
+            } catch (error) {
+                console.error('Error loading contacts:', error);
+            }
+        }
+        
+        function selectContact(contact) {
+            // Update UI
+            const contactItems = document.querySelectorAll('.contact-item');
+            contactItems.forEach(item => {
+                item.classList.remove('active');
+                if (parseInt(item.dataset.userId) === contact.user_id) {
+                    item.classList.add('active');
+                }
+            });
+            
+            selectedContact = contact;
+            chatHeader.innerHTML = `<h3>${contact.first_name} ${contact.last_name} (${contact.role_name})</h3>`;
+            messageInput.disabled = false;
+            sendButton.disabled = false;
+            
+            // Load messages
+            loadMessages(contact.user_id);
+        }
+        
+        async function loadMessages(userId) {
+            try {
+                const response = await fetch(`${API_URL}/chat/messages?other_user_id=${userId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    console.error('Error loading messages:', await response.json());
+                    return;
+                }
+                
+                const messages = await response.json();
+                
+                chatMessages.innerHTML = '';
+                
+                messages.forEach(message => {
+                    addMessageToUI(message);
+                });
+                
+                // Scroll to bottom
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                
+                // Refresh contacts to update unread counts
+                loadContacts();
+                
+            } catch (error) {
+                console.error('Error loading messages:', error);
+            }
+        }
+        
+        function addMessageToUI(message) {
+            const messageElement = document.createElement('div');
+            const isSent = message.sender_id === currentUser.user_id;
+            
+            messageElement.className = `message ${isSent ? 'message-sent' : 'message-received'}`;
+            
+            if (message.is_urgent) {
+                messageElement.classList.add('message-urgent');
+            }
+            
+            const time = new Date(message.sent_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            messageElement.innerHTML = `
+                <div class="message-content">${message.message}</div>
+                <div class="message-time">${time}</div>
+            `;
+            
+            chatMessages.appendChild(messageElement);
+        }
+        
+        async function sendMessage() {
+            const message = messageInput.value.trim();
+            const isUrgent = urgentCheckbox.checked;
+            
+            if (!message || !selectedContact) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_URL}/chat/messages`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        receiver_id: selectedContact.user_id,
+                        message,
+                        is_urgent: isUrgent,
+                        message_type: 'Text'
+                    })
+                });
+                
+                if (!response.ok) {
+                    console.error('Error sending message:', await response.json());
+                    return;
+                }
+                
+                // Clear input
+                messageInput.value = '';
+                urgentCheckbox.checked = false;
+                
+                // Reload messages
+                loadMessages(selectedContact.user_id);
+                
+            } catch (error) {
+                console.error('Error sending message:', error);
+            }
+        }
+        
+        function connectWebSocket() {
+            // Close existing connection if any
+            if (socket) {
+                socket.close();
+            }
+            
+            // Create new WebSocket connection
+            socket = new WebSocket(`ws://localhost:8000/api/v1/chat/ws/${currentUser.user_id}?token=${accessToken}`);
+            
+            socket.onopen = function(e) {
+                console.log('WebSocket connection established');
+            };
+            
+            socket.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                console.log('WebSocket message received:', data);
+                
+                if (data.type === 'chat_message') {
+                    const message = data.data;
+                    
+                    // If this message is from the currently selected contact, add it to UI
+                    if (selectedContact && message.sender_id === selectedContact.user_id) {
+                        addMessageToUI(message);
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                        
+                        // Mark as read
+                        markMessageRead(message.message_id);
+                    }
+                    
+                    // Refresh contacts to update unread counts
+                    loadContacts();
+                }
+            };
+            
+            socket.onclose = function(event) {
+                if (event.wasClean) {
+                    console.log(`WebSocket connection closed cleanly, code=${event.code}, reason=${event.reason}`);
+                } else {
+                    console.error('WebSocket connection died');
+                    
+                    // Try to reconnect after a delay
+                    setTimeout(connectWebSocket, 5000);
+                }
+            };
+            
+            socket.onerror = function(error) {
+                console.error(`WebSocket error:`, error);
+            };
+        }
+        
+        async function markMessageRead(messageId) {
+            try {
+                await fetch(`${API_URL}/chat/messages/${messageId}/read`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Accept': 'application/json'
+                    }
+                });
+            } catch (error) {
+                console.error('Error marking message as read:', error);
+            }
+        }
+    </script>
+</body>
+</html>
