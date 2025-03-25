@@ -1,22 +1,29 @@
 import { useState } from "react";
 import { Outlet, useLocation } from "react-router";
-import Sidebar from "./DocSidebar";
 import Navbar from "./DocNavbar";
 import DoctorDashboardHero from "./DoctorDashboardHero";
-import "./dashboard.css";
+import "../dashboard.css";
+import Sidebar from "../Sidebar";
 
 // Define types for each page
 interface DashboardPageInfo {
   bg: string;
+  children?: Record<string, DashboardPageInfo>;
   path?: string;
 }
 
 // Pages mapping for the Doctor's Portal
 const doctorPages: Record<string, DashboardPageInfo> = {
   dashboard: { bg: "/images/dr.jpg" },
-  appointments: { bg: "/images/calendar.jpg" },
-  patients: { bg: "/images/patients.jpg" },
-  records: { bg: "/images/records.jpg" },
+  calendar: { bg: "/images/calendar.jpg" },
+  patients: {
+    bg: "/images/patients.jpg",
+    children: {
+      records: { bg: "/images/records.jpg" },
+      tests: { bg: "/images/tests.jpg" },
+      medications: { bg: "/images/medications.jpg" },
+    },
+  },
   chat: { bg: "/images/support.jpg" },
 };
 
@@ -37,13 +44,14 @@ export default function DoctorDashboard() {
       <div className="row">
         {/* Sidebar Navigation */}
         <Sidebar
-          activeSection={activeSection}
-          handleNavClick={handleNavClick}
+          pages={doctorPages}
+          prefix="/doctor"
         />
 
         {/* Main Content */}
-        <main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+        <main className="offset-md-3 offset-lg-2 col-md-9 ms-sm-auto col-lg-10 px-md-4">
           <DoctorDashboardHero
+            bgSrc={bg}
             doctorName={
               activeSection === "dashboard"
                 ? "Welcome, Doctor!"

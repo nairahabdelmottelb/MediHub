@@ -2,6 +2,7 @@ import {
   type RouteConfig,
   index,
   layout,
+  prefix,
   route,
 } from "@react-router/dev/routes";
 
@@ -10,14 +11,16 @@ export default [
     index("routes/landing/welcomePage.tsx"),
     route("login", "routes/login/login.tsx"),
   ]),
-  layout("components/dashboard/DashboardLayout.tsx", [
-    route("dashboard", "routes/dashboard/home.tsx"),
-    route("calendar", "routes/dashboard/calendar.tsx"),
-    route("alerts", "routes/dashboard/alerts.tsx"),
-    route("tests", "routes/dashboard/tests.tsx"),
-    route("history", "routes/dashboard/history.tsx"),
-    route("medications", "routes/dashboard/medications.tsx"),
-    route("doctors", "routes/dashboard/doctors.tsx"),
-    route("doctorsdashboard", "routes/doctordashboard/drdashboard.tsx"),
+  route("patient", "components/patientDashboard/DashboardLayout.tsx", [
+    route("dashboard", "routes/patientDashboard/home.tsx"),
+    route("calendar", "routes/patientDashboard/calendar.tsx"),
+    route("alerts", "routes/patientDashboard/alerts.tsx"),
+    route("tests", "routes/patientDashboard/tests.tsx"),
+    route("history", "routes/patientDashboard/history.tsx"),
+    route("medications", "routes/patientDashboard/medications.tsx"),
+    route("doctors", "routes/patientDashboard/doctors.tsx"),
+  ]),
+  route("doctor", "components/doctorDashboard/DocDashboardLayout.tsx", [
+    route("dashboard", "routes/doctorDashboard/drDashboard.tsx"),
   ]),
 ] satisfies RouteConfig;

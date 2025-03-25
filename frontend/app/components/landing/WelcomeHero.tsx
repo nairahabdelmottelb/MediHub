@@ -3,12 +3,12 @@ export default function WelcomeHero() {
     <>
       <section
         className="hero vh-100 d-flex align-items-center"
-        style={{
-          backgroundImage: 'url("images/team.jpg")',
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-        }}
+          style={{
+            backgroundImage: 'url("images/team.jpg")',
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+          }}
       >
         <div className="container">
           <div className="row justify-content-center">

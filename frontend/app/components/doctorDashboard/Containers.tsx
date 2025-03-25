@@ -1,6 +1,3 @@
-import "bootstrap/dist/css/bootstrap.css";
-import "../routes/dashboard/home";
-
 export default function Containers() {
   return (
     <>
