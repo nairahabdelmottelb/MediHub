@@ -4,13 +4,7 @@ import Navbar from "./DocNavbar";
 import DoctorDashboardHero from "./DoctorDashboardHero";
 import "../dashboard.css";
 import Sidebar from "../Sidebar";
-
-// Define types for each page
-interface DashboardPageInfo {
-  bg: string;
-  children?: Record<string, DashboardPageInfo>;
-  path?: string;
-}
+import type DashboardPageInfo from "~/types/DashboardPageInfo";
 
 // Pages mapping for the Doctor's Portal
 const doctorPages: Record<string, DashboardPageInfo> = {
