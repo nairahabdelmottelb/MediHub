@@ -9,9 +9,9 @@ export default function Sidebar(props: {
     <nav className="col-md-3 col-lg-2 d-md-block bg-primary sidebar min-vh-100">
       <div className="position-sticky">
         <div className="sidebar-header p-4">
-                    <NavLink to="/">
-              <h3 className="text-white">MediHub</h3>
-                    </NavLink>
+          <NavLink to="/">
+            <h3 className="text-white">MediHub</h3>
+          </NavLink>
           <p className="text-white-50 mb-0">Patient Portal</p>
         </div>
         <ul className="nav flex-column">
