@@ -20,14 +20,16 @@
 
 .child-nav {
     position: relative;
+    background-color: #ffffff10;
+    border-radius: 0.5rem;
 }
 
 .child-nav::before {
     content: '';
     display: block;
-    width: 3px;
-    background: #FFFFFF50;
+    width: 2px;
     height: 100%;
+    background: #FFFFFF50;
     position: absolute;
     left: 1.5rem;
     top: 0;
@@ -35,7 +37,7 @@
 
 .child-nav .nav-link {
     padding-left: 3rem;
-    margin-block: 0.1rem;
+    margin: 0;
     padding-block: 0.5rem;
 }
 

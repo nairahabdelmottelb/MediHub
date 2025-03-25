@@ -28,7 +28,6 @@ function SimpleNavItem({ pageTitle, pageInfo }: NavItemProps) {
 }
 
 function DropdownNavItem({ pageTitle, pageInfo }: NavItemProps) {
-  const { activeEventKey } = useContext(AccordionContext);
   const onClick = useAccordionButton(pageTitle);
 
   return (
@@ -75,25 +74,22 @@ export default function Sidebar(props: {
 
   return (
     <nav className="col-md-3 col-lg-2 d-md-flex bg-primary sidebar">
-      <Accordion>
-        <div className="position-sticky d-flex flex-column flex-grow-1">
-          <div className="sidebar-header p-4">
-            <NavLink to="/">
-              <h3 className="text-white">MediHub</h3>
-            </NavLink>
-            <p className="text-white-50 mb-0">Patient Portal</p>
-          </div>
-          <ul className="nav flex-column flex-grow-1">
-            {/* Navigation items */}
-            {Object.entries(props.pages).map(renderNavItem)}
-
-            <li className="nav-item mt-auto">
-              <button className="btn btn-light w-100 text-capitalize">
-                Logout
-              </button>
-            </li>
-          </ul>
+      <Accordion className="d-flex flex-column flex-grow-1">
+        <div className="sidebar-header p-4">
+          <NavLink to="/">
+            <h3 className="text-white">MediHub</h3>
+          </NavLink>
+          <p className="text-white-50 mb-0">Patient Portal</p>
         </div>
+
+        <ul className="nav flex-column flex-grow-1">
+          {/* Navigation items */}
+          {Object.entries(props.pages).map(renderNavItem)}
+        </ul>
+
+        <button className="btn btn-light w-100 text-capitalize mt-auto">
+          Logout
+        </button>
       </Accordion>
     </nav>
   );
