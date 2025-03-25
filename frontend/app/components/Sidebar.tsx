@@ -70,9 +70,17 @@ export default function Sidebar(props: {
   const renderNavItem = ([pageName, pageInfo]: [string, DashboardPageInfo]) => (
     <li className="nav-item" key={pageName}>
       {pageInfo.children ? (
-        <DropdownNavItem pageInfo={pageInfo} pageTitle={pageName} />
+        <DropdownNavItem
+          prefix={props.prefix}
+          pageInfo={pageInfo}
+          pageTitle={pageName}
+        />
       ) : (
-        <SimpleNavItem pageTitle={pageName} pageInfo={pageInfo} />
+        <SimpleNavItem
+          prefix={props.prefix}
+          pageTitle={pageName}
+          pageInfo={pageInfo}
+        />
       )}
     </li>
   );
