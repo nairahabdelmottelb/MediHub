@@ -12,22 +12,26 @@ import {
 import { useContext } from "react";
 
 interface NavItemProps {
+  prefix?: string;
   pageTitle: PageTitle;
   pageInfo: DashboardPageInfo;
 }
 
-function SimpleNavItem({ pageTitle, pageInfo }: NavItemProps) {
+function SimpleNavItem(props: NavItemProps) {
+  const { prefix, pageTitle, pageInfo } = props;
+
   return (
     <NavLink
       className="nav-link text-white text-capitalize"
-      to={pageInfo.path ?? `/${pageTitle}`}
+      to={(prefix ?? "") + (pageInfo.path ?? `/${pageTitle}`)}
     >
       {pageTitle}
     </NavLink>
   );
 }
 
-function DropdownNavItem({ pageTitle, pageInfo }: NavItemProps) {
+function DropdownNavItem(props: NavItemProps) {
+  const { pageTitle, pageInfo, prefix } = props;
   const onClick = useAccordionButton(pageTitle);
 
   return (
@@ -47,6 +51,7 @@ function DropdownNavItem({ pageTitle, pageInfo }: NavItemProps) {
             <li className="nav-item" key={childPage}>
               <SimpleNavItem
                 key={childPage}
+                prefix={prefix}
                 pageTitle={childPage}
                 pageInfo={childInfo}
               />
