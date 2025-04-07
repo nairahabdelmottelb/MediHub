@@ -22,5 +22,10 @@ export default [
   ]),
   route("doctor", "components/doctorDashboard/DocDashboardLayout.tsx", [
     route("dashboard", "routes/doctorDashboard/drDashboard.tsx"),
+    route("calendar", "routes/doctorDashboard/drCalendar.tsx"),
+    route("medications", "routes/doctorDashboard/drMedications.tsx"),
+    route("tests", "routes/doctorDashboard/drTests.tsx"),
+    route("records", "routes/doctorDashboard/drRecords.tsx"),
+    route("chat", "routes/doctorDashboard/drChat.tsx"),
   ]),
 ] satisfies RouteConfig;

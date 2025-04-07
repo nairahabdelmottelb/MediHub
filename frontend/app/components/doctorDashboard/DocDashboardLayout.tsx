@@ -37,10 +37,7 @@ export default function DoctorDashboard() {
     <div className="container-fluid home-page">
       <div className="row">
         {/* Sidebar Navigation */}
-        <Sidebar
-          pages={doctorPages}
-          prefix="/doctor"
-        />
+        <Sidebar pages={doctorPages} prefix="/doctor" />
 
         {/* Main Content */}
         <main className="offset-md-3 offset-lg-2 col-md-9 ms-sm-auto col-lg-10 px-md-4">
