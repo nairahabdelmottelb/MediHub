@@ -29,10 +29,6 @@ export default function DoctorDashboard() {
   const page = location.pathname.split("/").pop() as PageTitle;
   const bg = doctorPages[page]?.bg;
 
-  const handleNavClick = (section: PageTitle) => {
-    setActiveSection(section);
-  };
-
   return (
     <div className="container-fluid home-page">
       <div className="row">
