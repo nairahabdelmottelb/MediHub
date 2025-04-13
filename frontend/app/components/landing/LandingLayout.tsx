@@ -5,7 +5,7 @@ export default function LandingLayout() {
   return (
     <>
       <Navbar />
-      <div style={{ paddingTop: 56 }}>
+      <div className="vh-100" style={{ paddingTop: 56 }}>
         <Outlet />
       </div>
     </>

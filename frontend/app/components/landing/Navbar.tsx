@@ -36,7 +36,7 @@ export default function Navbar() {
           <div className="d-flex gap-2">
             <NavLink
               className="btn btn-outline-primary"
-              to={"/patient/dashboard"}
+              to={"/login"}
             >
               Login
             </NavLink>

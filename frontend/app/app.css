@@ -10,3 +10,8 @@
     --white: #E3F2FD;
     --soft-blue: #81b2eba0;
 }
+
+* {
+    background-size: cover;
+    background-repeat: no-repeat;
+}

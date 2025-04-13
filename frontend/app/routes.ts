@@ -9,7 +9,8 @@ import {
 export default [
   layout("components/landing/LandingLayout.tsx", [
     index("routes/landing/welcomePage.tsx"),
-    route("login", "routes/login/login.tsx"),
+    route("login", "routes/auth/login.tsx"),
+    route("signup", "routes/auth/signup.tsx"),
   ]),
   route("patient", "components/patientDashboard/DashboardLayout.tsx", [
     route("dashboard", "routes/patientDashboard/home.tsx"),
