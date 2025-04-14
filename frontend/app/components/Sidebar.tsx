@@ -1,9 +1,11 @@
-import { NavLink } from "react-router";
+import { Link, useLocation } from 'react-router';
+import { useState } from 'react';
+import '../styles/sidebar.css';
 import {
   patientDashboardPages,
   type PageTitle,
 } from "./patientDashboard/DashboardLayout";
-import type DashboardPageInfo from "~/types/DashboardPageInfo";
+import type { DashboardPageInfo } from "~/types/DashboardPageInfo";
 import {
   Accordion,
   AccordionContext,
@@ -11,99 +13,83 @@ import {
 } from "react-bootstrap";
 import { useContext } from "react";
 
-interface NavItemProps {
-  prefix?: string;
-  pageTitle: PageTitle;
-  pageInfo: DashboardPageInfo;
+interface SidebarProps {
+  pages: {
+    name: string;
+    path: string;
+    icon: string;
+    children?: { name: string; path: string }[];
+  }[];
+  collapsed?: boolean;
 }
 
-function SimpleNavItem(props: NavItemProps) {
-  const { prefix, pageTitle, pageInfo } = props;
+export default function Sidebar({ pages, collapsed = false }: SidebarProps) {
+  const location = useLocation();
+  const [expandedItems, setExpandedItems] = useState<string[]>([]);
+
+  const toggleExpand = (e: React.MouseEvent, pageName: string) => {
+    e.preventDefault(); // Prevent navigation for parent items with children
+    setExpandedItems(prev => 
+      prev.includes(pageName) 
+        ? prev.filter(item => item !== pageName)
+        : [...prev, pageName]
+    );
+  };
 
   return (
-    <NavLink
-      className="nav-link text-white text-capitalize"
-      to={(prefix ?? "") + (pageInfo.path ?? `/${pageTitle}`)}
-    >
-      {pageTitle}
-    </NavLink>
-  );
-}
-
-function DropdownNavItem(props: NavItemProps) {
-  const { pageTitle, pageInfo, prefix } = props;
-  const onClick = useAccordionButton(pageTitle);
-
-  return (
-    <>
-      <button
-        type="button"
-        onClick={onClick}
-        className="nav-link text-white text-start text-capitalize"
-      >
-        {pageTitle}
-        <i className="bi bi-chevron-down ms-auto" />
-      </button>
-
-      <Accordion.Collapse eventKey={pageTitle}>
-        <ul className="nav child-nav flex-column">
-          {Object.entries(pageInfo.children!).map(([childPage, childInfo]) => (
-            <li className="nav-item" key={childPage}>
-              <SimpleNavItem
-                key={childPage}
-                prefix={prefix}
-                pageTitle={childPage}
-                pageInfo={childInfo}
-              />
-            </li>
-          ))}
-        </ul>
-      </Accordion.Collapse>
-    </>
-  );
-}
-
-export default function Sidebar(props: {
-  pages: Record<string, DashboardPageInfo>;
-  prefix?: string;
-}) {
-  const renderNavItem = ([pageName, pageInfo]: [string, DashboardPageInfo]) => (
-    <li className="nav-item" key={pageName}>
-      {pageInfo.children ? (
-        <DropdownNavItem
-          prefix={props.prefix}
-          pageInfo={pageInfo}
-          pageTitle={pageName}
-        />
-      ) : (
-        <SimpleNavItem
-          prefix={props.prefix}
-          pageTitle={pageName}
-          pageInfo={pageInfo}
-        />
-      )}
-    </li>
-  );
-
-  return (
-    <nav className="col-md-3 col-lg-2 d-md-flex bg-primary sidebar">
-      <Accordion className="d-flex flex-column flex-grow-1">
-        <div className="sidebar-header p-4">
-          <NavLink to="/">
-            <h3 className="text-white">MediHub</h3>
-          </NavLink>
-          <p className="text-white-50 mb-0">Patient Portal</p>
-        </div>
-
-        <ul className="nav flex-column flex-grow-1">
-          {/* Navigation items */}
-          {Object.entries(props.pages).map(renderNavItem)}
-        </ul>
-
-        <button className="btn btn-light w-100 text-capitalize mt-auto">
-          Logout
-        </button>
-      </Accordion>
-    </nav>
+    <div className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
+      <nav>
+        {pages.map((page) => (
+          <div key={page.path} className="nav-item">
+            {page.children ? (
+              // Parent item with children - acts as dropdown toggle
+              <a
+                href="#"
+                className={`nav-link d-flex align-items-center justify-content-between ${
+                  location.pathname.includes(page.path) ? 'active' : ''
+                }`}
+                onClick={(e) => toggleExpand(e, page.name)}
+              >
+                <div className="d-flex align-items-center">
+                  <i className={`fas fa-${page.icon} me-2`} />
+                  {!collapsed && <span>{page.name}</span>}
+                </div>
+                {!collapsed && (
+                  <i className={`fas fa-chevron-${expandedItems.includes(page.name) ? 'down' : 'right'} ms-2`} />
+                )}
+              </a>
+            ) : (
+              // Regular menu item - acts as navigation link
+              <Link
+                to={page.path}
+                className={`nav-link d-flex align-items-center ${
+                  location.pathname === page.path ? 'active' : ''
+                }`}
+              >
+                <i className={`fas fa-${page.icon} me-2`} />
+                {!collapsed && <span>{page.name}</span>}
+              </Link>
+            )}
+            
+            {/* Dropdown menu for children */}
+            {!collapsed && page.children && expandedItems.includes(page.name) && (
+              <div className="child-nav">
+                {page.children.map((child) => (
+                  <Link
+                    key={child.path}
+                    to={child.path}
+                    className={`nav-link ${
+                      location.pathname === child.path ? 'active' : ''
+                    }`}
+                  >
+                    {child.name}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+      </nav>
+    </div>
   );
 }

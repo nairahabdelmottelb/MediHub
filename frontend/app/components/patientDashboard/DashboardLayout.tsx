@@ -42,7 +42,17 @@ export default function DashboardLayout() {
       <div className="container-fluid home-page">
         <div className="row">
           {/* Sidebar Navigation */}
-          <Sidebar pages={patientDashboardPages} prefix="/patient" />
+          <Sidebar
+            pages={Object.entries(patientDashboardPages).map(
+              ([key, value]) => ({
+                name: key.charAt(0).toUpperCase() + key.slice(1),
+                path: `/patient/${key}`,
+                icon: "fas fa-circle", // Replace with appropriate icons
+                children: [],
+              })
+            )}
+            //prefix="/patient"
+          />
 
           {/* Main Content */}
           <main className="offset-md-3 offset-lg-2 col-md-9 ms-sm-auto col-lg-10 px-md-4">

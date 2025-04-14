@@ -1,3 +1,5 @@
-export default function DrCalendar() {
-  return <div>DrCalendar</div>;
+import DoctorCalendar from "~/components/doctorDashboard/DoctorCalendar";
+
+export default function drCalendar() {
+  return <DoctorCalendar />;
 }

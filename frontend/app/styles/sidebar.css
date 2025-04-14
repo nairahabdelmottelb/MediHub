@@ -1,0 +1,59 @@
+.sidebar {
+  width: 250px;
+  min-height: 100vh;
+  background-color: #ffffff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+  transition: width 0.3s ease;
+}
+
+.sidebar.collapsed {
+  width: 60px;
+}
+
+.sidebar .nav-item {
+  margin-bottom: 0.5rem;
+}
+
+.sidebar .nav-link {
+  color: #333;
+  text-decoration: none;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.sidebar .nav-link:hover {
+  background-color: #f8f9fa;
+  color: #007bff;
+}
+
+.sidebar .nav-link.active {
+  background-color: #e3f2fd;
+  color: #007bff;
+  font-weight: 500;
+}
+
+.sidebar .nav-link i {
+  font-size: 1.1rem;
+  width: 20px;
+  text-align: center;
+}
+
+.sidebar .nav-link .fa-chevron-right {
+  font-size: 0.8rem;
+  transition: transform 0.2s ease;
+}
+
+.sidebar .nav-link.active .fa-chevron-right {
+  transform: rotate(90deg);
+}
+
+.sidebar.collapsed .nav-link {
+  padding: 0.75rem;
+  justify-content: center;
+}
+
+.sidebar.collapsed .nav-link i {
+  margin: 0 !important;
+}
