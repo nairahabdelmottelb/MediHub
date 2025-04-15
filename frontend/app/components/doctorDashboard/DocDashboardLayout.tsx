@@ -31,21 +31,21 @@ const doctorPages = [
     children: [
       {
         name: "Medical Records",
-        path: "/routes/doctordashboard/drRecords.tsx",
+        path: "/doctor/records",
         icon: "file-medical",
         bg: "/images/records.jpg",
         description: "View and manage patient records",
       },
       {
         name: "Lab Tests",
-        path: "/routes/doctordashboard/drTests.tsx",
+        path: "/doctor/tests",
         icon: "vial",
         bg: "/images/tests.jpg",
         description: "View and order lab tests",
       },
       {
         name: "Medications",
-        path: "/routes/doctordashboard/drMedications.tsx",
+        path: "/doctor/medications",
         icon: "pills",
         bg: "/images/medications.jpg",
         description: "Prescribe and track medications",
