@@ -1,0 +1,3 @@
+2025-04-16 21:49:30,947 - app.main - INFO - Copied test.html to static\test.html
+2025-04-16 21:49:35,094 - app.utils.db_init - ERROR - Database initialization error: (2003, "Can't connect to MySQL server on 'localhost' ([WinError 10061] No connection could be made because the target machine actively refused it)")
+2025-04-16 21:49:35,094 - app.main - ERROR - Failed to initialize database: (2003, "Can't connect to MySQL server on 'localhost' ([WinError 10061] No connection could be made because the target machine actively refused it)")
