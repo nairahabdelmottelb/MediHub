@@ -1,4 +1,10 @@
+CREATE DATABASE medihub
+    DEFAULT CHARACTER SET = 'utf8mb4';
+
+
 USE medihub;
+
+
 CREATE TABLE DEPARTMENTS (
     department_id INT PRIMARY KEY AUTO_INCREMENT,
     department_name VARCHAR(100) NOT NULL UNIQUE
@@ -72,6 +78,17 @@ CREATE TABLE DOCTOR_CALENDAR (
     doctor_id INT NOT NULL,
     availability BOOLEAN DEFAULT TRUE,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (doctor_id) REFERENCES DOCTORS(doctor_id)
+);
+
+
+CREATE TABLE DOCTOR_SCHEDULE (
+    schedule_id INT PRIMARY KEY AUTO_INCREMENT,
+    doctor_id INT NOT NULL,
+    day_of_week INT NOT NULL COMMENT '0=Monday, 6=Sunday',
+    start_time TIME NOT NULL,
+    end_time TIME NOT NULL,
+    is_available BOOLEAN DEFAULT TRUE,
     FOREIGN KEY (doctor_id) REFERENCES DOCTORS(doctor_id)
 );
 

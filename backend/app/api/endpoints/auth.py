@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Request, Form
+from fastapi import APIRouter, Depends, HTTPException, status, Request, Form, Body
 from fastapi.security import OAuth2PasswordRequestForm
 from datetime import timedelta, date
 from app.config.database import db
@@ -29,71 +29,226 @@ class UserSignup(BaseModel):
 
 # Define model for JSON login
 class LoginRequest(BaseModel):
-    username: str
+    email: EmailStr
     password: str
 
 router = APIRouter()
 
-# JSON-based login endpoint
-@router.post("/login")
-async def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends(), login_json: LoginRequest = None):
+@router.post("/login", response_model=Dict)
+async def login(
+    form_data: OAuth2PasswordRequestForm = Depends(None),
+    email: str = Form(None),
+    password: str = Form(None),
+    username: str = Form(None),
+    body: dict = Body(None)
+):
     """
-    Login endpoint that returns an access token for valid credentials.
-    Accepts both JSON format and form data for compatibility with Swagger UI.
-    """
-    # Determine if this is JSON or form data
-    content_type = request.headers.get("Content-Type", "")
+    Login endpoint that supports multiple authentication methods:
     
-    # Get username and password from the appropriate source
-    if "application/json" in content_type and login_json:
-        username = login_json.username
-        password = login_json.password
-    else:
-        # Use form data (for Swagger UI)
-        username = form_data.username
+    1. OAuth2 form (username field contains email)
+    2. Regular form fields (email/password)
+    3. Direct JSON body (email/password or username/password)
+    
+    Returns access token and user information.
+    """
+    # Determine which login method to use
+    if form_data is not None:
+        # OAuth2 form login
+        email = form_data.username
         password = form_data.password
+    elif email is not None and password is not None:
+        # Regular form login with email/password
+        pass
+    elif username is not None and password is not None:
+        # Regular form login with username/password
+        email = username
+    elif body is not None:
+        # JSON body login
+        if "email" in body:
+            email = body["email"]
+        elif "username" in body:
+            email = body["username"]
+        else:
+            raise HTTPException(
+                status_code=400,
+                detail="JSON body must contain 'email' or 'username' field"
+            )
+            
+        if "password" in body:
+            password = body["password"]
+        else:
+            raise HTTPException(
+                status_code=400,
+                detail="JSON body must contain 'password' field"
+            )
+    else:
+        raise HTTPException(
+            status_code=400,
+            detail="No valid login data provided. Use form fields or JSON body."
+        )
     
-    logger.info(f"Login attempt for user: {username}")
-    
-    with db.get_db() as conn:
+    # Authenticate user
+    with db.transaction() as conn:
         with conn.cursor() as cursor:
             cursor.execute(
-                """
-                SELECT u.user_id, u.email, u.password, u.first_name, u.last_name, 
-                       u.role_id, r.role_name
-                FROM users u
-                JOIN roles r ON u.role_id = r.role_id
-                WHERE u.email = %s
-                """,
-                (username,)
+                "SELECT user_id, password, role_id FROM USERS WHERE email = %s",
+                (email,)
             )
             user = cursor.fetchone()
     
-    # Check if user exists and password is correct
-    if user is None or not security.verify_password(password, user["password"]):
-        logger.warning(f"Failed login attempt for user: {username}")
+    if not user or not security.verify_password(password, user["password"]):
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect email or password",
-            headers={"WWW-Authenticate": "Bearer"},
+            status_code=401,
+            detail="Incorrect email or password"
         )
     
-    logger.info(f"Successful login for user: {username}")
-    
-    # Create access token
-    access_token_expires = timedelta(minutes=30)
+    # Generate access token
     access_token = security.create_access_token(
-        data={"sub": str(user["user_id"])},
-        expires_delta=access_token_expires
+        data={"sub": str(user["user_id"]), "role": user["role_id"]}
     )
-    
-    # Remove password from user data
-    user.pop("password", None)
     
     return {
         "access_token": access_token,
         "token_type": "bearer",
-        "user": user
+        "user_id": user["user_id"],
+        "role_id": user["role_id"]
+    }
+
+@router.post("/login/json", response_model=Dict)
+async def login_json(request_data: dict = Body(...)):
+    """
+    Direct JSON login endpoint that only requires email and password.
+    This is a simpler alternative to the main login endpoint.
+    
+    Accepts either:
+    - {"email": "user@example.com", "password": "yourpassword"}
+    - {"username": "user@example.com", "password": "yourpassword"}
+    """
+    # Check if we have a username field (for compatibility)
+    if "username" in request_data and "email" not in request_data:
+        email = request_data["username"]
+    elif "email" in request_data:
+        email = request_data["email"]
+    else:
+        raise HTTPException(
+            status_code=400,
+            detail="JSON body must contain 'email' or 'username' field"
+        )
+    
+    if "password" not in request_data:
+        raise HTTPException(
+            status_code=400,
+            detail="JSON body must contain 'password' field"
+        )
+    
+    password = request_data["password"]
+    
+    # Authenticate user
+    with db.transaction() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(
+                "SELECT user_id, password, role_id FROM USERS WHERE email = %s",
+                (email,)
+            )
+            user = cursor.fetchone()
+    
+    if not user or not security.verify_password(password, user["password"]):
+        raise HTTPException(
+            status_code=401,
+            detail="Incorrect email or password"
+        )
+    
+    # Generate access token
+    access_token = security.create_access_token(
+        data={"sub": str(user["user_id"]), "role": user["role_id"]}
+    )
+    
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "user_id": user["user_id"],
+        "role_id": user["role_id"]
+    }
+
+@router.post("/json-login", response_model=Dict)
+async def json_login(request_data: dict = Body(...)):
+    """
+    Simple JSON login endpoint.
+    
+    Accepts a JSON body with:
+    - email or username
+    - password
+    
+    Example:
+    ```json
+    {
+        "email": "user@example.com",
+        "password": "yourpassword"
+    }
+    ```
+    
+    Or:
+    ```json
+    {
+        "username": "user@example.com",
+        "password": "yourpassword"
+    }
+    ```
+    
+    Returns a JWT token that can be used for authentication.
+    """
+    # Check for email or username
+    if "email" in request_data:
+        email = request_data["email"]
+    elif "username" in request_data:
+        email = request_data["username"]
+    else:
+        raise HTTPException(
+            status_code=400,
+            detail="Missing email or username field"
+        )
+    
+    # Check for password
+    if "password" not in request_data:
+        raise HTTPException(
+            status_code=400,
+            detail="Missing password field"
+        )
+    
+    password = request_data["password"]
+    
+    # Authenticate user
+    with db.transaction() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(
+                "SELECT user_id, password, role_id, first_name, last_name, email FROM USERS WHERE email = %s",
+                (email,)
+            )
+            user = cursor.fetchone()
+    
+    if not user or not security.verify_password(password, user["password"]):
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid email or password"
+        )
+    
+    # Generate access token
+    access_token = security.create_access_token(
+        data={"sub": str(user["user_id"]), "role": user["role_id"]}
+    )
+    
+    # Return token and user info
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "user_id": user["user_id"],
+        "role_id": user["role_id"],
+        "user": {
+            "id": user["user_id"],
+            "email": user["email"],
+            "first_name": user["first_name"],
+            "last_name": user["last_name"]
+        }
     }
 
 @router.post("/signup", response_model=Dict)

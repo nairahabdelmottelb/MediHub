@@ -1,8 +1,8 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Form, Depends, Body
 from app.config.database import db
 from app.utils.security import get_password_hash
 from pydantic import BaseModel, EmailStr
-from typing import Dict, Optional
+from typing import Dict, Optional, Union
 import logging
 
 # Set up logging
@@ -14,14 +14,46 @@ class UserSignup(BaseModel):
     password: str
     first_name: str
     last_name: str
-    contact_number: str  # We'll keep this in the request model but won't use it in the DB query
+    contact_number: str
 
 router = APIRouter()
 
+# Function to create a UserSignup from form data
+async def get_user_data(
+    email: str = Form(None),
+    password: str = Form(None),
+    first_name: str = Form(None),
+    last_name: str = Form(None),
+    contact_number: str = Form(None),
+    user_json: UserSignup = Body(None)
+) -> UserSignup:
+    """
+    Extract user data from either form data or JSON body.
+    Form fields take precedence over JSON if both are provided.
+    """
+    if email is not None:
+        # Form data was provided
+        return UserSignup(
+            email=email,
+            password=password,
+            first_name=first_name,
+            last_name=last_name,
+            contact_number=contact_number
+        )
+    elif user_json is not None:
+        # JSON data was provided
+        return user_json
+    else:
+        raise HTTPException(
+            status_code=400,
+            detail="No valid user data provided. Use either form data or JSON."
+        )
+
 @router.post("/", response_model=Dict)
-async def signup(user_data: UserSignup):
+async def signup(user_data: UserSignup = Depends(get_user_data)):
     """
     Register a new user with admin role (role_id=1).
+    Accepts both form data and JSON.
     """
     # Use transaction to ensure changes are committed
     with db.transaction() as conn:
