@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { Outlet, useLocation } from "react-router";
-import Navbar from "./DocNavbar";
 import DoctorDashboardHero from "./DoctorDashboardHero";
 import "../../components/dashboard.css";
+import "../../styles/sidebar.css";
 import Sidebar from "../Sidebar";
 import type { DashboardPageInfo } from "~/types/DashboardPageInfo";
 
@@ -79,35 +79,23 @@ export default function DoctorDashboard() {
   }, [currentPage]);
 
   return (
-    <div
-      className={`container-fluid home-page ${
-        isSidebarCollapsed ? "collapsed" : ""
-      }`}
-    >
+    <div className={`container-fluid home-page ${isSidebarCollapsed ? "collapsed" : ""}`}>
       <div className="row">
         {/* Sidebar Navigation */}
-        <div
-          className={`sidebar-wrapper bg-primary ${
-            isSidebarCollapsed ? "collapsed" : ""
-          }`}
-        >
-          <div className="sidebar-header p-3 mb-3 d-flex align-items-center justify-content-between">
+        <aside className={`sidebar ${isSidebarCollapsed ? "collapsed" : ""}`}>
+          <div className="sidebar-header">
             {!isSidebarCollapsed && (
               <h5 className="mb-0 text-white">Doctor's Portal</h5>
             )}
             <button
-              className="sidebar-collapse-btn btn btn-primary"
+              className="sidebar-collapse-btn"
               onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
             >
-              <i
-                className={`fas fa-${
-                  isSidebarCollapsed ? "chevron-right" : "chevron-left"
-                }`}
-              />
+              <i className={`fas fa-${isSidebarCollapsed ? "chevron-right" : "chevron-left"}`} />
             </button>
           </div>
           <Sidebar pages={doctorPages} collapsed={isSidebarCollapsed} />
-        </div>
+        </aside>
 
         {/* Main Content */}
         <main className="main-content">
@@ -115,9 +103,7 @@ export default function DoctorDashboard() {
             <div className="d-flex justify-content-between align-items-center p-3">
               <div>
                 <h4 className="mb-0">{currentPage?.name || activeSection}</h4>
-                <p className="text-muted mb-0 small">
-                  {currentPage?.description}
-                </p>
+                <p className="text-muted mb-0 small">{currentPage?.description}</p>
               </div>
               <div className="d-flex align-items-center gap-3">
                 <button className="btn btn-light position-relative">

@@ -1,11 +1,9 @@
 import { Link, useLocation } from 'react-router';
 import { useState } from 'react';
 import '../styles/sidebar.css';
-import {
-  patientDashboardPages,
-  type PageTitle,
-} from "./patientDashboard/DashboardLayout";
 import type { DashboardPageInfo } from "~/types/DashboardPageInfo";
+import patientDashboardPages from "./patientDashboard/DashboardLayout";
+import PageTitle from "./patientDashboard/DashboardLayout";
 import {
   Accordion,
   AccordionContext,
@@ -34,6 +32,11 @@ export default function Sidebar({ pages, collapsed = false }: SidebarProps) {
         ? prev.filter(item => item !== pageName)
         : [...prev, pageName]
     );
+  };
+
+  const handleLogout = () => {
+    // Add logout logic here
+    window.location.href = '/login';
   };
 
   return (
@@ -90,6 +93,17 @@ export default function Sidebar({ pages, collapsed = false }: SidebarProps) {
           </div>
         ))}
       </nav>
+      
+      {/* Logout Button */}
+      <div className="sidebar-footer">
+        <button
+          onClick={handleLogout}
+          className="nav-link logout-btn"
+        >
+          <i className="fas fa-sign-out-alt me-2" />
+          {!collapsed && <span>Logout</span>}
+        </button>
+      </div>
     </div>
   );
 }

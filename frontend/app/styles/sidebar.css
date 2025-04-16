@@ -1,52 +1,109 @@
 .sidebar {
-  width: 250px;
-  min-height: 100vh;
-  background-color: #ffffff;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 280px;
+  height: 100vh;
+  background-color: #0d6efd;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  padding: 1rem;
-  transition: width 0.3s ease;
+  transition: all 0.3s ease;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
 }
 
 .sidebar.collapsed {
-  width: 60px;
+  width: 80px;
 }
 
-.sidebar .nav-item {
+.sidebar-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 70px;
+}
+
+.sidebar-header h5 {
+  color: white;
+  margin: 0;
+  font-size: 1.1rem;
+  white-space: nowrap;
+}
+
+.sidebar-collapse-btn {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  cursor: pointer;
+}
+
+.sidebar-collapse-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.sidebar nav {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.nav-item {
   margin-bottom: 0.5rem;
 }
 
-.sidebar .nav-link {
-  color: #333;
+.nav-link {
+  color: rgba(255, 255, 255, 0.8);
   text-decoration: none;
   padding: 0.75rem 1rem;
   border-radius: 0.5rem;
   transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
 
-.sidebar .nav-link:hover {
-  background-color: #f8f9fa;
-  color: #007bff;
+.nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
 }
 
-.sidebar .nav-link.active {
-  background-color: #e3f2fd;
-  color: #007bff;
+.nav-link.active {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
   font-weight: 500;
 }
 
-.sidebar .nav-link i {
+.nav-link i {
   font-size: 1.1rem;
-  width: 20px;
+  width: 24px;
   text-align: center;
 }
 
-.sidebar .nav-link .fa-chevron-right {
+.nav-link .fa-chevron-right,
+.nav-link .fa-chevron-down {
   font-size: 0.8rem;
   transition: transform 0.2s ease;
+  margin-left: auto;
 }
 
-.sidebar .nav-link.active .fa-chevron-right {
-  transform: rotate(90deg);
+.child-nav {
+  margin: 0.5rem 0 0.5rem 2.5rem;
+  border-left: 2px solid rgba(255, 255, 255, 0.1);
+  padding-left: 1rem;
+}
+
+.child-nav .nav-link {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
 }
 
 .sidebar.collapsed .nav-link {
@@ -54,6 +111,94 @@
   justify-content: center;
 }
 
-.sidebar.collapsed .nav-link i {
-  margin: 0 !important;
+.sidebar.collapsed .nav-link span,
+.sidebar.collapsed .nav-link .fa-chevron-right,
+.sidebar.collapsed .nav-link .fa-chevron-down {
+  display: none;
+}
+
+.sidebar.collapsed .nav-link i:not(.fa-chevron-right):not(.fa-chevron-down) {
+  margin: 0;
+  width: 20px;
+}
+
+.sidebar.collapsed .child-nav {
+  display: none;
+}
+
+/* Main Content Adjustment */
+.main-content {
+  margin-left: 280px;
+  transition: margin-left 0.3s ease;
+  width: calc(100% - 280px);
+}
+
+.home-page.collapsed .main-content {
+  margin-left: 80px;
+  width: calc(100% - 80px);
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+
+  .sidebar.collapsed {
+    transform: translateX(0);
+  }
+
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .home-page.collapsed .main-content {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+
+/* Sidebar Footer */
+.sidebar-footer {
+  padding: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.logout-btn {
+  width: 100%;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.8);
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.logout-btn:hover {
+  background-color: rgba(255, 0, 0, 0.1);
+  color: #fff;
+}
+
+.logout-btn i {
+  font-size: 1.1rem;
+  width: 24px;
+  text-align: center;
+}
+
+.sidebar.collapsed .logout-btn {
+  padding: 0.75rem;
+  justify-content: center;
+}
+
+.sidebar.collapsed .logout-btn span {
+  display: none;
+}
+
+.sidebar.collapsed .logout-btn i {
+  margin: 0;
+  width: 20px;
 }

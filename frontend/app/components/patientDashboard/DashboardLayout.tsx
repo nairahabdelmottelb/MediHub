@@ -1,101 +1,184 @@
 import { useMemo, useState } from "react";
-import Sidebar from "../Sidebar";
+import { Link, Outlet, useLocation } from "react-router";
 import "../dashboard.css";
-import DashboardHero from "./DashboardHero";
-import Containers from "../doctorDashboard/Containers";
-import { Outlet, Routes, useLocation } from "react-router";
-import ChatWindow from "./ChatWindow/ChatWindow";
-import type DashboardPageInfo from "~/types/DashboardPageInfo";
+import ChatModal from "./ChatWindow/ChatWindow";
 
-export const patientDashboardPages: Record<string, DashboardPageInfo> = {
-  dashboard: {
+// Pages mapping for the Patient's Portal with enhanced metadata
+const patientPages = [
+  {
+    name: "Dashboard",
+    path: "/patient/dashboard",
+    icon: "home",
     bg: "/images/banner.png",
-    heroChildren: (
-      <button className="btn btn-light btn-lg px-5 py-3">
-        <i className="fas fa-calendar-plus me-2" />
-        Book New Appointment
-      </button>
-    ),
+    description: "Overview of your health status",
   },
-  calendar: { bg: "/images/drpatient.jpg" },
-  alerts: { bg: "/images/emergency.jpg" },
-  tests: { bg: "/images/lab.jpg" },
-  history: { bg: "/images/medical-bg.jpg" },
-  medications: { bg: "/images/madications.jpg" },
-  doctors: { bg: "/images/teamofdrs.jpg" },
-};
+  {
+    name: "Calendar",
+    path: "/patient/calendar",
+    icon: "calendar-alt",
+    bg: "/images/drpatient.jpg",
+    description: "Manage your appointments",
+  },
+  {
+    name: "Alerts",
+    path: "/patient/alerts",
+    icon: "bell",
+    bg: "/images/emergency.jpg",
+    description: "View important notifications",
+  },
+  {
+    name: "Tests",
+    path: "/patient/tests",
+    icon: "flask",
+    bg: "/images/lab.jpg",
+    description: "View lab test results",
+  },
+  {
+    name: "History",
+    path: "/patient/history",
+    icon: "file-medical",
+    bg: "/images/medical-bg.jpg",
+    description: "View medical history",
+  },
+  {
+    name: "Medications",
+    path: "/patient/medications",
+    icon: "pills",
+    bg: "/images/madications.jpg",
+    description: "Manage your medications",
+  },
+  {
+    name: "Doctors",
+    path: "/patient/doctors",
+    icon: "user-md",
+    bg: "/images/teamofdrs.jpg",
+    description: "View your doctors",
+  },
+];
 
-export type PageTitle = keyof typeof patientDashboardPages;
+type PageTitle = (typeof patientPages)[number]["name"];
 
 export default function DashboardLayout() {
-  const [showChatModal, setShowChatModal] = useState(false);
-
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [showChat, setShowChat] = useState(false);
   const location = useLocation();
   const page = useMemo(
     () => location.pathname.split("/").pop() as PageTitle,
     [location]
   );
-  const bg = patientDashboardPages[page]?.bg;
+  const currentPage = patientPages.find(p => p.path.includes(page));
+  const bg = currentPage?.bg;
+
+  const handleLogout = () => {
+    // Add logout logic here
+    window.location.href = '/login';
+  };
 
   return (
-    <>
-      <div className="container-fluid home-page">
-        <div className="row">
-          {/* Sidebar Navigation */}
-          <Sidebar
-            pages={Object.entries(patientDashboardPages).map(
-              ([key, value]) => ({
-                name: key.charAt(0).toUpperCase() + key.slice(1),
-                path: `/patient/${key}`,
-                icon: "fas fa-circle", // Replace with appropriate icons
-                children: [],
-              })
+    <div className={`container-fluid patient-dashboard ${isSidebarCollapsed ? 'collapsed' : ''}`}>
+      <div className="row">
+        {/* Sidebar Navigation */}
+        <div className={`patient-sidebar ${isSidebarCollapsed ? 'collapsed' : ''}`}>
+          <div className="patient-sidebar-header p-3 mb-3 d-flex align-items-center justify-content-between">
+            {!isSidebarCollapsed && (
+              <h5 className="mb-0 text-white">Patient's Portal</h5>
             )}
-            //prefix="/patient"
-          />
-
-          {/* Main Content */}
-          <main className="offset-md-3 offset-lg-2 col-md-9 ms-sm-auto col-lg-10 px-md-4">
-            {/* Dynamic Background Hero Section */}
-            <DashboardHero
-              title={
-                page === "dashboard"
-                  ? "Quality Healthcare Made Accessible"
-                  : `Welcome to ${page.charAt(0).toUpperCase() + page.slice(1)}`
-              }
-              bgSrc={bg}
+            <button
+              className="patient-sidebar-collapse-btn"
+              onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
             >
-              {patientDashboardPages[page]?.heroChildren}
-            </DashboardHero>
-
-            <div className="content-area py-4" id="contentArea">
-              {/* <Containers /> */}
-              <Outlet />
+              <i className={`fas fa-${isSidebarCollapsed ? 'chevron-right' : 'chevron-left'}`} />
+            </button>
+          </div>
+          <nav className="patient-sidebar-nav">
+            {patientPages.map((page) => (
+              <Link
+                key={page.path}
+                to={page.path}
+                className={`patient-nav-link ${location.pathname === page.path ? 'active' : ''}`}
+              >
+                <i className={`fas fa-${page.icon} me-2`} />
+                {!isSidebarCollapsed && <span>{page.name}</span>}
+              </Link>
+            ))}
+            <div className="mt-auto">
+              <button
+                onClick={handleLogout}
+                className="patient-nav-link text-danger"
+                style={{ width: '100%', border: 'none', background: 'transparent' }}
+              >
+                <i className="fas fa-sign-out-alt me-2" />
+                {!isSidebarCollapsed && <span>Logout</span>}
+              </button>
             </div>
-          </main>
+          </nav>
         </div>
+
+        {/* Main Content */}
+        <main className="patient-main-content">
+          {currentPage && (
+            <div className="patient-dashboard-hero" style={{ backgroundImage: `url(${currentPage.bg})` }}>
+              <div className="patient-dashboard-overlay">
+                <div className="patient-booking-card">
+                  <h2 className="text-white mb-4">{currentPage.name}</h2>
+                  <p className="text-white mb-0">{currentPage.description}</p>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          <div className="patient-main-header">
+            <div className="d-flex justify-content-between align-items-center p-3">
+              <div>
+                <h4 className="mb-0">{currentPage?.name || 'Dashboard'}</h4>
+                <p className="text-muted mb-0 small">
+                  {currentPage?.description}
+                </p>
+              </div>
+              <div className="d-flex align-items-center gap-3">
+                <button className="btn btn-light position-relative">
+                  <i className="fas fa-bell" />
+                  <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    3
+                  </span>
+                </button>
+                <div className="dropdown">
+                  <button 
+                    className="btn btn-light dropdown-toggle d-flex align-items-center gap-2" 
+                    data-bs-toggle="dropdown"
+                  >
+                    <div className="rounded-circle bg-primary text-white p-2" style={{ width: '32px', height: '32px' }}>
+                      <i className="fas fa-user" />
+                    </div>
+                    <span>John Doe</span>
+                  </button>
+                  <ul className="dropdown-menu dropdown-menu-end">
+                    <li><a className="dropdown-item" href="#"><i className="fas fa-user me-2" />Profile</a></li>
+                    <li><a className="dropdown-item" href="#"><i className="fas fa-cog me-2" />Settings</a></li>
+                    <li><hr className="dropdown-divider" /></li>
+                    <li><a className="dropdown-item text-danger" href="#"><i className="fas fa-sign-out-alt me-2" />Logout</a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="patient-content-area">
+            <Outlet />
+          </div>
+        </main>
       </div>
 
-      <ChatWindow
-        show={showChatModal}
-        handleClose={() => setShowChatModal(false)}
-      />
-
+      {/* Chat Button */}
       <button
-        className="btn btn-primary rounded-circle position-fixed"
-        style={{
-          transition: "opacity 0.2s",
-          opacity: showChatModal ? 0 : 1,
-          pointerEvents: showChatModal ? "none" : "auto",
-          bottom: "2rem",
-          right: "2rem",
-          width: "56px",
-          height: "56px",
-        }}
-        onClick={() => setShowChatModal((prev) => !prev)}
+        className="chat-button btn btn-primary rounded-circle"
+        onClick={() => setShowChat(true)}
       >
-        <i className="fas fa-comment-medical" />
+        <i className="fas fa-robot" />
       </button>
-    </>
+
+      {/* Chat Window */}
+      <ChatModal show={showChat} handleClose={() => setShowChat(false)} />
+    </div>
   );
 }
