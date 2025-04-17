@@ -1,15 +1,6 @@
 import { Link, useLocation } from 'react-router';
 import { useState } from 'react';
 import '../styles/sidebar.css';
-import type { DashboardPageInfo } from "~/types/DashboardPageInfo";
-import patientDashboardPages from "./patientDashboard/DashboardLayout";
-import PageTitle from "./patientDashboard/DashboardLayout";
-import {
-  Accordion,
-  AccordionContext,
-  useAccordionButton,
-} from "react-bootstrap";
-import { useContext } from "react";
 
 interface SidebarProps {
   pages: {
@@ -27,8 +18,8 @@ export default function Sidebar({ pages, collapsed = false }: SidebarProps) {
 
   const toggleExpand = (e: React.MouseEvent, pageName: string) => {
     e.preventDefault(); // Prevent navigation for parent items with children
-    setExpandedItems(prev => 
-      prev.includes(pageName) 
+    setExpandedItems(prev =>
+      prev.includes(pageName)
         ? prev.filter(item => item !== pageName)
         : [...prev, pageName]
     );
@@ -73,7 +64,7 @@ export default function Sidebar({ pages, collapsed = false }: SidebarProps) {
                 {!collapsed && <span>{page.name}</span>}
               </Link>
             )}
-            
+
             {/* Dropdown menu for children */}
             {!collapsed && page.children && expandedItems.includes(page.name) && (
               <div className="child-nav">
@@ -93,7 +84,7 @@ export default function Sidebar({ pages, collapsed = false }: SidebarProps) {
           </div>
         ))}
       </nav>
-      
+
       {/* Logout Button */}
       <div className="sidebar-footer">
         <button

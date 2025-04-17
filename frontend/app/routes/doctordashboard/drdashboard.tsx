@@ -1,12 +1,12 @@
 import { DashboardContainer } from "~/components/doctorDashboard/Containers";
-import { format } from 'date-fns';
+import { format } from "date-fns";
 
 interface Appointment {
   id: number;
   patientName: string;
   time: Date;
   type: string;
-  status: 'scheduled' | 'completed' | 'cancelled';
+  status: "scheduled" | "completed" | "cancelled";
 }
 
 interface LabResult {
@@ -14,43 +14,43 @@ interface LabResult {
   patientName: string;
   testName: string;
   date: Date;
-  status: 'new' | 'viewed';
+  status: "new" | "viewed";
 }
 
-export default function drdashboard() {
+export default function drDashboard() {
   // Sample data - in a real app, this would come from an API
   const today = new Date();
   const appointments: Appointment[] = [
     {
       id: 1,
-      patientName: 'John Doe',
+      patientName: "John Doe",
       time: new Date(today.setHours(10, 0)),
-      type: 'Regular Checkup',
-      status: 'scheduled',
+      type: "Regular Checkup",
+      status: "scheduled",
     },
     {
       id: 2,
-      patientName: 'Jane Smith',
+      patientName: "Jane Smith",
       time: new Date(today.setHours(14, 30)),
-      type: 'Follow-up',
-      status: 'scheduled',
+      type: "Follow-up",
+      status: "scheduled",
     },
   ];
 
   const labResults: LabResult[] = [
     {
       id: 1,
-      patientName: 'John Doe',
-      testName: 'Blood Test',
+      patientName: "John Doe",
+      testName: "Blood Test",
       date: new Date(today.setDate(today.getDate() - 1)),
-      status: 'new',
+      status: "new",
     },
     {
       id: 2,
-      patientName: 'Jane Smith',
-      testName: 'X-Ray',
+      patientName: "Jane Smith",
+      testName: "X-Ray",
       date: new Date(today.setDate(today.getDate() - 2)),
-      status: 'new',
+      status: "new",
     },
   ];
 
@@ -60,7 +60,7 @@ export default function drdashboard() {
       <div className="col-12">
         <DashboardContainer>
           <div className="row g-4">
-            <div className="col-md-3">
+            <div className="col-12 col-md-6 col-lg-3">
               <div className="d-flex align-items-center p-3 bg-primary bg-opacity-10 rounded-3">
                 <div className="rounded-circle bg-primary p-3 me-3">
                   <i className="fas fa-calendar-plus text-white fs-4" />
@@ -71,7 +71,7 @@ export default function drdashboard() {
                 </div>
               </div>
             </div>
-            <div className="col-md-3">
+            <div className="col-12 col-md-6 col-lg-3">
               <div className="d-flex align-items-center p-3 bg-success bg-opacity-10 rounded-3">
                 <div className="rounded-circle bg-success p-3 me-3">
                   <i className="fas fa-flask text-white fs-4" />
@@ -82,7 +82,7 @@ export default function drdashboard() {
                 </div>
               </div>
             </div>
-            <div className="col-md-3">
+            <div className="col-12 col-md-6 col-lg-3">
               <div className="d-flex align-items-center p-3 bg-info bg-opacity-10 rounded-3">
                 <div className="rounded-circle bg-info p-3 me-3">
                   <i className="fas fa-user-injured text-white fs-4" />
@@ -93,7 +93,7 @@ export default function drdashboard() {
                 </div>
               </div>
             </div>
-            <div className="col-md-3">
+            <div className="col-12 col-md-6 col-lg-3">
               <div className="d-flex align-items-center p-3 bg-warning bg-opacity-10 rounded-3">
                 <div className="rounded-circle bg-warning p-3 me-3">
                   <i className="fas fa-clock text-white fs-4" />
@@ -159,18 +159,18 @@ export default function drdashboard() {
                     </div>
                     <p className="mb-1 text-muted">
                       <i className="fas fa-clock me-2" />
-                      {format(appointment.time, 'h:mm a')}
+                      {format(appointment.time, "h:mm a")}
                     </p>
                     <small className="text-muted">{appointment.type}</small>
                   </div>
                   <div className="text-end">
                     <span
                       className={`badge ${
-                        appointment.status === 'completed'
-                          ? 'bg-success'
-                          : appointment.status === 'cancelled'
-                          ? 'bg-danger'
-                          : 'bg-warning'
+                        appointment.status === "completed"
+                          ? "bg-success"
+                          : appointment.status === "cancelled"
+                          ? "bg-danger"
+                          : "bg-warning"
                       } mb-2 d-block`}
                     >
                       {appointment.status.charAt(0).toUpperCase() +
@@ -194,7 +194,7 @@ export default function drdashboard() {
           </div>
         </DashboardContainer>
       </div>
-      
+
       {/* Lab Results Section */}
       <div className="col-md-6">
         <DashboardContainer>
@@ -228,7 +228,7 @@ export default function drdashboard() {
                     </p>
                     <small className="text-muted">
                       <i className="fas fa-calendar me-2" />
-                      {format(result.date, 'MMM dd, yyyy')}
+                      {format(result.date, "MMM dd, yyyy")}
                     </small>
                   </div>
                   <div className="text-end">

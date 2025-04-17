@@ -66,48 +66,80 @@ export default function DashboardLayout() {
     () => location.pathname.split("/").pop() as PageTitle,
     [location]
   );
-  const currentPage = patientPages.find(p => p.path.includes(page));
+  const currentPage = patientPages.find((p) => p.path.includes(page));
   const bg = currentPage?.bg;
 
   const handleLogout = () => {
     // Add logout logic here
-    window.location.href = '/login';
+    window.location.href = "/login";
   };
 
   return (
-    <div className={`container-fluid patient-dashboard ${isSidebarCollapsed ? 'collapsed' : ''}`}>
+    <div
+      className={`container-fluid patient-dashboard ${
+        isSidebarCollapsed ? "collapsed" : ""
+      }`}
+    >
       <div className="row">
         {/* Sidebar Navigation */}
-        <div className={`patient-sidebar ${isSidebarCollapsed ? 'collapsed' : ''}`}>
-          <div className="patient-sidebar-header p-3 mb-3 d-flex align-items-center justify-content-between">
+        <div
+          className={`patient-sidebar ${isSidebarCollapsed ? "collapsed" : ""}`}
+        >
+          <div
+            className={`patient-sidebar-header ${
+              !isSidebarCollapsed
+                ? "p-3 justify-content-between"
+                : "py-3 justify-content-center"
+            } mb-3 d-flex align-items-center`}
+          >
             {!isSidebarCollapsed && (
-              <h5 className="mb-0 text-white">Patient's Portal</h5>
+              <h5 className="heading mb-0 text-white">Patient's Portal</h5>
             )}
             <button
               className="patient-sidebar-collapse-btn"
               onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
             >
-              <i className={`fas fa-${isSidebarCollapsed ? 'chevron-right' : 'chevron-left'}`} />
+              <i
+                className={`fas fa-${
+                  isSidebarCollapsed ? "chevron-right" : "chevron-left"
+                }`}
+              />
             </button>
           </div>
+
           <nav className="patient-sidebar-nav">
             {patientPages.map((page) => (
               <Link
                 key={page.path}
                 to={page.path}
-                className={`patient-nav-link ${location.pathname === page.path ? 'active' : ''}`}
+                className={`patient-nav-link ${
+                  location.pathname === page.path ? "active" : ""
+                }`}
               >
-                <i className={`fas fa-${page.icon} me-2`} />
+                <i
+                  className={`fas fa-${page.icon} ${
+                    !isSidebarCollapsed ? "me-2" : ""
+                  }`}
+                />
                 {!isSidebarCollapsed && <span>{page.name}</span>}
               </Link>
             ))}
+
             <div className="mt-auto">
               <button
                 onClick={handleLogout}
-                className="patient-nav-link text-danger"
-                style={{ width: '100%', border: 'none', background: 'transparent' }}
+                className="patient-nav-link text-white"
+                style={{
+                  width: "100%",
+                  border: "none",
+                  background: "transparent",
+                }}
               >
-                <i className="fas fa-sign-out-alt me-2" />
+                <i
+                  className={`fas fa-sign-out-alt ${
+                    !isSidebarCollapsed ? "me-2" : ""
+                  }`}
+                />
                 {!isSidebarCollapsed && <span>Logout</span>}
               </button>
             </div>
@@ -117,7 +149,10 @@ export default function DashboardLayout() {
         {/* Main Content */}
         <main className="patient-main-content">
           {currentPage && (
-            <div className="patient-dashboard-hero" style={{ backgroundImage: `url(${currentPage.bg})` }}>
+            <div
+              className="patient-dashboard-hero"
+              style={{ backgroundImage: `url(${currentPage.bg})` }}
+            >
               <div className="patient-dashboard-overlay">
                 <div className="patient-booking-card">
                   <h2 className="text-white mb-4">{currentPage.name}</h2>
@@ -126,11 +161,11 @@ export default function DashboardLayout() {
               </div>
             </div>
           )}
-          
+
           <div className="patient-main-header">
             <div className="d-flex justify-content-between align-items-center p-3">
               <div>
-                <h4 className="mb-0">{currentPage?.name || 'Dashboard'}</h4>
+                <h4 className="mb-0">{currentPage?.name || "Dashboard"}</h4>
                 <p className="text-muted mb-0 small">
                   {currentPage?.description}
                 </p>
@@ -143,20 +178,40 @@ export default function DashboardLayout() {
                   </span>
                 </button>
                 <div className="dropdown">
-                  <button 
-                    className="btn btn-light dropdown-toggle d-flex align-items-center gap-2" 
+                  <button
+                    className="btn btn-light dropdown-toggle d-flex align-items-center gap-2"
                     data-bs-toggle="dropdown"
                   >
-                    <div className="rounded-circle bg-primary text-white p-2" style={{ width: '32px', height: '32px' }}>
+                    <div
+                      className="rounded-circle bg-primary text-white p-2"
+                      style={{ width: "32px", height: "32px" }}
+                    >
                       <i className="fas fa-user" />
                     </div>
                     <span>John Doe</span>
                   </button>
                   <ul className="dropdown-menu dropdown-menu-end">
-                    <li><a className="dropdown-item" href="#"><i className="fas fa-user me-2" />Profile</a></li>
-                    <li><a className="dropdown-item" href="#"><i className="fas fa-cog me-2" />Settings</a></li>
-                    <li><hr className="dropdown-divider" /></li>
-                    <li><a className="dropdown-item text-danger" href="#"><i className="fas fa-sign-out-alt me-2" />Logout</a></li>
+                    <li>
+                      <a className="dropdown-item" href="#">
+                        <i className="fas fa-user me-2" />
+                        Profile
+                      </a>
+                    </li>
+                    <li>
+                      <a className="dropdown-item" href="#">
+                        <i className="fas fa-cog me-2" />
+                        Settings
+                      </a>
+                    </li>
+                    <li>
+                      <hr className="dropdown-divider" />
+                    </li>
+                    <li>
+                      <a className="dropdown-item text-danger" href="#">
+                        <i className="fas fa-sign-out-alt me-2" />
+                        Logout
+                      </a>
+                    </li>
                   </ul>
                 </div>
               </div>

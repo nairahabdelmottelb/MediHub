@@ -10,12 +10,12 @@
 }
 
 .nav-link {
+    display: flex;
+    width: 100%;
     transition: all 0.3s ease;
     padding: 0.75rem 1.5rem;
     margin: 0.25rem auto;
     border-radius: 0.5rem;
-    display: flex;
-    width: 100%;
 }
 
 .child-nav {
@@ -413,12 +413,26 @@
     width: 80px;
 }
 
+.patient-sidebar.collapsed .patient-sidebar-nav {
+    padding: 1rem 0;
+}
+
+.patient-sidebar.collapsed .patient-nav-link {
+    padding: 0.75rem 0.5rem;
+    justify-content: center;
+}
+
 .patient-sidebar-header {
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+.patient-sidebar-header .heading {
+    white-space: nowrap;
+}
+
 .patient-sidebar-collapse-btn {
     width: 32px;
+    min-width: 32px;
     height: 32px;
     padding: 0;
     display: flex;
@@ -486,7 +500,7 @@
 }
 
 .patient-booking-card {
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.4);
     padding: 2rem;
     border-radius: 1rem;
     text-align: center;
@@ -496,11 +510,16 @@
 }
 
 /* Patient Dashboard Navigation */
-.patient-sidebar-nav {
-    padding: 1rem 0;
+.patient-sidebar {
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 70px);
+}
+
+.patient-sidebar-nav {
+    padding: 1rem 1rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
 }
 
 .patient-nav-link {
@@ -511,7 +530,7 @@
     text-decoration: none;
     transition: all 0.3s ease;
     border-radius: 0.5rem;
-    margin: 0.25rem 1rem;
+    margin: 0.25rem 0;
     cursor: pointer;
 }
 

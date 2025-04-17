@@ -114,7 +114,7 @@ export default function DoctorDashboard() {
                 </button>
                 <div className="dropdown">
                   <button
-                    className="btn btn-light dropdown-toggle d-flex align-items-center gap-2"
+                    className="btn btn-light d-flex align-items-center gap-2"
                     data-bs-toggle="dropdown"
                   >
                     <div
