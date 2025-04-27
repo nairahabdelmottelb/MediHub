@@ -8,14 +8,21 @@ import logging
 # Configure logging
 logger = logging.getLogger(__name__)
 
-# Define OAuth2 scheme here since it doesn't exist in SecurityManager
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
+# Define OAuth2 scheme for authentication
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 
 async def get_current_user(token: str = Depends(oauth2_scheme)):
     """
     Get the current user from the token.
     """
     payload = security.verify_token(token)
+    if payload is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid authentication token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
     user_id = payload.get("sub")
     if not user_id:
         raise HTTPException(

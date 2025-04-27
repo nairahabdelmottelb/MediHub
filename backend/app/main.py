@@ -15,6 +15,7 @@ import traceback
 import os
 from pathlib import Path
 from app.api.endpoints import auth, chat, users  # Make sure users is imported
+from app.utils.db_init import initialize_database
 
 # Configure logging
 logging.basicConfig(
@@ -30,7 +31,28 @@ logger = logging.getLogger("app.main")
 
 app = FastAPI(
     title="MediHub API",
-    description="Backend API for the MediHub healthcare application",
+    description="""
+    Backend API for the MediHub healthcare application
+    
+    ## Authentication
+    
+    Multiple login options are available:
+    
+    1. Standard login at `/api/auth/login`:
+       - Using Swagger UI: Enter your email in the 'username' field
+       - Using form data: Send email/password or username/password
+       - Using JSON: Send {"email": "user@example.com", "password": "yourpassword"} 
+                     or {"username": "user@example.com", "password": "yourpassword"}
+    
+    2. JSON-only login at `/api/auth/login/json`:
+       - Simple endpoint for direct JSON: {"email": "user@example.com", "password": "yourpassword"}
+       - Also accepts: {"username": "user@example.com", "password": "yourpassword"}
+       
+    3. NEW: Simplified JSON login at `/api/auth/json-login`:
+       - Clean JSON-only interface
+       - Returns more user information in response
+       - Example: {"email": "user@example.com", "password": "yourpassword"}
+    """,
     version="1.0.0",
     openapi_url=f"{settings.API_V1_STR}/openapi.json",
     docs_url="/docs",
@@ -70,9 +92,9 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 app.include_router(api_router, prefix="/api")
 
 # Include routers
-app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
-app.include_router(chat.router, prefix="/api/v1/chat", tags=["chat"])
-app.include_router(users.router, prefix="/api/v1/users", tags=["users"])  # Make sure this is included
+# app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])  # Removed to avoid duplication
+# app.include_router(chat.router, prefix="/api/v1/chat", tags=["chat"])  # Removed to avoid duplication
+# app.include_router(users.router, prefix="/api/v1/users", tags=["users"])  # Removed to avoid duplication
 
 # Custom OAuth2 scheme for Swagger UI
 oauth2_scheme = OAuth2PasswordBearer(
@@ -92,7 +114,7 @@ def custom_openapi():
         routes=app.routes,
     )
     
-    # Customize the security scheme
+    # Customize the security schemes
     openapi_schema["components"]["securitySchemes"] = {
         "OAuth2PasswordBearer": {
             "type": "oauth2",
@@ -102,12 +124,28 @@ def custom_openapi():
                     "scopes": {}
                 }
             },
-            "description": "Use JSON format: { \"username\": \"your-email\", \"password\": \"your-password\" }"
+            "description": "Login using email and password. In the Swagger UI form, enter your email in the 'username' field. When using direct JSON, either 'email' or 'username' fields are accepted."
+        },
+        "DirectJsonLogin": {
+            "type": "http",
+            "scheme": "bearer",
+            "bearerFormat": "JWT",
+            "description": "Obtain token using the `/api/auth/login/json` endpoint with JSON body containing email/password or username/password."
+        },
+        "SimpleJsonLogin": {
+            "type": "http",
+            "scheme": "bearer",
+            "bearerFormat": "JWT",
+            "description": "NEW: Use the `/api/auth/json-login` endpoint for a cleaner JSON login experience with more user info returned."
         }
     }
     
-    # Add global security
-    openapi_schema["security"] = [{"OAuth2PasswordBearer": []}]
+    # Add global security with all options
+    openapi_schema["security"] = [
+        {"OAuth2PasswordBearer": []},
+        {"DirectJsonLogin": []},
+        {"SimpleJsonLogin": []}
+    ]
     
     app.openapi_schema = openapi_schema
     return app.openapi_schema
@@ -165,3 +203,13 @@ async def log_requests(request: Request, call_next):
     logger.info(f"Request path: {request.url.path}")
     response = await call_next(request)
     return response
+
+# Initialize database tables and reference data before starting the app
+try:
+    initialize_database()
+    logger.info("Database initialized successfully")
+except Exception as e:
+    logger.error(f"Failed to initialize database: {str(e)}")
+    # You might want to exit if database initialization fails
+    # import sys
+    # sys.exit(1)
