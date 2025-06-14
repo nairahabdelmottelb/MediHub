@@ -50,6 +50,13 @@ const doctorPages = [
         bg: "/images/medications.jpg",
         description: "Prescribe and track medications",
       },
+      {
+        name: "Transcriptions",
+        path: "/doctor/transcriptions",
+        icon: "microphone",
+        bg: "/images/transcriptions.jpg",
+        description: "AI-powered medical transcription and analysis",
+      },
     ],
   },
   {
@@ -63,7 +70,13 @@ const doctorPages = [
 
 type PageTitle = (typeof doctorPages)[number]["name"];
 
-export default function DoctorDashboard() {
+interface DocDashboardLayoutProps {
+  children: React.ReactNode;
+}
+
+export default function DocDashboardLayout({
+  children,
+}: DocDashboardLayoutProps) {
   const [activeSection, setActiveSection] = useState<PageTitle>("Dashboard");
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const location = useLocation();
@@ -79,7 +92,11 @@ export default function DoctorDashboard() {
   }, [currentPage]);
 
   return (
-    <div className={`container-fluid home-page ${isSidebarCollapsed ? "collapsed" : ""}`}>
+    <div
+      className={`container-fluid home-page ${
+        isSidebarCollapsed ? "collapsed" : ""
+      }`}
+    >
       <div className="row">
         {/* Sidebar Navigation */}
         <aside className={`sidebar ${isSidebarCollapsed ? "collapsed" : ""}`}>
@@ -91,7 +108,11 @@ export default function DoctorDashboard() {
               className="sidebar-collapse-btn"
               onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
             >
-              <i className={`fas fa-${isSidebarCollapsed ? "chevron-right" : "chevron-left"}`} />
+              <i
+                className={`fas fa-${
+                  isSidebarCollapsed ? "chevron-right" : "chevron-left"
+                }`}
+              />
             </button>
           </div>
           <Sidebar pages={doctorPages} collapsed={isSidebarCollapsed} />
@@ -103,7 +124,9 @@ export default function DoctorDashboard() {
             <div className="d-flex justify-content-between align-items-center p-3">
               <div>
                 <h4 className="mb-0">{currentPage?.name || activeSection}</h4>
-                <p className="text-muted mb-0 small">{currentPage?.description}</p>
+                <p className="text-muted mb-0 small">
+                  {currentPage?.description}
+                </p>
               </div>
               <div className="d-flex align-items-center gap-3">
                 <button className="btn btn-light position-relative">

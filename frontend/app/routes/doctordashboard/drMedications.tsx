@@ -1,5 +1,5 @@
 import { DashboardContainer } from "../../components/doctorDashboard/Containers";
-import { format } from 'date-fns';
+import { format } from "date-fns";
 
 interface PatientMedication {
   id: number;
@@ -9,7 +9,7 @@ interface PatientMedication {
   frequency: string;
   startDate: Date;
   endDate?: Date;
-  status: 'active' | 'completed' | 'cancelled';
+  status: "active" | "completed" | "cancelled";
 }
 
 export default function DrMedications() {
@@ -17,22 +17,22 @@ export default function DrMedications() {
   const medications: PatientMedication[] = [
     {
       id: 1,
-      patientName: 'John Doe',
-      medicationName: 'Amoxicillin',
-      dosage: '500mg',
-      frequency: 'Twice daily',
+      patientName: "John Doe",
+      medicationName: "Amoxicillin",
+      dosage: "500mg",
+      frequency: "Twice daily",
       startDate: new Date(2024, 3, 1),
       endDate: new Date(2024, 3, 7),
-      status: 'active',
+      status: "active",
     },
     {
       id: 2,
-      patientName: 'Jane Smith',
-      medicationName: 'Ibuprofen',
-      dosage: '200mg',
-      frequency: 'As needed',
+      patientName: "Jane Smith",
+      medicationName: "Ibuprofen",
+      dosage: "200mg",
+      frequency: "As needed",
       startDate: new Date(2024, 3, 2),
-      status: 'active',
+      status: "active",
     },
   ];
 
@@ -65,20 +65,20 @@ export default function DrMedications() {
                     <td>{medication.medicationName}</td>
                     <td>{medication.dosage}</td>
                     <td>{medication.frequency}</td>
-                    <td>{format(medication.startDate, 'MMM dd, yyyy')}</td>
+                    <td>{format(medication.startDate, "MMM dd, yyyy")}</td>
                     <td>
                       {medication.endDate
-                        ? format(medication.endDate, 'MMM dd, yyyy')
-                        : '-'}
+                        ? format(medication.endDate, "MMM dd, yyyy")
+                        : "-"}
                     </td>
                     <td>
                       <span
                         className={`badge ${
-                          medication.status === 'active'
-                            ? 'bg-success'
-                            : medication.status === 'completed'
-                            ? 'bg-info'
-                            : 'bg-danger'
+                          medication.status === "active"
+                            ? "bg-success"
+                            : medication.status === "completed"
+                            ? "bg-info"
+                            : "bg-danger"
                         }`}
                       >
                         {medication.status}
@@ -86,7 +86,7 @@ export default function DrMedications() {
                     </td>
                     <td>
                       <button className="btn btn-primary btn-sm me-2">
-                        <i className="fas fa-eye me-1" />
+                        <i className="fas fa-eye me-q1" />
                         View
                       </button>
                       <button className="btn btn-info btn-sm">

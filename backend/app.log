@@ -1,3 +1,1282 @@
 2025-04-16 21:49:30,947 - app.main - INFO - Copied test.html to static\test.html
 2025-04-16 21:49:35,094 - app.utils.db_init - ERROR - Database initialization error: (2003, "Can't connect to MySQL server on 'localhost' ([WinError 10061] No connection could be made because the target machine actively refused it)")
 2025-04-16 21:49:35,094 - app.main - ERROR - Failed to initialize database: (2003, "Can't connect to MySQL server on 'localhost' ([WinError 10061] No connection could be made because the target machine actively refused it)")
+2025-05-06 15:38:43,811 - app.main - INFO - Copied test.html to static\test.html
+2025-05-06 15:38:43,939 - app.utils.db_init - ERROR - Database initialization error: (1045, "Access denied for user 'Acer'@'localhost' (using password: NO)")
+2025-05-06 15:38:43,940 - app.main - ERROR - Failed to initialize database: (1045, "Access denied for user 'Acer'@'localhost' (using password: NO)")
+2025-05-06 15:39:24,806 - app.main - INFO - Copied test.html to static\test.html
+2025-05-06 15:39:24,938 - app.utils.db_init - ERROR - Database initialization error: (1045, "Access denied for user 'Acer'@'localhost' (using password: NO)")
+2025-05-06 15:39:24,939 - app.main - ERROR - Failed to initialize database: (1045, "Access denied for user 'Acer'@'localhost' (using password: NO)")
+2025-05-06 15:39:36,919 - app.main - INFO - Copied test.html to static\test.html
+2025-05-06 15:39:37,031 - app.utils.db_init - ERROR - Database initialization error: (1045, "Access denied for user 'Acer'@'localhost' (using password: NO)")
+2025-05-06 15:39:37,032 - app.main - ERROR - Failed to initialize database: (1045, "Access denied for user 'Acer'@'localhost' (using password: NO)")
+2025-05-06 15:39:39,467 - app.main - INFO - Request path: /
+2025-05-06 15:39:39,872 - app.main - INFO - Request path: /favicon.ico
+2025-05-06 15:39:56,124 - app.main - INFO - Request path: /docs
+2025-05-06 15:39:57,032 - app.main - INFO - Request path: /api/v1/openapi.json
+2025-05-06 15:47:22,163 - app.main - INFO - Request path: /api/auth/login
+2025-05-06 15:47:22,213 - app.main - ERROR - Error ID: 20250506154722
+2025-05-06 15:47:22,213 - app.main - ERROR - Request: POST http://127.0.0.1:8000/api/auth/login
+2025-05-06 15:47:22,213 - app.main - ERROR - Exception: (1045, "Access denied for user 'Acer'@'localhost' (using password: NO)")
+2025-05-06 15:47:22,383 - app.main - ERROR - Traceback (most recent call last):
+  File "C:\Python313\Lib\site-packages\anyio\streams\memory.py", line 98, in receive
+    return self.receive_nowait()
+           ~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\site-packages\anyio\streams\memory.py", line 93, in receive_nowait
+    raise WouldBlock
+anyio.WouldBlock
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 78, in call_next
+    message = await recv_stream.receive()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\anyio\streams\memory.py", line 118, in receive
+    raise EndOfStream
+anyio.EndOfStream
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python313\Lib\site-packages\starlette\middleware\errors.py", line 162, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 108, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\main.py", line 204, in log_requests
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 84, in call_next
+    raise app_exc
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 70, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\cors.py", line 91, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\cors.py", line 146, in simple_response
+    await self.app(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\exceptions.py", line 79, in __call__
+    raise exc
+  File "C:\Python313\Lib\site-packages\starlette\middleware\exceptions.py", line 68, in __call__
+    await self.app(scope, receive, sender)
+  File "C:\Python313\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 20, in __call__
+    raise e
+  File "C:\Python313\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 17, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\routing.py", line 718, in __call__
+    await route.handle(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\routing.py", line 66, in app
+    response = await func(request)
+               ^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\fastapi\routing.py", line 274, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        dependant=dependant, values=values, is_coroutine=is_coroutine
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Python313\Lib\site-packages\fastapi\routing.py", line 191, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\api\endpoints\auth.py", line 91, in login
+    with db.transaction() as conn:
+         ~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\config\database.py", line 67, in transaction
+    with self.get_db() as conn:
+         ~~~~~~~~~~~^^
+  File "C:\Python313\Lib\contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\config\database.py", line 51, in get_db
+    conn = pymysql.connect(**self.config)
+  File "C:\Python313\Lib\site-packages\pymysql\connections.py", line 358, in __init__
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\site-packages\pymysql\connections.py", line 664, in connect
+    self._request_authentication()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\site-packages\pymysql\connections.py", line 954, in _request_authentication
+    auth_packet = self._read_packet()
+  File "C:\Python313\Lib\site-packages\pymysql\connections.py", line 772, in _read_packet
+    packet.raise_for_error()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\site-packages\pymysql\protocol.py", line 221, in raise_for_error
+    err.raise_mysql_exception(self._data)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\pymysql\err.py", line 143, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.OperationalError: (1045, "Access denied for user 'Acer'@'localhost' (using password: NO)")
+
+2025-05-06 15:49:09,390 - app.main - INFO - Request path: /
+2025-05-06 15:49:09,396 - app.main - INFO - Request path: /
+2025-05-06 15:50:50,524 - app.main - INFO - Request path: /
+2025-05-06 15:51:21,360 - app.main - INFO - Request path: /
+2025-05-06 15:57:01,762 - app.main - INFO - Request path: /
+2025-05-06 15:57:02,136 - app.main - INFO - Request path: /favicon.ico
+2025-05-06 15:57:16,648 - app.main - INFO - Request path: /docs
+2025-05-06 15:57:17,421 - app.main - INFO - Request path: /api/v1/openapi.json
+2025-05-06 15:59:54,315 - app.main - INFO - Request path: /api/auth/signup
+2025-05-06 15:59:54,336 - app.main - ERROR - Error ID: 20250506155954
+2025-05-06 15:59:54,336 - app.main - ERROR - Request: POST http://localhost:8000/api/auth/signup
+2025-05-06 15:59:54,337 - app.main - ERROR - Exception: (1045, "Access denied for user 'Acer'@'localhost' (using password: NO)")
+2025-05-06 15:59:54,343 - app.main - ERROR - Traceback (most recent call last):
+  File "C:\Python313\Lib\site-packages\anyio\streams\memory.py", line 98, in receive
+    return self.receive_nowait()
+           ~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\site-packages\anyio\streams\memory.py", line 93, in receive_nowait
+    raise WouldBlock
+anyio.WouldBlock
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 78, in call_next
+    message = await recv_stream.receive()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\anyio\streams\memory.py", line 118, in receive
+    raise EndOfStream
+anyio.EndOfStream
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python313\Lib\site-packages\starlette\middleware\errors.py", line 162, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 108, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\main.py", line 204, in log_requests
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 84, in call_next
+    raise app_exc
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 70, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\cors.py", line 91, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\cors.py", line 146, in simple_response
+    await self.app(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\exceptions.py", line 79, in __call__
+    raise exc
+  File "C:\Python313\Lib\site-packages\starlette\middleware\exceptions.py", line 68, in __call__
+    await self.app(scope, receive, sender)
+  File "C:\Python313\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 20, in __call__
+    raise e
+  File "C:\Python313\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 17, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\routing.py", line 718, in __call__
+    await route.handle(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\routing.py", line 66, in app
+    response = await func(request)
+               ^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\fastapi\routing.py", line 274, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        dependant=dependant, values=values, is_coroutine=is_coroutine
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Python313\Lib\site-packages\fastapi\routing.py", line 191, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\api\endpoints\auth.py", line 260, in signup
+    with db.transaction() as conn:
+         ~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\config\database.py", line 67, in transaction
+    with self.get_db() as conn:
+         ~~~~~~~~~~~^^
+  File "C:\Python313\Lib\contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\config\database.py", line 51, in get_db
+    conn = pymysql.connect(**self.config)
+  File "C:\Python313\Lib\site-packages\pymysql\connections.py", line 358, in __init__
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\site-packages\pymysql\connections.py", line 664, in connect
+    self._request_authentication()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\site-packages\pymysql\connections.py", line 954, in _request_authentication
+    auth_packet = self._read_packet()
+  File "C:\Python313\Lib\site-packages\pymysql\connections.py", line 772, in _read_packet
+    packet.raise_for_error()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\site-packages\pymysql\protocol.py", line 221, in raise_for_error
+    err.raise_mysql_exception(self._data)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\pymysql\err.py", line 143, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.OperationalError: (1045, "Access denied for user 'Acer'@'localhost' (using password: NO)")
+
+2025-05-06 16:00:52,127 - app.main - INFO - Request path: /api/auth/signup
+2025-05-06 16:00:52,149 - app.main - ERROR - Error ID: 20250506160052
+2025-05-06 16:00:52,150 - app.main - ERROR - Request: POST http://localhost:8000/api/auth/signup
+2025-05-06 16:00:52,150 - app.main - ERROR - Exception: (1045, "Access denied for user 'Acer'@'localhost' (using password: NO)")
+2025-05-06 16:00:52,158 - app.main - ERROR - Traceback (most recent call last):
+  File "C:\Python313\Lib\site-packages\anyio\streams\memory.py", line 98, in receive
+    return self.receive_nowait()
+           ~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\site-packages\anyio\streams\memory.py", line 93, in receive_nowait
+    raise WouldBlock
+anyio.WouldBlock
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 78, in call_next
+    message = await recv_stream.receive()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\anyio\streams\memory.py", line 118, in receive
+    raise EndOfStream
+anyio.EndOfStream
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python313\Lib\site-packages\starlette\middleware\errors.py", line 162, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 108, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\main.py", line 204, in log_requests
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 84, in call_next
+    raise app_exc
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 70, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\cors.py", line 91, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\cors.py", line 146, in simple_response
+    await self.app(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\exceptions.py", line 79, in __call__
+    raise exc
+  File "C:\Python313\Lib\site-packages\starlette\middleware\exceptions.py", line 68, in __call__
+    await self.app(scope, receive, sender)
+  File "C:\Python313\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 20, in __call__
+    raise e
+  File "C:\Python313\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 17, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\routing.py", line 718, in __call__
+    await route.handle(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\routing.py", line 66, in app
+    response = await func(request)
+               ^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\fastapi\routing.py", line 274, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        dependant=dependant, values=values, is_coroutine=is_coroutine
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Python313\Lib\site-packages\fastapi\routing.py", line 191, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\api\endpoints\auth.py", line 260, in signup
+    with db.transaction() as conn:
+         ~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\config\database.py", line 67, in transaction
+    with self.get_db() as conn:
+         ~~~~~~~~~~~^^
+  File "C:\Python313\Lib\contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\config\database.py", line 51, in get_db
+    conn = pymysql.connect(**self.config)
+  File "C:\Python313\Lib\site-packages\pymysql\connections.py", line 358, in __init__
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\site-packages\pymysql\connections.py", line 664, in connect
+    self._request_authentication()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\site-packages\pymysql\connections.py", line 954, in _request_authentication
+    auth_packet = self._read_packet()
+  File "C:\Python313\Lib\site-packages\pymysql\connections.py", line 772, in _read_packet
+    packet.raise_for_error()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\site-packages\pymysql\protocol.py", line 221, in raise_for_error
+    err.raise_mysql_exception(self._data)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\pymysql\err.py", line 143, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.OperationalError: (1045, "Access denied for user 'Acer'@'localhost' (using password: NO)")
+
+2025-05-06 16:01:05,941 - app.main - INFO - Request path: /api/auth/signup
+2025-05-06 16:01:05,946 - app.main - ERROR - Error ID: 20250506160105
+2025-05-06 16:01:05,946 - app.main - ERROR - Request: POST http://localhost:8000/api/auth/signup
+2025-05-06 16:01:05,947 - app.main - ERROR - Exception: (1045, "Access denied for user 'Acer'@'localhost' (using password: NO)")
+2025-05-06 16:01:05,953 - app.main - ERROR - Traceback (most recent call last):
+  File "C:\Python313\Lib\site-packages\anyio\streams\memory.py", line 98, in receive
+    return self.receive_nowait()
+           ~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\site-packages\anyio\streams\memory.py", line 93, in receive_nowait
+    raise WouldBlock
+anyio.WouldBlock
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 78, in call_next
+    message = await recv_stream.receive()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\anyio\streams\memory.py", line 118, in receive
+    raise EndOfStream
+anyio.EndOfStream
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python313\Lib\site-packages\starlette\middleware\errors.py", line 162, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 108, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\main.py", line 204, in log_requests
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 84, in call_next
+    raise app_exc
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 70, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\cors.py", line 91, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\cors.py", line 146, in simple_response
+    await self.app(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\exceptions.py", line 79, in __call__
+    raise exc
+  File "C:\Python313\Lib\site-packages\starlette\middleware\exceptions.py", line 68, in __call__
+    await self.app(scope, receive, sender)
+  File "C:\Python313\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 20, in __call__
+    raise e
+  File "C:\Python313\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 17, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\routing.py", line 718, in __call__
+    await route.handle(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\routing.py", line 66, in app
+    response = await func(request)
+               ^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\fastapi\routing.py", line 274, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        dependant=dependant, values=values, is_coroutine=is_coroutine
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Python313\Lib\site-packages\fastapi\routing.py", line 191, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\api\endpoints\auth.py", line 260, in signup
+    with db.transaction() as conn:
+         ~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\config\database.py", line 67, in transaction
+    with self.get_db() as conn:
+         ~~~~~~~~~~~^^
+  File "C:\Python313\Lib\contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\config\database.py", line 51, in get_db
+    conn = pymysql.connect(**self.config)
+  File "C:\Python313\Lib\site-packages\pymysql\connections.py", line 358, in __init__
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\site-packages\pymysql\connections.py", line 664, in connect
+    self._request_authentication()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\site-packages\pymysql\connections.py", line 954, in _request_authentication
+    auth_packet = self._read_packet()
+  File "C:\Python313\Lib\site-packages\pymysql\connections.py", line 772, in _read_packet
+    packet.raise_for_error()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\site-packages\pymysql\protocol.py", line 221, in raise_for_error
+    err.raise_mysql_exception(self._data)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\pymysql\err.py", line 143, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.OperationalError: (1045, "Access denied for user 'Acer'@'localhost' (using password: NO)")
+
+2025-05-06 16:01:24,584 - app.main - INFO - Request path: /api/auth/signup
+2025-05-06 16:01:46,522 - app.main - INFO - Request path: /api/auth/signup
+2025-05-06 16:01:46,541 - app.main - ERROR - Error ID: 20250506160146
+2025-05-06 16:01:46,542 - app.main - ERROR - Request: POST http://localhost:8000/api/auth/signup
+2025-05-06 16:01:46,542 - app.main - ERROR - Exception: (1045, "Access denied for user 'Acer'@'localhost' (using password: NO)")
+2025-05-06 16:01:46,548 - app.main - ERROR - Traceback (most recent call last):
+  File "C:\Python313\Lib\site-packages\anyio\streams\memory.py", line 98, in receive
+    return self.receive_nowait()
+           ~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\site-packages\anyio\streams\memory.py", line 93, in receive_nowait
+    raise WouldBlock
+anyio.WouldBlock
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 78, in call_next
+    message = await recv_stream.receive()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\anyio\streams\memory.py", line 118, in receive
+    raise EndOfStream
+anyio.EndOfStream
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python313\Lib\site-packages\starlette\middleware\errors.py", line 162, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 108, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\main.py", line 204, in log_requests
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 84, in call_next
+    raise app_exc
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 70, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\cors.py", line 91, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\cors.py", line 146, in simple_response
+    await self.app(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\exceptions.py", line 79, in __call__
+    raise exc
+  File "C:\Python313\Lib\site-packages\starlette\middleware\exceptions.py", line 68, in __call__
+    await self.app(scope, receive, sender)
+  File "C:\Python313\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 20, in __call__
+    raise e
+  File "C:\Python313\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 17, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\routing.py", line 718, in __call__
+    await route.handle(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\routing.py", line 66, in app
+    response = await func(request)
+               ^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\fastapi\routing.py", line 274, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        dependant=dependant, values=values, is_coroutine=is_coroutine
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Python313\Lib\site-packages\fastapi\routing.py", line 191, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\api\endpoints\auth.py", line 260, in signup
+    with db.transaction() as conn:
+         ~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\config\database.py", line 67, in transaction
+    with self.get_db() as conn:
+         ~~~~~~~~~~~^^
+  File "C:\Python313\Lib\contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\config\database.py", line 51, in get_db
+    conn = pymysql.connect(**self.config)
+  File "C:\Python313\Lib\site-packages\pymysql\connections.py", line 358, in __init__
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\site-packages\pymysql\connections.py", line 664, in connect
+    self._request_authentication()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\site-packages\pymysql\connections.py", line 954, in _request_authentication
+    auth_packet = self._read_packet()
+  File "C:\Python313\Lib\site-packages\pymysql\connections.py", line 772, in _read_packet
+    packet.raise_for_error()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\site-packages\pymysql\protocol.py", line 221, in raise_for_error
+    err.raise_mysql_exception(self._data)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\pymysql\err.py", line 143, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.OperationalError: (1045, "Access denied for user 'Acer'@'localhost' (using password: NO)")
+
+2025-05-06 16:02:05,984 - app.main - INFO - Request path: /api/auth/signup
+2025-05-06 16:02:06,028 - app.main - ERROR - Error ID: 20250506160206
+2025-05-06 16:02:06,029 - app.main - ERROR - Request: POST http://localhost:8000/api/auth/signup
+2025-05-06 16:02:06,029 - app.main - ERROR - Exception: (1045, "Access denied for user 'Acer'@'localhost' (using password: NO)")
+2025-05-06 16:02:06,037 - app.main - ERROR - Traceback (most recent call last):
+  File "C:\Python313\Lib\site-packages\anyio\streams\memory.py", line 98, in receive
+    return self.receive_nowait()
+           ~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\site-packages\anyio\streams\memory.py", line 93, in receive_nowait
+    raise WouldBlock
+anyio.WouldBlock
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 78, in call_next
+    message = await recv_stream.receive()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\anyio\streams\memory.py", line 118, in receive
+    raise EndOfStream
+anyio.EndOfStream
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python313\Lib\site-packages\starlette\middleware\errors.py", line 162, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 108, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\main.py", line 204, in log_requests
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 84, in call_next
+    raise app_exc
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 70, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\cors.py", line 91, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\cors.py", line 146, in simple_response
+    await self.app(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\exceptions.py", line 79, in __call__
+    raise exc
+  File "C:\Python313\Lib\site-packages\starlette\middleware\exceptions.py", line 68, in __call__
+    await self.app(scope, receive, sender)
+  File "C:\Python313\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 20, in __call__
+    raise e
+  File "C:\Python313\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 17, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\routing.py", line 718, in __call__
+    await route.handle(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\routing.py", line 66, in app
+    response = await func(request)
+               ^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\fastapi\routing.py", line 274, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        dependant=dependant, values=values, is_coroutine=is_coroutine
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Python313\Lib\site-packages\fastapi\routing.py", line 191, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\api\endpoints\auth.py", line 260, in signup
+    with db.transaction() as conn:
+         ~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\config\database.py", line 67, in transaction
+    with self.get_db() as conn:
+         ~~~~~~~~~~~^^
+  File "C:\Python313\Lib\contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\config\database.py", line 51, in get_db
+    conn = pymysql.connect(**self.config)
+  File "C:\Python313\Lib\site-packages\pymysql\connections.py", line 358, in __init__
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\site-packages\pymysql\connections.py", line 664, in connect
+    self._request_authentication()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\site-packages\pymysql\connections.py", line 954, in _request_authentication
+    auth_packet = self._read_packet()
+  File "C:\Python313\Lib\site-packages\pymysql\connections.py", line 772, in _read_packet
+    packet.raise_for_error()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\site-packages\pymysql\protocol.py", line 221, in raise_for_error
+    err.raise_mysql_exception(self._data)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\pymysql\err.py", line 143, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.OperationalError: (1045, "Access denied for user 'Acer'@'localhost' (using password: NO)")
+
+2025-05-06 16:05:04,537 - app.main - INFO - Request path: /api/auth/login
+2025-05-06 16:05:04,541 - app.main - ERROR - Error ID: 20250506160504
+2025-05-06 16:05:04,541 - app.main - ERROR - Request: POST http://localhost:8000/api/auth/login
+2025-05-06 16:05:04,541 - app.main - ERROR - Exception: (1045, "Access denied for user 'Acer'@'localhost' (using password: NO)")
+2025-05-06 16:05:04,548 - app.main - ERROR - Traceback (most recent call last):
+  File "C:\Python313\Lib\site-packages\anyio\streams\memory.py", line 98, in receive
+    return self.receive_nowait()
+           ~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\site-packages\anyio\streams\memory.py", line 93, in receive_nowait
+    raise WouldBlock
+anyio.WouldBlock
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 78, in call_next
+    message = await recv_stream.receive()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\anyio\streams\memory.py", line 118, in receive
+    raise EndOfStream
+anyio.EndOfStream
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python313\Lib\site-packages\starlette\middleware\errors.py", line 162, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 108, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\main.py", line 204, in log_requests
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 84, in call_next
+    raise app_exc
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 70, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\cors.py", line 91, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\cors.py", line 146, in simple_response
+    await self.app(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\exceptions.py", line 79, in __call__
+    raise exc
+  File "C:\Python313\Lib\site-packages\starlette\middleware\exceptions.py", line 68, in __call__
+    await self.app(scope, receive, sender)
+  File "C:\Python313\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 20, in __call__
+    raise e
+  File "C:\Python313\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 17, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\routing.py", line 718, in __call__
+    await route.handle(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\routing.py", line 66, in app
+    response = await func(request)
+               ^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\fastapi\routing.py", line 274, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        dependant=dependant, values=values, is_coroutine=is_coroutine
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Python313\Lib\site-packages\fastapi\routing.py", line 191, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\api\endpoints\auth.py", line 91, in login
+    with db.transaction() as conn:
+         ~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\config\database.py", line 67, in transaction
+    with self.get_db() as conn:
+         ~~~~~~~~~~~^^
+  File "C:\Python313\Lib\contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\config\database.py", line 51, in get_db
+    conn = pymysql.connect(**self.config)
+  File "C:\Python313\Lib\site-packages\pymysql\connections.py", line 358, in __init__
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\site-packages\pymysql\connections.py", line 664, in connect
+    self._request_authentication()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\site-packages\pymysql\connections.py", line 954, in _request_authentication
+    auth_packet = self._read_packet()
+  File "C:\Python313\Lib\site-packages\pymysql\connections.py", line 772, in _read_packet
+    packet.raise_for_error()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\site-packages\pymysql\protocol.py", line 221, in raise_for_error
+    err.raise_mysql_exception(self._data)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\pymysql\err.py", line 143, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.OperationalError: (1045, "Access denied for user 'Acer'@'localhost' (using password: NO)")
+
+2025-05-06 16:07:05,665 - app.main - INFO - Request path: /api/auth/signup
+2025-05-06 16:07:05,690 - app.main - ERROR - Error ID: 20250506160705
+2025-05-06 16:07:05,690 - app.main - ERROR - Request: POST http://localhost:8000/api/auth/signup
+2025-05-06 16:07:05,690 - app.main - ERROR - Exception: (1045, "Access denied for user 'Acer'@'localhost' (using password: NO)")
+2025-05-06 16:07:05,697 - app.main - ERROR - Traceback (most recent call last):
+  File "C:\Python313\Lib\site-packages\anyio\streams\memory.py", line 98, in receive
+    return self.receive_nowait()
+           ~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\site-packages\anyio\streams\memory.py", line 93, in receive_nowait
+    raise WouldBlock
+anyio.WouldBlock
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 78, in call_next
+    message = await recv_stream.receive()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\anyio\streams\memory.py", line 118, in receive
+    raise EndOfStream
+anyio.EndOfStream
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python313\Lib\site-packages\starlette\middleware\errors.py", line 162, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 108, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\main.py", line 204, in log_requests
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 84, in call_next
+    raise app_exc
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 70, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\cors.py", line 91, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\cors.py", line 146, in simple_response
+    await self.app(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\exceptions.py", line 79, in __call__
+    raise exc
+  File "C:\Python313\Lib\site-packages\starlette\middleware\exceptions.py", line 68, in __call__
+    await self.app(scope, receive, sender)
+  File "C:\Python313\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 20, in __call__
+    raise e
+  File "C:\Python313\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 17, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\routing.py", line 718, in __call__
+    await route.handle(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\routing.py", line 66, in app
+    response = await func(request)
+               ^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\fastapi\routing.py", line 274, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        dependant=dependant, values=values, is_coroutine=is_coroutine
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Python313\Lib\site-packages\fastapi\routing.py", line 191, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\api\endpoints\auth.py", line 260, in signup
+    with db.transaction() as conn:
+         ~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\config\database.py", line 67, in transaction
+    with self.get_db() as conn:
+         ~~~~~~~~~~~^^
+  File "C:\Python313\Lib\contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\config\database.py", line 51, in get_db
+    conn = pymysql.connect(**self.config)
+  File "C:\Python313\Lib\site-packages\pymysql\connections.py", line 358, in __init__
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\site-packages\pymysql\connections.py", line 664, in connect
+    self._request_authentication()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\site-packages\pymysql\connections.py", line 954, in _request_authentication
+    auth_packet = self._read_packet()
+  File "C:\Python313\Lib\site-packages\pymysql\connections.py", line 772, in _read_packet
+    packet.raise_for_error()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\site-packages\pymysql\protocol.py", line 221, in raise_for_error
+    err.raise_mysql_exception(self._data)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\pymysql\err.py", line 143, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.OperationalError: (1045, "Access denied for user 'Acer'@'localhost' (using password: NO)")
+
+2025-05-06 16:07:59,021 - app.main - INFO - Request path: /api/auth/signup
+2025-05-06 16:07:59,027 - app.main - ERROR - Error ID: 20250506160759
+2025-05-06 16:07:59,027 - app.main - ERROR - Request: POST http://localhost:8000/api/auth/signup
+2025-05-06 16:07:59,028 - app.main - ERROR - Exception: (1045, "Access denied for user 'Acer'@'localhost' (using password: NO)")
+2025-05-06 16:07:59,034 - app.main - ERROR - Traceback (most recent call last):
+  File "C:\Python313\Lib\site-packages\anyio\streams\memory.py", line 98, in receive
+    return self.receive_nowait()
+           ~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\site-packages\anyio\streams\memory.py", line 93, in receive_nowait
+    raise WouldBlock
+anyio.WouldBlock
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 78, in call_next
+    message = await recv_stream.receive()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\anyio\streams\memory.py", line 118, in receive
+    raise EndOfStream
+anyio.EndOfStream
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python313\Lib\site-packages\starlette\middleware\errors.py", line 162, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 108, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\main.py", line 204, in log_requests
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 84, in call_next
+    raise app_exc
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 70, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\cors.py", line 91, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\cors.py", line 146, in simple_response
+    await self.app(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\exceptions.py", line 79, in __call__
+    raise exc
+  File "C:\Python313\Lib\site-packages\starlette\middleware\exceptions.py", line 68, in __call__
+    await self.app(scope, receive, sender)
+  File "C:\Python313\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 20, in __call__
+    raise e
+  File "C:\Python313\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 17, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\routing.py", line 718, in __call__
+    await route.handle(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\routing.py", line 66, in app
+    response = await func(request)
+               ^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\fastapi\routing.py", line 274, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        dependant=dependant, values=values, is_coroutine=is_coroutine
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Python313\Lib\site-packages\fastapi\routing.py", line 191, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\api\endpoints\auth.py", line 260, in signup
+    with db.transaction() as conn:
+         ~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\config\database.py", line 67, in transaction
+    with self.get_db() as conn:
+         ~~~~~~~~~~~^^
+  File "C:\Python313\Lib\contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\config\database.py", line 51, in get_db
+    conn = pymysql.connect(**self.config)
+  File "C:\Python313\Lib\site-packages\pymysql\connections.py", line 358, in __init__
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\site-packages\pymysql\connections.py", line 664, in connect
+    self._request_authentication()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\site-packages\pymysql\connections.py", line 954, in _request_authentication
+    auth_packet = self._read_packet()
+  File "C:\Python313\Lib\site-packages\pymysql\connections.py", line 772, in _read_packet
+    packet.raise_for_error()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\site-packages\pymysql\protocol.py", line 221, in raise_for_error
+    err.raise_mysql_exception(self._data)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\pymysql\err.py", line 143, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.OperationalError: (1045, "Access denied for user 'Acer'@'localhost' (using password: NO)")
+
+2025-05-06 16:08:32,515 - app.main - INFO - Request path: /api/auth/signup
+2025-05-06 16:08:32,540 - app.main - ERROR - Error ID: 20250506160832
+2025-05-06 16:08:32,540 - app.main - ERROR - Request: POST http://localhost:8000/api/auth/signup
+2025-05-06 16:08:32,540 - app.main - ERROR - Exception: (1045, "Access denied for user 'Acer'@'localhost' (using password: NO)")
+2025-05-06 16:08:32,547 - app.main - ERROR - Traceback (most recent call last):
+  File "C:\Python313\Lib\site-packages\anyio\streams\memory.py", line 98, in receive
+    return self.receive_nowait()
+           ~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\site-packages\anyio\streams\memory.py", line 93, in receive_nowait
+    raise WouldBlock
+anyio.WouldBlock
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 78, in call_next
+    message = await recv_stream.receive()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\anyio\streams\memory.py", line 118, in receive
+    raise EndOfStream
+anyio.EndOfStream
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python313\Lib\site-packages\starlette\middleware\errors.py", line 162, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 108, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\main.py", line 204, in log_requests
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 84, in call_next
+    raise app_exc
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 70, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\cors.py", line 91, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\cors.py", line 146, in simple_response
+    await self.app(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\exceptions.py", line 79, in __call__
+    raise exc
+  File "C:\Python313\Lib\site-packages\starlette\middleware\exceptions.py", line 68, in __call__
+    await self.app(scope, receive, sender)
+  File "C:\Python313\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 20, in __call__
+    raise e
+  File "C:\Python313\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 17, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\routing.py", line 718, in __call__
+    await route.handle(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\routing.py", line 66, in app
+    response = await func(request)
+               ^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\fastapi\routing.py", line 274, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        dependant=dependant, values=values, is_coroutine=is_coroutine
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Python313\Lib\site-packages\fastapi\routing.py", line 191, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\api\endpoints\auth.py", line 260, in signup
+    with db.transaction() as conn:
+         ~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\config\database.py", line 67, in transaction
+    with self.get_db() as conn:
+         ~~~~~~~~~~~^^
+  File "C:\Python313\Lib\contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\config\database.py", line 51, in get_db
+    conn = pymysql.connect(**self.config)
+  File "C:\Python313\Lib\site-packages\pymysql\connections.py", line 358, in __init__
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\site-packages\pymysql\connections.py", line 664, in connect
+    self._request_authentication()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\site-packages\pymysql\connections.py", line 954, in _request_authentication
+    auth_packet = self._read_packet()
+  File "C:\Python313\Lib\site-packages\pymysql\connections.py", line 772, in _read_packet
+    packet.raise_for_error()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\site-packages\pymysql\protocol.py", line 221, in raise_for_error
+    err.raise_mysql_exception(self._data)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\pymysql\err.py", line 143, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.OperationalError: (1045, "Access denied for user 'Acer'@'localhost' (using password: NO)")
+
+2025-05-06 16:12:54,016 - app.main - INFO - Copied test.html to static\test.html
+2025-05-06 16:12:54,183 - app.utils.db_init - ERROR - Database initialization error: (1045, "Access denied for user 'Acer'@'localhost' (using password: NO)")
+2025-05-06 16:12:54,184 - app.main - ERROR - Failed to initialize database: (1045, "Access denied for user 'Acer'@'localhost' (using password: NO)")
+2025-05-06 16:13:05,437 - app.main - INFO - Request path: /api/auth/signup
+2025-05-06 16:13:05,448 - app.main - ERROR - Error ID: 20250506161305
+2025-05-06 16:13:05,448 - app.main - ERROR - Request: POST http://localhost:8000/api/auth/signup
+2025-05-06 16:13:05,448 - app.main - ERROR - Exception: (1045, "Access denied for user 'Acer'@'localhost' (using password: NO)")
+2025-05-06 16:13:05,462 - app.main - ERROR - Traceback (most recent call last):
+  File "C:\Python313\Lib\site-packages\anyio\streams\memory.py", line 98, in receive
+    return self.receive_nowait()
+           ~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\site-packages\anyio\streams\memory.py", line 93, in receive_nowait
+    raise WouldBlock
+anyio.WouldBlock
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 78, in call_next
+    message = await recv_stream.receive()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\anyio\streams\memory.py", line 118, in receive
+    raise EndOfStream
+anyio.EndOfStream
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python313\Lib\site-packages\starlette\middleware\errors.py", line 162, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 108, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\main.py", line 204, in log_requests
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 84, in call_next
+    raise app_exc
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 70, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\cors.py", line 91, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\cors.py", line 146, in simple_response
+    await self.app(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\exceptions.py", line 79, in __call__
+    raise exc
+  File "C:\Python313\Lib\site-packages\starlette\middleware\exceptions.py", line 68, in __call__
+    await self.app(scope, receive, sender)
+  File "C:\Python313\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 20, in __call__
+    raise e
+  File "C:\Python313\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 17, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\routing.py", line 718, in __call__
+    await route.handle(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\routing.py", line 66, in app
+    response = await func(request)
+               ^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\fastapi\routing.py", line 274, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        dependant=dependant, values=values, is_coroutine=is_coroutine
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Python313\Lib\site-packages\fastapi\routing.py", line 191, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\api\endpoints\auth.py", line 260, in signup
+    with db.transaction() as conn:
+         ~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\config\database.py", line 67, in transaction
+    with self.get_db() as conn:
+         ~~~~~~~~~~~^^
+  File "C:\Python313\Lib\contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\config\database.py", line 51, in get_db
+    conn = pymysql.connect(**self.config)
+  File "C:\Python313\Lib\site-packages\pymysql\connections.py", line 358, in __init__
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\site-packages\pymysql\connections.py", line 664, in connect
+    self._request_authentication()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\site-packages\pymysql\connections.py", line 954, in _request_authentication
+    auth_packet = self._read_packet()
+  File "C:\Python313\Lib\site-packages\pymysql\connections.py", line 772, in _read_packet
+    packet.raise_for_error()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\site-packages\pymysql\protocol.py", line 221, in raise_for_error
+    err.raise_mysql_exception(self._data)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\pymysql\err.py", line 143, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.OperationalError: (1045, "Access denied for user 'Acer'@'localhost' (using password: NO)")
+
+2025-05-06 16:14:27,554 - app.main - INFO - Request path: /docs
+2025-05-06 16:14:28,084 - app.main - INFO - Request path: /api/v1/openapi.json
+2025-05-06 16:15:27,335 - app.main - INFO - Request path: /api/auth/signup
+2025-05-06 16:15:27,354 - app.main - ERROR - Error ID: 20250506161527
+2025-05-06 16:15:27,355 - app.main - ERROR - Request: POST http://localhost:8000/api/auth/signup
+2025-05-06 16:15:27,355 - app.main - ERROR - Exception: (1045, "Access denied for user 'Acer'@'localhost' (using password: NO)")
+2025-05-06 16:15:27,363 - app.main - ERROR - Traceback (most recent call last):
+  File "C:\Python313\Lib\site-packages\anyio\streams\memory.py", line 98, in receive
+    return self.receive_nowait()
+           ~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\site-packages\anyio\streams\memory.py", line 93, in receive_nowait
+    raise WouldBlock
+anyio.WouldBlock
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 78, in call_next
+    message = await recv_stream.receive()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\anyio\streams\memory.py", line 118, in receive
+    raise EndOfStream
+anyio.EndOfStream
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python313\Lib\site-packages\starlette\middleware\errors.py", line 162, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 108, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\main.py", line 204, in log_requests
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 84, in call_next
+    raise app_exc
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 70, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\cors.py", line 91, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\cors.py", line 146, in simple_response
+    await self.app(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\exceptions.py", line 79, in __call__
+    raise exc
+  File "C:\Python313\Lib\site-packages\starlette\middleware\exceptions.py", line 68, in __call__
+    await self.app(scope, receive, sender)
+  File "C:\Python313\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 20, in __call__
+    raise e
+  File "C:\Python313\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 17, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\routing.py", line 718, in __call__
+    await route.handle(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\routing.py", line 66, in app
+    response = await func(request)
+               ^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\fastapi\routing.py", line 274, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        dependant=dependant, values=values, is_coroutine=is_coroutine
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Python313\Lib\site-packages\fastapi\routing.py", line 191, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\api\endpoints\auth.py", line 260, in signup
+    with db.transaction() as conn:
+         ~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\config\database.py", line 67, in transaction
+    with self.get_db() as conn:
+         ~~~~~~~~~~~^^
+  File "C:\Python313\Lib\contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\config\database.py", line 51, in get_db
+    conn = pymysql.connect(**self.config)
+  File "C:\Python313\Lib\site-packages\pymysql\connections.py", line 358, in __init__
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\site-packages\pymysql\connections.py", line 664, in connect
+    self._request_authentication()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\site-packages\pymysql\connections.py", line 954, in _request_authentication
+    auth_packet = self._read_packet()
+  File "C:\Python313\Lib\site-packages\pymysql\connections.py", line 772, in _read_packet
+    packet.raise_for_error()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\site-packages\pymysql\protocol.py", line 221, in raise_for_error
+    err.raise_mysql_exception(self._data)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\pymysql\err.py", line 143, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.OperationalError: (1045, "Access denied for user 'Acer'@'localhost' (using password: NO)")
+
+2025-05-06 16:19:00,718 - app.main - INFO - Copied test.html to static\test.html
+2025-05-06 16:19:00,854 - app.utils.db_init - ERROR - Database initialization error: (1045, "Access denied for user 'Acer'@'localhost' (using password: NO)")
+2025-05-06 16:19:00,854 - app.main - ERROR - Failed to initialize database: (1045, "Access denied for user 'Acer'@'localhost' (using password: NO)")
+2025-05-06 16:23:53,946 - app.main - INFO - Copied test.html to static\test.html
+2025-05-06 16:23:54,164 - app.utils.db_init - INFO - Database initialization complete
+2025-05-06 16:23:54,164 - app.main - INFO - Database initialized successfully
+2025-05-06 16:24:02,955 - app.main - INFO - Request path: /api/auth/signup
+2025-05-06 16:24:03,008 - passlib.handlers.bcrypt - WARNING - (trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "C:\Python313\Lib\site-packages\passlib\handlers\bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+2025-05-06 16:24:03,345 - app.config.database - ERROR - Transaction failed: (1265, "Data truncated for column 'gender' at row 1")
+2025-05-06 16:24:03,346 - app.config.database - ERROR - Database error: Transaction failed: (1265, "Data truncated for column 'gender' at row 1")
+2025-05-06 16:24:03,347 - app.main - ERROR - Error ID: 20250506162403
+2025-05-06 16:24:03,348 - app.main - ERROR - Request: POST http://localhost:8000/api/auth/signup
+2025-05-06 16:24:03,348 - app.main - ERROR - Exception: Database operation failed: Transaction failed: (1265, "Data truncated for column 'gender' at row 1")
+2025-05-06 16:24:03,355 - app.main - ERROR - Traceback (most recent call last):
+  File "C:\Python313\Lib\site-packages\anyio\streams\memory.py", line 98, in receive
+    return self.receive_nowait()
+           ~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\site-packages\anyio\streams\memory.py", line 93, in receive_nowait
+    raise WouldBlock
+anyio.WouldBlock
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 78, in call_next
+    message = await recv_stream.receive()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\anyio\streams\memory.py", line 118, in receive
+    raise EndOfStream
+anyio.EndOfStream
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python313\Lib\site-packages\starlette\middleware\errors.py", line 162, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 108, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\main.py", line 204, in log_requests
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 84, in call_next
+    raise app_exc
+  File "C:\Python313\Lib\site-packages\starlette\middleware\base.py", line 70, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\cors.py", line 91, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\cors.py", line 146, in simple_response
+    await self.app(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\middleware\exceptions.py", line 79, in __call__
+    raise exc
+  File "C:\Python313\Lib\site-packages\starlette\middleware\exceptions.py", line 68, in __call__
+    await self.app(scope, receive, sender)
+  File "C:\Python313\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 20, in __call__
+    raise e
+  File "C:\Python313\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 17, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\routing.py", line 718, in __call__
+    await route.handle(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "C:\Python313\Lib\site-packages\starlette\routing.py", line 66, in app
+    response = await func(request)
+               ^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\fastapi\routing.py", line 274, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        dependant=dependant, values=values, is_coroutine=is_coroutine
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Python313\Lib\site-packages\fastapi\routing.py", line 191, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\api\endpoints\auth.py", line 260, in signup
+    with db.transaction() as conn:
+         ~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\config\database.py", line 80, in transaction
+    with self.get_db() as conn:
+         ~~~~~~~~~~~^^
+  File "C:\Python313\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\Acer\Medihub\MediHub-react\backend\app\config\database.py", line 74, in get_db
+    raise DatabaseError(f"Database operation failed: {str(e)}")
+app.config.database.DatabaseError: Database operation failed: Transaction failed: (1265, "Data truncated for column 'gender' at row 1")
+
+2025-05-06 16:25:22,782 - app.main - INFO - Request path: /api/auth/signup
+2025-05-06 16:59:30,901 - app.main - INFO - Request path: /
+2025-05-06 16:59:45,850 - app.main - INFO - Request path: /
+2025-05-06 16:59:56,158 - app.main - INFO - Request path: /

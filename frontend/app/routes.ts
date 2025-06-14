@@ -26,7 +26,15 @@ export default [
     route("calendar", "routes/doctorDashboard/drCalendar.tsx"),
     route("medications", "routes/doctorDashboard/drMedications.tsx"),
     route("tests", "routes/doctorDashboard/drTests.tsx"),
+    route("transcriptions", "routes/doctorDashboard/drTranscriptions.tsx"),
     route("records", "routes/doctorDashboard/drRecords.tsx"),
     route("chat", "routes/doctorDashboard/drChat.tsx"),
+  ]),
+  route("admin", "components/AdminDashboard/AdminDashboardLayout.tsx", [
+    route("dashboard", "routes/adminDashboard/adminDashboard.tsx"),
+    route("businessanalytics", "routes/adminDashboard/businessAnalytics.tsx"),
+    route("managedoc", "routes/adminDashboard/manageDoctors.tsx"),
+    route("managepatient", "routes/adminDashboard/managePatients.tsx"),
+    route("medicalanalytics", "routes/adminDashboard/medicalAnalytics.tsx"),
   ]),
 ] satisfies RouteConfig;

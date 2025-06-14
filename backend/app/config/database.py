@@ -6,7 +6,20 @@ import os
 from dotenv import load_dotenv
 from fastapi import HTTPException
 
-load_dotenv("/home/seth0x41/MediHub/backend/.env")
+def list_files_in_path(path):
+    try:
+        files = os.listdir(path)
+        print(f"Files in '{path}': {files}")
+    except Exception as e:
+        logger.error(f"Error listing files in path '{path}': {str(e)}")
+        raise
+
+list_files_in_path(".")
+
+dotenv_loaded = load_dotenv("./.env")
+if not dotenv_loaded:
+    logging.warning("Failed to load .env file. Ensure it exists in the correct path.")
+
 
 logger = logging.getLogger(__name__)
 
