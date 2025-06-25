@@ -3,7 +3,15 @@ export default function DocNavbar() {
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
       <div className="container">
-        <NavLink className="navbar-brand text-primary fw-bold" to="/">
+        <NavLink
+          className="navbar-brand text-primary fw-bold d-flex align-items-center"
+          to="/"
+        >
+          <img
+            src="/logo/MediHub.png"
+            alt="MediHub Logo"
+            style={{ height: 70, marginRight: 30 }}
+          />
           MediHub
         </NavLink>
         <button

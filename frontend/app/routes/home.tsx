@@ -13,7 +13,10 @@ export default function Home() {
             <Link to="/login" className="btn btn-primary btn-lg">
               Login
             </Link>
-            <Link to="/register" className="btn btn-outline-primary btn-lg">
+            <Link
+              to="/patientSignup"
+              className="btn btn-outline-primary btn-lg"
+            >
               Register
             </Link>
           </div>

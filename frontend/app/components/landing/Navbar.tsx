@@ -2,9 +2,17 @@ import { NavLink } from "react-router";
 
 export default function Navbar() {
   return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
+    <nav className="navbar navbar-expand-md navbar-light bg-white shadow-sm fixed-top">
       <div className="container">
-        <NavLink className="navbar-brand text-primary fw-bold" to="/">
+        <NavLink
+          className="navbar-brand text-primary fw-bold d-flex align-items-center"
+          to="/"
+        >
+          <img
+            src="/logo/MediHub.png"
+            alt="MediHub Logo"
+            style={{ height: 70, marginRight: 10 }}
+          />
           MediHub
         </NavLink>
         <button
@@ -34,17 +42,10 @@ export default function Navbar() {
             </li>
           </ul>
           <div className="d-flex gap-2">
-            <NavLink
-              className="btn btn-outline-primary"
-              to={"/login"}
-            >
+            <NavLink className="btn btn-outline-primary" to={"/login"}>
               Login
             </NavLink>
-            <button
-              className="btn btn-primary"
-            >
-              Sign Up
-            </button>
+            <button className="btn btn-primary">Sign Up</button>
           </div>
         </div>
       </div>

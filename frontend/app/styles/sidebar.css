@@ -4,7 +4,7 @@
   left: 0;
   width: 280px;
   height: 100vh;
-  background-color: #0d6efd;
+  background-color: #fff;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
   z-index: 1000;
@@ -61,7 +61,7 @@
 }
 
 .nav-link {
-  color: rgba(255, 255, 255, 0.8);
+  color: #0d6efd;
   text-decoration: none;
   padding: 0.75rem 1rem;
   border-radius: 0.5rem;
@@ -71,21 +71,27 @@
   gap: 0.75rem;
 }
 
+.nav-link i {
+  color: #0d6efd;
+}
+
 .nav-link:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: white;
+  background-color: #0d6efd;
+  color: #fff;
+}
+
+.nav-link:hover i {
+  color: #fff;
 }
 
 .nav-link.active {
-  background-color: rgba(255, 255, 255, 0.2);
-  color: white;
+  background-color: #e7f1ff;
+  color: #0d6efd;
   font-weight: 500;
 }
 
-.nav-link i {
-  font-size: 1.1rem;
-  width: 24px;
-  text-align: center;
+.nav-link.active i {
+  color: #0d6efd;
 }
 
 .nav-link .fa-chevron-right,
@@ -97,13 +103,27 @@
 
 .child-nav {
   margin: 0.5rem 0 0.5rem 2.5rem;
-  border-left: 2px solid rgba(255, 255, 255, 0.1);
+  border-left: 2px solid #0d6efd22;
   padding-left: 1rem;
 }
 
 .child-nav .nav-link {
   padding: 0.5rem 1rem;
   font-size: 0.9rem;
+}
+
+.child-nav .nav-link:hover {
+  background-color: #f0f0f0;
+  color: #0d6efd;
+}
+
+.child-nav .nav-link.active {
+  background-color: #e7f1ff;
+  color: #0d6efd;
+}
+
+.child-nav .nav-link.active i {
+  color: #0d6efd;
 }
 
 .sidebar.collapsed .nav-link {
@@ -161,14 +181,14 @@
 /* Sidebar Footer */
 .sidebar-footer {
   padding: 1rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid #0d6efd22;
 }
 
 .logout-btn {
   width: 100%;
   background: none;
   border: none;
-  color: rgba(255, 255, 255, 0.8);
+  color: #0d6efd;
   padding: 0.75rem 1rem;
   border-radius: 0.5rem;
   display: flex;
@@ -179,11 +199,16 @@
 }
 
 .logout-btn:hover {
-  background-color: rgba(255, 0, 0, 0.1);
+  background-color: #0d6efd;
+  color: #fff;
+}
+
+.logout-btn:hover i {
   color: #fff;
 }
 
 .logout-btn i {
+  color: #0d6efd;
   font-size: 1.1rem;
   width: 24px;
   text-align: center;

@@ -10,7 +10,6 @@ export default [
   layout("components/landing/LandingLayout.tsx", [
     index("routes/landing/welcomePage.tsx"),
     route("login", "routes/auth/login.tsx"),
-    route("signup", "routes/auth/signup.tsx"),
   ]),
   route("patient", "components/patientDashboard/DashboardLayout.tsx", [
     route("dashboard", "routes/patientDashboard/home.tsx"),
@@ -29,6 +28,7 @@ export default [
     route("transcriptions", "routes/doctorDashboard/drTranscriptions.tsx"),
     route("records", "routes/doctorDashboard/drRecords.tsx"),
     route("chat", "routes/doctorDashboard/drChat.tsx"),
+    route("predictivediagnosis", "routes/doctordashboard/drPredict.tsx"),
   ]),
   route("admin", "components/AdminDashboard/AdminDashboardLayout.tsx", [
     route("dashboard", "routes/adminDashboard/adminDashboard.tsx"),

@@ -57,6 +57,13 @@ const doctorPages = [
         bg: "/images/transcriptions.jpg",
         description: "AI-powered medical transcription and analysis",
       },
+      {
+        name: "Predictive Diagnosis",
+        path: "/doctor/predict",
+        icon: "diagnoses",
+        bg: "/images/diagnosis.jpg",
+        description: "Upload images for AI-powered diagnosis",
+      },
     ],
   },
   {
@@ -100,9 +107,20 @@ export default function DocDashboardLayout({
       <div className="row">
         {/* Sidebar Navigation */}
         <aside className={`sidebar ${isSidebarCollapsed ? "collapsed" : ""}`}>
-          <div className="sidebar-header">
+          <div className="sidebar-header d-flex align-items-center">
             {!isSidebarCollapsed && (
-              <h5 className="mb-0 text-white">Doctor's Portal</h5>
+              <div className="d-flex align-items-center">
+                <img
+                  src="/logo/MediHub.png"
+                  alt="MediHub Logo"
+                  style={{ height: 70, width: 60, marginRight: 12 }}
+                />
+                <span
+                  style={{ color: "#0d6efd", fontWeight: 700, fontSize: 28 }}
+                >
+                  MediHub
+                </span>
+              </div>
             )}
             <button
               className="sidebar-collapse-btn"

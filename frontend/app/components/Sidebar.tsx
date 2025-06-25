@@ -1,6 +1,6 @@
-import { Link, useLocation } from 'react-router';
-import { useState } from 'react';
-import '../styles/sidebar.css';
+import { Link, useLocation } from "react-router";
+import { useState } from "react";
+import "../styles/sidebar.css";
 
 interface SidebarProps {
   pages: {
@@ -18,20 +18,30 @@ export default function Sidebar({ pages, collapsed = false }: SidebarProps) {
 
   const toggleExpand = (e: React.MouseEvent, pageName: string) => {
     e.preventDefault(); // Prevent navigation for parent items with children
-    setExpandedItems(prev =>
+    setExpandedItems((prev) =>
       prev.includes(pageName)
-        ? prev.filter(item => item !== pageName)
+        ? prev.filter((item) => item !== pageName)
         : [...prev, pageName]
     );
   };
 
   const handleLogout = () => {
     // Add logout logic here
-    window.location.href = '/login';
+    window.location.href = "/login";
   };
 
   return (
-    <div className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
+    <div className={`sidebar ${collapsed ? "collapsed" : ""}`}>
+      <div className="sidebar-logo text-left py-4 ">
+        <img
+          src="/logo/MediHub.png"
+          alt="MediHub Logo"
+          style={{ height: 80, marginLeft: 30, maxWidth: "100%" }}
+        />
+        <span style={{ color: "#0d6efd", fontWeight: 700, fontSize: 20 }}>
+          MediHub
+        </span>
+      </div>
       <nav>
         {pages.map((page) => (
           <div key={page.path} className="nav-item">
@@ -40,7 +50,7 @@ export default function Sidebar({ pages, collapsed = false }: SidebarProps) {
               <a
                 href="#"
                 className={`nav-link d-flex align-items-center justify-content-between ${
-                  location.pathname.includes(page.path) ? 'active' : ''
+                  location.pathname.includes(page.path) ? "active" : ""
                 }`}
                 onClick={(e) => toggleExpand(e, page.name)}
               >
@@ -49,7 +59,11 @@ export default function Sidebar({ pages, collapsed = false }: SidebarProps) {
                   {!collapsed && <span>{page.name}</span>}
                 </div>
                 {!collapsed && (
-                  <i className={`fas fa-chevron-${expandedItems.includes(page.name) ? 'down' : 'right'} ms-2`} />
+                  <i
+                    className={`fas fa-chevron-${
+                      expandedItems.includes(page.name) ? "down" : "right"
+                    } ms-2`}
+                  />
                 )}
               </a>
             ) : (
@@ -57,7 +71,7 @@ export default function Sidebar({ pages, collapsed = false }: SidebarProps) {
               <Link
                 to={page.path}
                 className={`nav-link d-flex align-items-center ${
-                  location.pathname === page.path ? 'active' : ''
+                  location.pathname === page.path ? "active" : ""
                 }`}
               >
                 <i className={`fas fa-${page.icon} me-2`} />
@@ -66,31 +80,30 @@ export default function Sidebar({ pages, collapsed = false }: SidebarProps) {
             )}
 
             {/* Dropdown menu for children */}
-            {!collapsed && page.children && expandedItems.includes(page.name) && (
-              <div className="child-nav">
-                {page.children.map((child) => (
-                  <Link
-                    key={child.path}
-                    to={child.path}
-                    className={`nav-link ${
-                      location.pathname === child.path ? 'active' : ''
-                    }`}
-                  >
-                    {child.name}
-                  </Link>
-                ))}
-              </div>
-            )}
+            {!collapsed &&
+              page.children &&
+              expandedItems.includes(page.name) && (
+                <div className="child-nav">
+                  {page.children.map((child) => (
+                    <Link
+                      key={child.path}
+                      to={child.path}
+                      className={`nav-link ${
+                        location.pathname === child.path ? "active" : ""
+                      }`}
+                    >
+                      {child.name}
+                    </Link>
+                  ))}
+                </div>
+              )}
           </div>
         ))}
       </nav>
 
       {/* Logout Button */}
       <div className="sidebar-footer">
-        <button
-          onClick={handleLogout}
-          className="nav-link logout-btn"
-        >
+        <button onClick={handleLogout} className="nav-link logout-btn">
           <i className="fas fa-sign-out-alt me-2" />
           {!collapsed && <span>Logout</span>}
         </button>
