@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { Outlet, useLocation } from "react-router";
 import "../../components/dashboard.css";
 import Sidebar from "../Sidebar";
-import type { DashboardPageInfo } from "~/types/DashboardPageInfo";
 
 interface AdminDashboardLayoutProps {
   children: React.ReactNode;

@@ -45,7 +45,16 @@ export default function Navbar() {
             <NavLink className="btn btn-outline-primary" to={"/login"}>
               Login
             </NavLink>
+<<<<<<< HEAD
             <button className="btn btn-primary">Sign Up</button>
+=======
+            <NavLink
+              className="btn btn-primary"
+              to={"/signup"}
+            >
+              Sign Up
+            </NavLink>
+>>>>>>> 715166af8d97eae49da159d34476d11d5e82980a
           </div>
         </div>
       </div>
