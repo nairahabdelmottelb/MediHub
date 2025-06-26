@@ -6,7 +6,7 @@ import type { AuthInfo } from "~/types/api/auth/AuthInfo";
 export interface AuthState extends NullablePartial<AuthInfo> {}
 
 export interface AuthActions {
-  setAuthInfo: (authInfo: AuthState) => void;
+  setAuthInfo: (authInfo: NullablePartial<AuthInfo>) => void;
   logout: () => void;
   isLoggedIn: () => boolean;
 }
@@ -25,7 +25,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
       setAuthInfo: (authInfo) =>
         set((state) => ({
           ...state,
-          authInfo,
+          ...authInfo,
         })),
 
       logout: () =>
