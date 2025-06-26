@@ -1280,3 +1280,12 @@ app.config.database.DatabaseError: Database operation failed: Transaction failed
 2025-05-06 16:59:30,901 - app.main - INFO - Request path: /
 2025-05-06 16:59:45,850 - app.main - INFO - Request path: /
 2025-05-06 16:59:56,158 - app.main - INFO - Request path: /
+2025-06-26 00:04:01,792 - app.main - INFO - Copied test.html to static\test.html
+2025-06-26 00:04:05,993 - app.utils.db_init - ERROR - Database initialization error: (2003, "Can't connect to MySQL server on 'localhost' ([WinError 10061] No connection could be made because the target machine actively refused it)")
+2025-06-26 00:04:05,993 - app.main - ERROR - Failed to initialize database: (2003, "Can't connect to MySQL server on 'localhost' ([WinError 10061] No connection could be made because the target machine actively refused it)")
+2025-06-26 00:04:09,688 - app.main - INFO - Request path: /
+2025-06-26 00:04:10,995 - app.main - INFO - Request path: /favicon.ico
+2025-06-26 00:04:13,853 - app.main - INFO - Request path: /swagger
+2025-06-26 00:04:16,429 - app.main - INFO - Request path: /swagger/
+2025-06-26 00:04:23,024 - app.main - INFO - Request path: /docs
+2025-06-26 00:04:23,891 - app.main - INFO - Request path: /api/v1/openapi.json

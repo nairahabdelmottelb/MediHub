@@ -40,11 +40,12 @@ export default function Navbar() {
             >
               Login
             </NavLink>
-            <button
+            <NavLink
               className="btn btn-primary"
+              to={"/signup"}
             >
               Sign Up
-            </button>
+            </NavLink>
           </div>
         </div>
       </div>
