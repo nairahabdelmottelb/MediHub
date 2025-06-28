@@ -1,4 +1,5 @@
 import { Link } from "react-router";
+import "../styles/main.css";
 
 export default function Home() {
   return (
@@ -13,11 +14,11 @@ export default function Home() {
             <Link to="/login" className="btn btn-primary btn-lg">
               Login
             </Link>
-            <Link
-              to="/patientSignup"
-              className="btn btn-outline-primary btn-lg"
-            >
+            <Link to="/register" className="btn btn-outline-primary btn-lg">
               Register
+            </Link>
+            <Link to="/logintobook" className="btn book-appointment-btn btn-lg">
+              Book Appointment
             </Link>
           </div>
         </div>

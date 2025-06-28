@@ -3,6 +3,7 @@ import { Form, Button, Card, Row, Col } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router";
 import { useSignUp, type SignUpData } from "~/api/mutations/auth/useSignup";
+import Footer from "../../components/landing/Footer";
 
 interface SignupFormValues extends SignUpData {}
 
@@ -18,59 +19,87 @@ export default function SignupPage() {
     signup(data, {
       onSuccess: () => {
         navigate("/login");
-      }
+      },
     });
   };
 
   return (
     <div
-      className="d-flex justify-content-center py-4 h-100"
-      style={{ backgroundImage: "url('/images/support.jpg')" }}
+      className="d-flex justify-content-center align-items-center h-100"
+      style={{
+        backgroundImage: "url('/images/signup.jpg')",
+        minHeight: "115vh",
+      }}
     >
-      <Card style={{ maxWidth: "600px" }} className="my-auto w-100 p-4 shadow">
+      <Card
+        style={{
+          maxWidth: "500px",
+          minHeight: "90px",
+          padding: "2rem 2rem",
+          marginTop: "10vh",
+        }}
+        className="w-100 shadow"
+      >
         <h4 className="mb-4 text-center">Sign Up</h4>
         <Form onSubmit={handleSubmit(onSubmit)}>
           <Form.Group controlId="email" className="mb-3">
             <Form.Label>Email</Form.Label>
-            <Form.Control type="email" {...register("email")} placeholder="Enter email" />
+            <Form.Control
+              type="email"
+              {...register("email")}
+              placeholder="Enter email"
+            />
           </Form.Group>
 
           <Form.Group controlId="password" className="mb-3">
             <Form.Label>Password</Form.Label>
-            <Form.Control type="password" {...register("password")} placeholder="Enter password" />
+            <Form.Control
+              type="password"
+              {...register("password")}
+              placeholder="Enter password"
+            />
           </Form.Group>
 
           <Row className="mb-3">
             <Col>
               <Form.Group controlId="firstName">
                 <Form.Label>First Name</Form.Label>
-                <Form.Control type="text" {...register("first_name")} placeholder="First name" />
+                <Form.Control
+                  type="text"
+                  {...register("first_name")}
+                  placeholder="First name"
+                />
               </Form.Group>
             </Col>
             <Col>
               <Form.Group controlId="lastName">
                 <Form.Label>Last Name</Form.Label>
-                <Form.Control type="text" {...register("last_name")} placeholder="Last name" />
+                <Form.Control
+                  type="text"
+                  {...register("last_name")}
+                  placeholder="Last name"
+                />
+              </Form.Group>
+            </Col>
+            <Col>
+              <Form.Group controlId="contactNumber">
+                <Form.Label>Contact Number</Form.Label>
+                <Form.Control
+                  type="tel"
+                  {...register("contact_number")}
+                  placeholder="Contact number"
+                />
               </Form.Group>
             </Col>
           </Row>
 
           <Row className="mb-3">
             <Col>
-              <Form.Group controlId="contactNumber">
-                <Form.Label>Contact Number</Form.Label>
-                <Form.Control type="tel" {...register("contact_number")} placeholder="Contact number" />
-              </Form.Group>
-            </Col>
-            <Col>
               <Form.Group controlId="dateOfBirth">
                 <Form.Label>Date of Birth</Form.Label>
                 <Form.Control type="date" {...register("date_of_birth")} />
               </Form.Group>
             </Col>
-          </Row>
-
-          <Row className="mb-4">
             <Col>
               <Form.Group controlId="gender">
                 <Form.Label>Gender</Form.Label>

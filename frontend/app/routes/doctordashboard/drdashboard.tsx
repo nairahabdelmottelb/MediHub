@@ -1,5 +1,6 @@
 import { DashboardContainer } from "~/components/doctorDashboard/Containers";
 import { format } from "date-fns";
+import { Link } from "react-router";
 
 interface Appointment {
   id: number;
@@ -61,10 +62,7 @@ export default function drDashboard() {
         <DashboardContainer>
           <div className="row g-4">
             <div className="col-12 col-md-6 col-lg-3">
-              <div className="d-flex align-items-center p-3 bg-primary bg-opacity-10 rounded-3">
-                <div className="rounded-circle bg-primary p-3 me-3">
-                  <i className="fas fa-calendar-plus text-white fs-4" />
-                </div>
+              <div className="d-flex align-items-center p-3 bg-primary bg-opacity-10 rounded-3 h-100">
                 <div>
                   <h6 className="mb-1">Today's Appointments</h6>
                   <h4 className="mb-0 fw-bold">{appointments.length}</h4>
@@ -72,10 +70,7 @@ export default function drDashboard() {
               </div>
             </div>
             <div className="col-12 col-md-6 col-lg-3">
-              <div className="d-flex align-items-center p-3 bg-success bg-opacity-10 rounded-3">
-                <div className="rounded-circle bg-success p-3 me-3">
-                  <i className="fas fa-flask text-white fs-4" />
-                </div>
+              <div className="d-flex align-items-center p-3 bg-success bg-opacity-10 rounded-3 h-100">
                 <div>
                   <h6 className="mb-1">New Lab Results</h6>
                   <h4 className="mb-0 fw-bold">{labResults.length}</h4>
@@ -83,10 +78,7 @@ export default function drDashboard() {
               </div>
             </div>
             <div className="col-12 col-md-6 col-lg-3">
-              <div className="d-flex align-items-center p-3 bg-info bg-opacity-10 rounded-3">
-                <div className="rounded-circle bg-info p-3 me-3">
-                  <i className="fas fa-user-injured text-white fs-4" />
-                </div>
+              <div className="d-flex align-items-center p-3 bg-info bg-opacity-10 rounded-3 h-100">
                 <div>
                   <h6 className="mb-1">Total Patients</h6>
                   <h4 className="mb-0 fw-bold">124</h4>
@@ -94,10 +86,7 @@ export default function drDashboard() {
               </div>
             </div>
             <div className="col-12 col-md-6 col-lg-3">
-              <div className="d-flex align-items-center p-3 bg-warning bg-opacity-10 rounded-3">
-                <div className="rounded-circle bg-warning p-3 me-3">
-                  <i className="fas fa-clock text-white fs-4" />
-                </div>
+              <div className="d-flex align-items-center p-3 bg-warning bg-opacity-10 rounded-3 h-100">
                 <div>
                   <h6 className="mb-1">Pending Reviews</h6>
                   <h4 className="mb-0 fw-bold">7</h4>
@@ -111,22 +100,34 @@ export default function drDashboard() {
       {/* Quick Action Buttons */}
       <div className="col-12">
         <div className="d-flex gap-3 flex-wrap">
-          <button className="btn btn-primary d-inline-flex align-items-center">
+          <Link
+            to="/doctor/newAppointment"
+            className="btn btn-primary d-inline-flex align-items-center"
+          >
             <i className="fas fa-plus-circle me-2"></i>
             New Appointment
-          </button>
-          <button className="btn btn-success d-inline-flex align-items-center">
+          </Link>
+          <Link
+            to="/doctor/createPrescription"
+            className="btn btn-success d-inline-flex align-items-center"
+          >
             <i className="fas fa-notes-medical me-2"></i>
             Create Prescription
-          </button>
-          <button className="btn btn-info text-white d-inline-flex align-items-center">
+          </Link>
+          <Link
+            to="/doctor/addMedicalRecord"
+            className="btn btn-info text-white d-inline-flex align-items-center"
+          >
             <i className="fas fa-file-medical me-2"></i>
             Add Medical Record
-          </button>
-          <button className="btn btn-warning text-white d-inline-flex align-items-center">
+          </Link>
+          <Link
+            to="/doctor/manageSchedule"
+            className="btn btn-warning text-white d-inline-flex align-items-center"
+          >
             <i className="fas fa-calendar-alt me-2"></i>
             Manage Schedule
-          </button>
+          </Link>
         </div>
       </div>
 

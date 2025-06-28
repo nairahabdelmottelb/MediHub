@@ -1,14 +1,16 @@
+import { Link } from "react-router";
+
 export default function WelcomeHero() {
   return (
     <>
       <section
         className="hero vh-100 d-flex align-items-center"
-          style={{
-            backgroundImage: 'url("images/team.jpg")',
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            backgroundRepeat: "no-repeat",
-          }}
+        style={{
+          backgroundImage: 'url("images/team.jpg")',
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
       >
         <div className="container">
           <div className="row justify-content-center">
@@ -25,9 +27,9 @@ export default function WelcomeHero() {
                   compassionate care to provide exceptional healthcare services
                   for all our patients.
                 </p>
-                <button className="btn btn-success btn-lg">
+                <Link to="/loginToBook" className="btn btn-success btn-lg">
                   <i className="fas fa-calendar-check me-2"></i>Book Appointment
-                </button>
+                </Link>
               </div>
             </div>
           </div>

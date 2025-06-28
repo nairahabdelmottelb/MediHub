@@ -66,13 +66,6 @@ const doctorPages = [
       },
     ],
   },
-  {
-    name: "AI Assistant",
-    path: "/doctor/chat",
-    icon: "comment-medical",
-    bg: "/images/support.jpg",
-    description: "Get AI-powered insights",
-  },
 ];
 
 type PageTitle = (typeof doctorPages)[number]["name"];

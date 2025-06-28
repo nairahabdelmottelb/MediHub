@@ -93,3 +93,17 @@
     color: var(--primary-blue);
     transform: translateY(-2px);
 }
+
+.book-appointment-btn {
+    background: white;
+    color: var(--primary-blue);
+    border: 2px solid var(--primary-blue);
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.book-appointment-btn:hover {
+    background: var(--primary-blue);
+    color: white;
+    border-color: var(--primary-blue);
+}

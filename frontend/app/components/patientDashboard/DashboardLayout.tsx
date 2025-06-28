@@ -13,19 +13,13 @@ const patientPages = [
     description: "Overview of your health status",
   },
   {
-    name: "Calendar",
-    path: "/patient/calendar",
-    icon: "calendar-alt",
-    bg: "/images/drpatient.jpg",
-    description: "Manage your appointments",
+    name: "Book Appointment",
+    path: "/patient/bookAppointment",
+    icon: "calendar-plus",
+    bg: "/images/book.jpg",
+    description: "Schedule a new appointment",
   },
-  {
-    name: "Alerts",
-    path: "/patient/alerts",
-    icon: "bell",
-    bg: "/images/emergency.jpg",
-    description: "View important notifications",
-  },
+
   {
     name: "Tests",
     path: "/patient/tests",

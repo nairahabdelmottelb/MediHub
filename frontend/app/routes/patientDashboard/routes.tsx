@@ -1,44 +1,34 @@
-import { createBrowserRouter, RouterProvider } from 'react-router';
-import DashboardLayout from '~/components/patientDashboard/DashboardLayout';
-import Home from './home';
-import Calendar from './calendar';
-import Alerts from './alerts';
-import Tests from './tests';
-import History from './history';
-import Medications from './medications';
-import Doctors from './doctors';
+import { createBrowserRouter, RouterProvider } from "react-router";
+import DashboardLayout from "~/components/patientDashboard/DashboardLayout";
+import Home from "./home";
+import Tests from "./tests";
+import History from "./history";
+import Medications from "./medications";
+import Doctors from "./doctors";
 
 const router = createBrowserRouter([
   {
-    path: '/patient',
+    path: "/patient",
     element: <DashboardLayout />,
     children: [
       {
-        path: 'dashboard',
+        path: "dashboard",
         element: <Home />,
       },
       {
-        path: 'calendar',
-        element: <Calendar />,
-      },
-      {
-        path: 'alerts',
-        element: <Alerts />,
-      },
-      {
-        path: 'tests',
+        path: "tests",
         element: <Tests />,
       },
       {
-        path: 'history',
+        path: "history",
         element: <History />,
       },
       {
-        path: 'medications',
+        path: "medications",
         element: <Medications />,
       },
       {
-        path: 'doctors',
+        path: "doctors",
         element: <Doctors />,
       },
     ],
@@ -47,4 +37,4 @@ const router = createBrowserRouter([
 
 export default function PatientRoutes() {
   return <RouterProvider router={router} />;
-} 
+}

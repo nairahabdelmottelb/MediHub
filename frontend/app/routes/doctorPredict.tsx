@@ -74,6 +74,14 @@ export default function DoctorPredict() {
                   >
                     {loading ? "Analyzing..." : "Get Prediction"}
                   </button>
+                  <button
+                    type="button"
+                    className="btn btn-success"
+                    onClick={handleSubmit}
+                    disabled={loading}
+                  >
+                    Generate Prediction
+                  </button>
                 </div>
               </form>
               {result && (

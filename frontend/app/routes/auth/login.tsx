@@ -29,23 +29,34 @@ export default function LoginPage() {
       onSuccess: (response) => {
         setAuthInfo(response);
         navigate("/patient/dashboard");
-      }
+      },
     });
   };
 
   return (
-    <div className="d-flex justify-content-center align-items-center h-100" style={{ backgroundImage: "url('/images/support.jpg')" }}>
+    <div
+      className="d-flex justify-content-center align-items-center h-100"
+      style={{ backgroundImage: "url('/images/signin.jpg')" }}
+    >
       <Card style={{ maxWidth: "400px" }} className="w-100 p-4 shadow">
         <h4 className="mb-4 text-center">Login</h4>
         <Form onSubmit={handleSubmit(onLogin)}>
           <Form.Group className="mb-3">
             <Form.Label>Email</Form.Label>
-            <Form.Control type="text" {...register("email")} placeholder="Enter Email" />
+            <Form.Control
+              type="text"
+              {...register("email")}
+              placeholder="Enter Email"
+            />
           </Form.Group>
 
           <Form.Group className="mb-4">
             <Form.Label>Password</Form.Label>
-            <Form.Control type="password" {...register("password")} placeholder="Enter password" />
+            <Form.Control
+              type="password"
+              {...register("password")}
+              placeholder="Enter password"
+            />
           </Form.Group>
 
           <div className="d-grid">
