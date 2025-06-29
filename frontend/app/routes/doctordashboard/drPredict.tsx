@@ -39,7 +39,7 @@ export default function DrPredict() {
     e.preventDefault();
     setError("");
     setResult("");
-    
+
     if (!image) {
       setError("Please upload an image.");
       return;
@@ -51,7 +51,7 @@ export default function DrPredict() {
     }
 
     setLoading(true);
-    
+
     try {
       // Determine the correct API endpoint based on doctor's specialty
       let apiEndpoint;
@@ -64,15 +64,15 @@ export default function DrPredict() {
       }
 
       console.log(`Making prediction request to: ${apiEndpoint} for specialty: ${currentDoctor.spec_name}`);
-      
+
       // Create FormData for file upload
       const formData = new FormData();
       formData.append('image', image);
-      
+
       // Add doctor information to the request
       formData.append('doctor_id', currentDoctor.doctor_id.toString());
       formData.append('specialty', currentDoctor.spec_name);
-      
+
       // Make the API call
       const response = await axios.post(apiEndpoint, formData, {
         headers: {
@@ -80,9 +80,9 @@ export default function DrPredict() {
         },
         timeout: 30000, // 30 second timeout
       });
-      
+
       console.log('Prediction response:', response.data);
-      
+
       // Handle the response
       if (response.data && response.data.prediction) {
         setResult(`Predicted diagnosis: ${response.data.prediction}`);
@@ -93,16 +93,16 @@ export default function DrPredict() {
       } else {
         setResult(`Analysis complete. Raw response: ${JSON.stringify(response.data)}`);
       }
-      
+
     } catch (err: any) {
       console.error('Prediction API error:', err);
-      
+
       if (err.code === 'ECONNABORTED') {
         setError("Request timed out. Please try again with a smaller image.");
       } else if (err.response) {
         const status = err.response.status;
         const errorMessage = err.response.data?.error || err.response.data?.message || 'Prediction service error';
-        
+
         if (status === 404) {
           setError(`The diagnostic model for ${currentDoctor.spec_name} is not available. Please contact system administrator.`);
         } else if (status >= 500) {
@@ -127,7 +127,7 @@ export default function DrPredict() {
           <div className="card">
             <div className="card-body p-4">
               <h2 className="text-center mb-4">Predictive Diagnosis</h2>
-              
+
               {/* Doctor Loading State */}
               {doctorLoading && (
                 <div className="text-center mb-3">
@@ -137,7 +137,7 @@ export default function DrPredict() {
                   <small className="text-muted ms-2">Loading doctor information...</small>
                 </div>
               )}
-              
+
               {/* Doctor Specialty Display */}
               {currentDoctor && (
                 <div className="alert alert-info mb-3">
@@ -157,7 +157,7 @@ export default function DrPredict() {
                   </small>
                 </div>
               )}
-              
+
               <form onSubmit={handleSubmit}>
                 <div className="mb-3">
                   <label htmlFor="image" className="form-label">

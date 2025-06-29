@@ -26,7 +26,7 @@ export const useDoctorAppointments = () => {
         const patientsResponse = await api.get("/patients");
         const patients = patientsResponse.data;
         const patientMap = new Map();
-        
+
         // Create patient map with the data we already have
         patients.forEach((patient: any) => {
           patientMap.set(patient.patient_id, {
@@ -80,18 +80,18 @@ export const useSummarizeNotes = () => {
           text: notes,
           type: 'medical_notes'
         });
-        
+
         return response.data.summary;
       } catch (error) {
         // Simulate a successful response for demo purposes
         console.log("Simulating summarization API call for:", notes);
-        
+
         // Create a mock summary based on the notes content
         const mockSummary = generateMockSummary(notes);
-        
+
         // Simulate API delay
         await new Promise(resolve => setTimeout(resolve, 1500));
-        
+
         return mockSummary;
       }
     }
@@ -103,22 +103,22 @@ function generateMockSummary(notes: string): string {
   if (!notes || notes.trim() === "") {
     return "No notes to summarize.";
   }
-  
+
   const words = notes.trim().split(/\s+/);
-  
+
   if (words.length <= 10) {
     return `Brief note: ${notes}`;
   }
-  
+
   // Create a mock summary by extracting key medical terms and creating a concise version
   const medicalTerms = notes.match(/\b(patient|appointment|symptoms|treatment|medication|diagnosis|follow.?up|examination|test|results|prescription|condition|pain|fever|blood pressure|heart rate)\b/gi) || [];
-  
+
   const uniqueTerms = [...new Set(medicalTerms.map(term => term.toLowerCase()))];
-  
+
   if (uniqueTerms.length > 0) {
     return `Summary: ${notes.substring(0, 50)}... Key areas discussed: ${uniqueTerms.slice(0, 3).join(', ')}.`;
   }
-  
+
   // Fallback summary
   return `Summary: ${notes.substring(0, 80)}${notes.length > 80 ? '...' : ''}`;
 }

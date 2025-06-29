@@ -6,29 +6,29 @@ export default function DrTranscriptions() {
   const [file, setFile] = useState<File | null>(null);
   const [transcriptionResults, setTranscriptionResults] = useState<TranscriptionResponse[]>([]);
   const [error, setError] = useState<string | null>(null);
-  
+
   const transcribeMutation = useTranscribeFile();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const selectedFile = e.target.files[0];
-      
+
       // Validate file type
       const validTypes = ['audio/', 'video/'];
       const isValidType = validTypes.some(type => selectedFile.type.startsWith(type));
-      
+
       if (!isValidType) {
         setError("Please select a valid audio or video file");
         return;
       }
-      
+
       // Validate file size (limit to 100MB)
       const maxSize = 100 * 1024 * 1024; // 100MB
       if (selectedFile.size > maxSize) {
         setError("File size must be less than 100MB");
         return;
       }
-      
+
       setFile(selectedFile);
       setError(null);
     }
@@ -47,7 +47,7 @@ export default function DrTranscriptions() {
       const result = await transcribeMutation.mutateAsync({ file });
       setTranscriptionResults((prev) => [result, ...prev]);
       setFile(null);
-      
+
       // Reset the file input
       const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
       if (fileInput) {
@@ -195,7 +195,7 @@ ${result.text}
                         </span>
                       )}
                     </div>
-                    <button 
+                    <button
                       className="btn btn-sm btn-outline-primary"
                       onClick={() => handleDownload(result, index)}
                     >

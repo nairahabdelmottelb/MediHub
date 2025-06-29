@@ -102,7 +102,7 @@ export default function DrAppointments() {
               {appointments?.length || 0} appointments found
             </div>
           </div>
-          
+
           {appointments && appointments.length > 0 ? (
             <div className="table-responsive">
               <table className="table table-hover">
@@ -195,14 +195,14 @@ export default function DrAppointments() {
                       </td>
                       <td>
                         <div className="d-flex gap-2">
-                          <button 
+                          <button
                             className="btn btn-primary btn-sm px-3 py-1 d-inline-flex align-items-center"
                             onClick={() => handleViewAppointment(appointment)}
                           >
                             <i className="fas fa-eye me-2" />
                             View
                           </button>
-                          <button 
+                          <button
                             className="btn btn-outline-secondary btn-sm px-3 py-1 d-inline-flex align-items-center"
                             onClick={() => window.print()}
                           >
@@ -244,8 +244,8 @@ export default function DrAppointments() {
                   <i className="fas fa-calendar-check me-2"></i>
                   Appointment Details
                 </h5>
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   className="btn-close"
                   onClick={() => setShowViewModal(false)}
                 ></button>
@@ -257,7 +257,7 @@ export default function DrAppointments() {
                     <p><strong>Name:</strong> {selectedAppointment.patient_name}</p>
                     <p><strong>Date:</strong> {format(new Date(selectedAppointment.appointment_date), "MMMM dd, yyyy")}</p>
                     <p><strong>Time:</strong> {format(new Date(selectedAppointment.appointment_date), "h:mm a")}</p>
-                    <p><strong>Status:</strong> 
+                    <p><strong>Status:</strong>
                       <span className={`badge ms-2 ${getStatusBadgeClass(selectedAppointment.status)}`}>
                         {selectedAppointment.status}
                       </span>
@@ -267,7 +267,7 @@ export default function DrAppointments() {
                     <h6><i className="fas fa-info-circle me-2"></i>Appointment Details</h6>
                     <p><strong>Appointment ID:</strong> #{selectedAppointment.appointment_id}</p>
                     <p><strong>Patient ID:</strong> #{selectedAppointment.patient_id}</p>
-                    <p><strong>Priority:</strong> 
+                    <p><strong>Priority:</strong>
                       {selectedAppointment.priority_flag ? (
                         <span className="badge bg-warning ms-2">High Priority</span>
                       ) : (
@@ -277,14 +277,14 @@ export default function DrAppointments() {
                     <p><strong>Slot ID:</strong> #{selectedAppointment.slot_id}</p>
                   </div>
                 </div>
-                
+
                 {selectedAppointment.notes && (
                   <div className="mt-4">
                     <h6><i className="fas fa-sticky-note me-2"></i>Appointment Notes</h6>
                     <div className="alert alert-light" style={{ whiteSpace: 'pre-wrap' }}>
                       {selectedAppointment.notes}
                     </div>
-                    
+
                     {summaries[selectedAppointment.appointment_id] && (
                       <div className="mt-3">
                         <h6><i className="fas fa-magic me-2"></i>AI Summary</h6>
@@ -293,7 +293,7 @@ export default function DrAppointments() {
                         </div>
                       </div>
                     )}
-                    
+
                     {!summaries[selectedAppointment.appointment_id] && (
                       <div className="mt-3">
                         <button
@@ -321,15 +321,15 @@ export default function DrAppointments() {
                 )}
               </div>
               <div className="modal-footer">
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   className="btn btn-secondary"
                   onClick={() => setShowViewModal(false)}
                 >
                   Close
                 </button>
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   className="btn btn-primary"
                   onClick={() => window.print()}
                 >

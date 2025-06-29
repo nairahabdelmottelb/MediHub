@@ -35,20 +35,20 @@ export const useTranscribeFile = () => {
         return response.data;
       } catch (error) {
         console.error("Transcription API error:", error);
-        
+
         // Since the API is a placeholder and doesn't exist yet, provide a mock response
         // This will be replaced when the real API is available
         if (axios.isAxiosError(error) && (error.code === 'ENOTFOUND' || error.response?.status === 404)) {
           console.warn("Using mock transcription data - API endpoint not available");
-          
+
           // Generate mock response based on file type and name
           const fileName = request.file.name.toLowerCase();
           const fileType = request.file.type;
-          
+
           let mockText = "Patient consultation recording transcribed successfully.";
           let mockSummary = "Medical consultation summary";
           let mockKeyPoints = ["File processed", "Transcription completed"];
-          
+
           if (fileName.includes("consultation") || fileName.includes("appointment")) {
             mockText = "Patient presented with symptoms of fever and cough. Temperature recorded at 38.5°C. Physical examination revealed clear chest sounds. Recommended rest, increased fluid intake, and prescribed acetaminophen for fever management. Follow-up scheduled in one week if symptoms persist.";
             mockSummary = "Patient consultation for fever and cough symptoms, prescribed medication and rest";
@@ -80,10 +80,10 @@ export const useTranscribeFile = () => {
               "Continue current plan"
             ];
           }
-          
+
           // Simulate processing time
           await new Promise(resolve => setTimeout(resolve, 1500 + Math.random() * 2000));
-          
+
           return {
             text: mockText,
             summary: mockSummary,
@@ -94,7 +94,7 @@ export const useTranscribeFile = () => {
             language: "en"
           };
         }
-        
+
         throw error;
       }
     },
