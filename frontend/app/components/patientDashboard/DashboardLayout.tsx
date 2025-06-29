@@ -2,6 +2,8 @@ import { useMemo, useState } from "react";
 import { Link, Outlet, useLocation } from "react-router";
 import "../dashboard.css";
 import ChatModal from "./ChatWindow/ChatWindow";
+import { useCurrentUser } from "~/api/queries/useCurrentUser";
+import { getFullName } from "~/utils/userUtils";
 
 // Pages mapping for the Patient's Portal with enhanced metadata
 const patientPages = [
@@ -56,12 +58,16 @@ export default function DashboardLayout() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [showChat, setShowChat] = useState(false);
   const location = useLocation();
+  const { data: currentUser, isLoading } = useCurrentUser();
+
   const page = useMemo(
     () => location.pathname.split("/").pop() as PageTitle,
     [location]
   );
   const currentPage = patientPages.find((p) => p.path.includes(page));
   const bg = currentPage?.bg;
+
+  const displayName = currentUser ? getFullName(currentUser) : "Loading...";
 
   const handleLogout = () => {
     // Add logout logic here
@@ -70,9 +76,8 @@ export default function DashboardLayout() {
 
   return (
     <div
-      className={`container-fluid patient-dashboard ${
-        isSidebarCollapsed ? "collapsed" : ""
-      }`}
+      className={`container-fluid patient-dashboard ${isSidebarCollapsed ? "collapsed" : ""
+        }`}
     >
       <div className="row">
         {/* Sidebar Navigation */}
@@ -80,11 +85,10 @@ export default function DashboardLayout() {
           className={`patient-sidebar ${isSidebarCollapsed ? "collapsed" : ""}`}
         >
           <div
-            className={`patient-sidebar-header ${
-              !isSidebarCollapsed
+            className={`patient-sidebar-header ${!isSidebarCollapsed
                 ? "p-3 justify-content-between"
                 : "py-3 justify-content-center"
-            } mb-3 d-flex align-items-center`}
+              } mb-3 d-flex align-items-center`}
           >
             {!isSidebarCollapsed && (
               <h5 className="heading mb-0 text-white">Patient's Portal</h5>
@@ -94,9 +98,8 @@ export default function DashboardLayout() {
               onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
             >
               <i
-                className={`fas fa-${
-                  isSidebarCollapsed ? "chevron-right" : "chevron-left"
-                }`}
+                className={`fas fa-${isSidebarCollapsed ? "chevron-right" : "chevron-left"
+                  }`}
               />
             </button>
           </div>
@@ -106,14 +109,12 @@ export default function DashboardLayout() {
               <Link
                 key={page.path}
                 to={page.path}
-                className={`patient-nav-link ${
-                  location.pathname === page.path ? "active" : ""
-                }`}
+                className={`patient-nav-link ${location.pathname === page.path ? "active" : ""
+                  }`}
               >
                 <i
-                  className={`fas fa-${page.icon} ${
-                    !isSidebarCollapsed ? "me-2" : ""
-                  }`}
+                  className={`fas fa-${page.icon} ${!isSidebarCollapsed ? "me-2" : ""
+                    }`}
                 />
                 {!isSidebarCollapsed && <span>{page.name}</span>}
               </Link>
@@ -130,9 +131,8 @@ export default function DashboardLayout() {
                 }}
               >
                 <i
-                  className={`fas fa-sign-out-alt ${
-                    !isSidebarCollapsed ? "me-2" : ""
-                  }`}
+                  className={`fas fa-sign-out-alt ${!isSidebarCollapsed ? "me-2" : ""
+                    }`}
                 />
                 {!isSidebarCollapsed && <span>Logout</span>}
               </button>
@@ -182,7 +182,7 @@ export default function DashboardLayout() {
                     >
                       <i className="fas fa-user" />
                     </div>
-                    <span>John Doe</span>
+                    <span>{displayName}</span>
                   </button>
                   <ul className="dropdown-menu dropdown-menu-end">
                     <li>
