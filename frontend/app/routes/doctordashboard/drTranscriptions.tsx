@@ -1,24 +1,35 @@
 import { useState } from "react";
 import { DashboardContainer } from "../../components/doctorDashboard/Containers";
-
-interface TranscriptionResult {
-  text: string;
-  summary: string;
-  keyPoints: string[];
-  timestamp: string;
-}
+import { useTranscribeFile, type TranscriptionResponse } from "~/api/mutations/useTranscribeFile";
 
 export default function DrTranscriptions() {
   const [file, setFile] = useState<File | null>(null);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [transcriptionResults, setTranscriptionResults] = useState<
-    TranscriptionResult[]
-  >([]);
+  const [transcriptionResults, setTranscriptionResults] = useState<TranscriptionResponse[]>([]);
   const [error, setError] = useState<string | null>(null);
+  
+  const transcribeMutation = useTranscribeFile();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
+      const selectedFile = e.target.files[0];
+      
+      // Validate file type
+      const validTypes = ['audio/', 'video/'];
+      const isValidType = validTypes.some(type => selectedFile.type.startsWith(type));
+      
+      if (!isValidType) {
+        setError("Please select a valid audio or video file");
+        return;
+      }
+      
+      // Validate file size (limit to 100MB)
+      const maxSize = 100 * 1024 * 1024; // 100MB
+      if (selectedFile.size > maxSize) {
+        setError("File size must be less than 100MB");
+        return;
+      }
+      
+      setFile(selectedFile);
       setError(null);
     }
   };
@@ -30,61 +41,98 @@ export default function DrTranscriptions() {
       return;
     }
 
-    setIsProcessing(true);
     setError(null);
 
     try {
-      // TODO: Replace with actual API call to your transcription service
-      // This is a mock implementation
-      const formData = new FormData();
-      formData.append("file", file);
-
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      // Mock response
-      const mockResult: TranscriptionResult = {
-        text: "Patient presented with symptoms of fever and cough. Temperature was 38.5°C. Recommended rest and prescribed medication.",
-        summary: "Patient with fever and cough, prescribed medication",
-        keyPoints: [
-          "Fever: 38.5°C",
-          "Cough present",
-          "Medication prescribed",
-          "Rest recommended",
-        ],
-        timestamp: new Date().toLocaleString(),
-      };
-
-      setTranscriptionResults((prev) => [mockResult, ...prev]);
+      const result = await transcribeMutation.mutateAsync({ file });
+      setTranscriptionResults((prev) => [result, ...prev]);
       setFile(null);
+      
+      // Reset the file input
+      const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+      if (fileInput) {
+        fileInput.value = '';
+      }
     } catch (err) {
-      setError("Failed to process the file. Please try again.");
-    } finally {
-      setIsProcessing(false);
+      console.error("Transcription error:", err);
+      setError("Failed to process the file. Please check your connection and try again.");
     }
   };
+
+  const handleDownload = (result: TranscriptionResponse, index: number) => {
+    const content = `Medical Transcription Report
+Generated: ${result.timestamp}
+${result.confidence ? `Confidence: ${(result.confidence * 100).toFixed(1)}%` : ''}
+${result.duration ? `Duration: ${result.duration} seconds` : ''}
+${result.language ? `Language: ${result.language}` : ''}
+
+SUMMARY:
+${result.summary}
+
+KEY POINTS:
+${result.keyPoints.map(point => `• ${point}`).join('\n')}
+
+FULL TRANSCRIPTION:
+${result.text}
+`;
+
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `transcription_${index + 1}_${new Date().toISOString().split('T')[0]}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const getFileTypeIcon = (fileName: string) => {
+    const extension = fileName.split('.').pop()?.toLowerCase();
+    if (['mp3', 'wav', 'ogg', 'aac', 'm4a'].includes(extension || '')) {
+      return 'fas fa-music';
+    } else if (['mp4', 'avi', 'mov', 'wmv', 'flv'].includes(extension || '')) {
+      return 'fas fa-video';
+    }
+    return 'fas fa-file';
+  };
+
 
   return (
     <DashboardContainer>
       <div className="transcriptions-container">
         <div className="upload-section mb-4">
-          <h3 className="mb-3">Upload Audio/Video</h3>
+          <h3 className="mb-3">
+            <i className="fas fa-microphone-alt me-2"></i>
+            Upload Audio/Video for Transcription
+          </h3>
           <form onSubmit={handleSubmit} className="upload-form">
             <div className="mb-3">
+              <label htmlFor="file-upload" className="form-label">
+                Select audio or video file to transcribe
+              </label>
               <input
+                id="file-upload"
                 type="file"
                 className="form-control"
                 accept="audio/*,video/*"
                 onChange={handleFileChange}
-                disabled={isProcessing}
+                disabled={transcribeMutation.isPending}
               />
+              {file && (
+                <div className="mt-2 text-muted">
+                  <i className={getFileTypeIcon(file.name)}></i>
+                  <span className="ms-2">{file.name}</span>
+                  <span className="ms-2">({(file.size / 1024 / 1024).toFixed(2)} MB)</span>
+                </div>
+              )}
             </div>
             <button
               type="submit"
               className="btn btn-primary"
-              disabled={isProcessing || !file}
+              disabled={transcribeMutation.isPending || !file}
             >
-              {isProcessing ? (
+              {transcribeMutation.isPending ? (
                 <>
                   <span
                     className="spinner-border spinner-border-sm me-2"
@@ -94,45 +142,98 @@ export default function DrTranscriptions() {
                   Processing...
                 </>
               ) : (
-                "Process File"
+                <>
+                  <i className="fas fa-play me-2"></i>
+                  Process File
+                </>
               )}
             </button>
           </form>
-          {error && <div className="alert alert-danger mt-3">{error}</div>}
+          {error && (
+            <div className="alert alert-danger mt-3">
+              <i className="fas fa-exclamation-triangle me-2"></i>
+              {error}
+            </div>
+          )}
+          {transcribeMutation.error && (
+            <div className="alert alert-danger mt-3">
+              <i className="fas fa-exclamation-triangle me-2"></i>
+              {transcribeMutation.error instanceof Error ? transcribeMutation.error.message : 'An error occurred during transcription'}
+            </div>
+          )}
         </div>
 
         <div className="results-section">
-          <h3 className="mb-3">Transcription Results</h3>
+          <h3 className="mb-3">
+            <i className="fas fa-file-alt me-2"></i>
+            Transcription Results
+          </h3>
           {transcriptionResults.length === 0 ? (
             <div className="alert alert-info">
-              No transcriptions yet. Upload a file to get started.
+              <i className="fas fa-info-circle me-2"></i>
+              No transcriptions yet. Upload an audio or video file to get started.
             </div>
           ) : (
             <div className="results-list">
               {transcriptionResults.map((result, index) => (
                 <div key={index} className="card mb-3">
                   <div className="card-header d-flex justify-content-between align-items-center">
-                    <span className="text-muted">{result.timestamp}</span>
-                    <button className="btn btn-sm btn-outline-primary">
+                    <div>
+                      <span className="text-muted">
+                        <i className="fas fa-clock me-1"></i>
+                        {result.timestamp}
+                      </span>
+                      {result.confidence && (
+                        <span className="badge bg-success ms-3">
+                          {(result.confidence * 100).toFixed(1)}% accuracy
+                        </span>
+                      )}
+                      {result.duration && (
+                        <span className="text-muted ms-3">
+                          <i className="fas fa-stopwatch me-1"></i>
+                          {result.duration}s
+                        </span>
+                      )}
+                    </div>
+                    <button 
+                      className="btn btn-sm btn-outline-primary"
+                      onClick={() => handleDownload(result, index)}
+                    >
                       <i className="fas fa-download me-2" />
                       Download
                     </button>
                   </div>
                   <div className="card-body">
-                    <h5 className="card-title">Summary</h5>
+                    <h5 className="card-title">
+                      <i className="fas fa-clipboard-list me-2"></i>
+                      Summary
+                    </h5>
                     <p className="card-text">{result.summary}</p>
 
-                    <h5 className="card-title mt-3">Key Points</h5>
+                    <h5 className="card-title mt-4">
+                      <i className="fas fa-list-ul me-2"></i>
+                      Key Points
+                    </h5>
                     <ul className="list-group list-group-flush">
                       {result.keyPoints.map((point, i) => (
-                        <li key={i} className="list-group-item">
+                        <li key={i} className="list-group-item d-flex align-items-center">
+                          <i className="fas fa-check-circle text-success me-2"></i>
                           {point}
                         </li>
                       ))}
                     </ul>
 
-                    <h5 className="card-title mt-3">Full Transcription</h5>
-                    <p className="card-text">{result.text}</p>
+                    <h5 className="card-title mt-4">
+                      <i className="fas fa-file-audio me-2"></i>
+                      Full Transcription
+                    </h5>
+                    <div className="card border-0 bg-light">
+                      <div className="card-body">
+                        <p className="card-text text-muted mb-0 font-monospace">
+                          {result.text}
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -140,6 +241,54 @@ export default function DrTranscriptions() {
           )}
         </div>
       </div>
+
+      <style>{`
+        .transcriptions-container {
+          max-width: 1000px;
+          margin: 0 auto;
+        }
+        
+        .upload-form {
+          padding: 20px;
+          border: 2px dashed #dee2e6;
+          border-radius: 8px;
+          background-color: #f8f9fa;
+          transition: all 0.3s ease;
+        }
+        
+        .upload-form:hover {
+          border-color: #007bff;
+          background-color: #e3f2fd;
+        }
+        
+        .results-list .card {
+          border: 1px solid #dee2e6;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+          transition: all 0.3s ease;
+        }
+        
+        .results-list .card:hover {
+          box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+          transform: translateY(-2px);
+        }
+        
+        .font-monospace {
+          font-family: 'Courier New', monospace;
+          font-size: 0.9em;
+          line-height: 1.6;
+          white-space: pre-wrap;
+          word-wrap: break-word;
+        }
+        
+        .card-body h5 {
+          color: #495057;
+          font-weight: 600;
+        }
+        
+        .badge {
+          font-size: 0.75em;
+        }
+      `}</style>
     </DashboardContainer>
   );
 }

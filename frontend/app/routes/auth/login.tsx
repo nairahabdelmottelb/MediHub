@@ -4,6 +4,9 @@ import { Link, useNavigate } from "react-router";
 import { useForm } from "react-hook-form";
 import { useLogin } from "~/api/mutations/auth/useLogin";
 import { useAuthStore } from "~/store/auth.state";
+import { api } from "~/api/index";
+import { getRoleBasedDashboardPath } from "~/utils/userUtils";
+import type { CurrentUser } from "~/api/queries/useCurrentUser";
 
 interface LoginFormValues {
   email: string;
@@ -22,13 +25,26 @@ export default function LoginPage() {
   const { mutate: login, isPending } = useLogin();
   const { setAuthInfo } = useAuthStore();
 
-  const onLogin = (loginCredentials: LoginFormValues) => {
+  const onLogin = async (loginCredentials: LoginFormValues) => {
     console.log("Login attempt with:", loginCredentials);
 
     login(loginCredentials, {
-      onSuccess: (response) => {
+      onSuccess: async (response) => {
         setAuthInfo(response);
-        navigate("/patient/dashboard");
+
+        try {
+          // Fetch user info to determine role-based redirection
+          const userResponse = await api.get<CurrentUser>("/users/me");
+          const user = userResponse.data;
+
+          // Redirect based on user role
+          const dashboardPath = getRoleBasedDashboardPath(user);
+          navigate(dashboardPath);
+        } catch (error) {
+          console.error("Failed to fetch user info:", error);
+          // Fallback to patient dashboard if user info fetch fails
+          navigate("/patient/dashboard");
+        }
       },
     });
   };

@@ -22,26 +22,27 @@ export default [
     route("bookAppointment", "routes/patientDashboard/bookAppointment.tsx"),
   ]),
   route("doctor", "components/doctorDashboard/DocDashboardLayout.tsx", [
-    route("dashboard", "routes/doctorDashboard/drDashboard.tsx"),
-    route("calendar", "routes/doctorDashboard/calendar.tsx"),
-    route("newAppointment", "routes/doctorDashboard/newAppointment.tsx"),
+    route("dashboard", "routes/doctordashboard/drdashboard.tsx"),
+    route("calendar", "routes/doctordashboard/calendar.tsx"),
+    route("newAppointment", "routes/doctordashboard/newAppointment.tsx"),
     route(
       "createPrescription",
-      "routes/doctorDashboard/createPrescription.tsx"
+      "routes/doctordashboard/createPrescription.tsx"
     ),
-    route("addMedicalRecord", "routes/doctorDashboard/addMedicalRecord.tsx"),
-    route("manageSchedule", "routes/doctorDashboard/manageSchedule.tsx"),
-    route("medications", "routes/doctorDashboard/drMedications.tsx"),
-    route("tests", "routes/doctorDashboard/drTests.tsx"),
-    route("transcriptions", "routes/doctorDashboard/drTranscriptions.tsx"),
-    route("records", "routes/doctorDashboard/drRecords.tsx"),
+    route("addMedicalRecord", "routes/doctordashboard/addMedicalRecord.tsx"),
+    route("manageSchedule", "routes/doctordashboard/manageSchedule.tsx"),
+    route("appointments", "routes/doctordashboard/drAppointments.tsx"),
+    route("medications", "routes/doctordashboard/drMedications.tsx"),
+    route("tests", "routes/doctordashboard/drTests.tsx"),
+    route("transcriptions", "routes/doctordashboard/drTranscriptions.tsx"),
+    route("records", "routes/doctordashboard/drRecords.tsx"),
     route("predict", "routes/doctordashboard/drPredict.tsx"),
   ]),
-  route("admin", "components/AdminDashboard/AdminDashboardLayout.tsx", [
-    route("dashboard", "routes/adminDashboard/adminDashboard.tsx"),
-    route("businessanalytics", "routes/adminDashboard/businessAnalytics.tsx"),
-    route("managedoc", "routes/adminDashboard/manageDoctors.tsx"),
-    route("managepatient", "routes/adminDashboard/managePatients.tsx"),
-    route("medicalanalytics", "routes/adminDashboard/medicalAnalytics.tsx"),
+  route("admin", "components/adminDashboard/AdminDashboardLayout.tsx", [
+    route("dashboard", "routes/admindashboard/adminDashboard.tsx"),
+    route("businessanalytics", "routes/admindashboard/businessAnalytics.tsx"),
+    route("managedoc", "routes/admindashboard/manageDoctors.tsx"),
+    route("managepatient", "routes/admindashboard/managePatients.tsx"),
+    route("medicalanalytics", "routes/admindashboard/medicalAnalytics.tsx"),
   ]),
 ] satisfies RouteConfig;

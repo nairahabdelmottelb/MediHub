@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { Outlet, useLocation } from "react-router";
 import "../../components/dashboard.css";
 import Sidebar from "../Sidebar";
+import { useCurrentUser } from "~/api/queries/useCurrentUser";
+import { getFullName } from "~/utils/userUtils";
 
 interface AdminDashboardLayoutProps {
   children: React.ReactNode;
@@ -54,9 +56,13 @@ export default function AdminDashboard({
   const [activeSection, setActiveSection] = useState<PageTitle>("Dashboard");
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const location = useLocation();
+  const { data: currentUser, isLoading } = useCurrentUser();
+
   const page = location.pathname.split("/").pop() as string;
   const currentPage = adminPages.find((p) => p.path.includes(page));
   const bg = currentPage?.bg;
+
+  const displayName = currentUser ? getFullName(currentUser) : "Admin";
 
   // Update active section when route changes
   useEffect(() => {
@@ -67,9 +73,8 @@ export default function AdminDashboard({
 
   return (
     <div
-      className={`container-fluid home-page ${
-        isSidebarCollapsed ? "collapsed" : ""
-      }`}
+      className={`container-fluid home-page ${isSidebarCollapsed ? "collapsed" : ""
+        }`}
     >
       <div className="row">
         {/* Sidebar Navigation */}
@@ -83,9 +88,8 @@ export default function AdminDashboard({
               onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
             >
               <i
-                className={`fas fa-${
-                  isSidebarCollapsed ? "chevron-right" : "chevron-left"
-                }`}
+                className={`fas fa-${isSidebarCollapsed ? "chevron-right" : "chevron-left"
+                  }`}
               />
             </button>
           </div>
@@ -120,7 +124,7 @@ export default function AdminDashboard({
                     >
                       <i className="fas fa-user-shield" />
                     </div>
-                    <span>Admin</span>
+                    <span>{displayName}</span>
                   </button>
                   <ul className="dropdown-menu dropdown-menu-end">
                     <li>

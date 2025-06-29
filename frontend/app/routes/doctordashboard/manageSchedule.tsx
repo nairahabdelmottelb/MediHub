@@ -1,95 +1,119 @@
 import React, { useState } from "react";
 import { DashboardContainer } from "~/components/doctorDashboard/Containers";
-
-interface ScheduleSlot {
-  id: number;
-  date: string;
-  time: string;
-  patientName: string;
-  type: string;
-  status: "scheduled" | "available" | "blocked";
-}
+import { useCurrentDoctor } from "~/api/queries/useCurrentDoctor";
+import { useDoctorTimeslots, useCreateDoctorTimeslots, useUpdateTimeslot, useDeleteTimeslot, type TimeSlot, type CreateTimeSlotData } from "~/api/queries/useTimeslots";
 
 export default function ManageSchedule() {
+  const { data: currentDoctor, isLoading: doctorLoading } = useCurrentDoctor();
   const [selectedDate, setSelectedDate] = useState(
     new Date().toISOString().split("T")[0]
   );
-  const [scheduleSlots, setScheduleSlots] = useState<ScheduleSlot[]>([
-    {
-      id: 1,
-      date: "2024-01-15",
-      time: "09:00",
-      patientName: "John Doe",
-      type: "Consultation",
-      status: "scheduled",
-    },
-    {
-      id: 2,
-      date: "2024-01-15",
-      time: "10:00",
-      patientName: "",
-      type: "",
-      status: "available",
-    },
-    {
-      id: 3,
-      date: "2024-01-15",
-      time: "11:00",
-      patientName: "Jane Smith",
-      type: "Follow-up",
-      status: "scheduled",
-    },
-    {
-      id: 4,
-      date: "2024-01-15",
-      time: "14:00",
-      patientName: "",
-      type: "",
-      status: "blocked",
-    },
-  ]);
 
-  const [newSlot, setNewSlot] = useState({
-    date: "",
-    time: "",
-    status: "available" as "available" | "blocked",
+  // Calculate date range for fetching timeslots (current week)
+  const startOfWeek = new Date(selectedDate);
+  startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
+  const endOfWeek = new Date(startOfWeek);
+  endOfWeek.setDate(endOfWeek.getDate() + 6);
+
+  const { data: timeslots, isLoading: timeslotsLoading, error, refetch } = useDoctorTimeslots(
+    currentDoctor?.doctor_id || 0,
+    startOfWeek.toISOString().split("T")[0],
+    endOfWeek.toISOString().split("T")[0]
+  );
+
+  const createTimeslotsMutation = useCreateDoctorTimeslots(currentDoctor?.doctor_id || 0);
+  const updateTimeslotMutation = useUpdateTimeslot();
+  const deleteTimeslotMutation = useDeleteTimeslot();
+
+  const [newSlot, setNewSlot] = useState<CreateTimeSlotData>({
+    date: selectedDate,
+    start_hour: 9,
+    end_hour: 17,
+    duration_minutes: 30,
   });
 
-  const addSlot = () => {
-    if (newSlot.date && newSlot.time) {
-      const slot: ScheduleSlot = {
-        id: Date.now(),
-        date: newSlot.date,
-        time: newSlot.time,
-        patientName: "",
-        type: "",
-        status: newSlot.status,
-      };
-      setScheduleSlots([...scheduleSlots, slot]);
-      setNewSlot({ date: "", time: "", status: "available" });
+  const [showAdvancedModal, setShowAdvancedModal] = useState(false);
+
+  const handleCreateSlots = async () => {
+    if (!currentDoctor) return;
+
+    try {
+      await createTimeslotsMutation.mutateAsync(newSlot);
+      setNewSlot({
+        date: selectedDate,
+        start_hour: 9,
+        end_hour: 17,
+        duration_minutes: 30,
+      });
+      refetch();
+    } catch (error) {
+      console.error("Error creating timeslots:", error);
     }
   };
 
-  const removeSlot = (id: number) => {
-    setScheduleSlots(scheduleSlots.filter((slot) => slot.id !== id));
+  const handleToggleAvailability = async (slot: TimeSlot) => {
+    try {
+      await updateTimeslotMutation.mutateAsync({
+        slotId: slot.slot_id,
+        data: { is_available: !slot.is_available }
+      });
+      refetch();
+    } catch (error) {
+      console.error("Error updating timeslot:", error);
+    }
   };
 
-  const toggleSlotStatus = (id: number) => {
-    setScheduleSlots(
-      scheduleSlots.map((slot) =>
-        slot.id === id
-          ? {
-              ...slot,
-              status: slot.status === "available" ? "blocked" : "available",
-            }
-          : slot
-      )
+  const handleDeleteSlot = async (slotId: number) => {
+    try {
+      await deleteTimeslotMutation.mutateAsync(slotId);
+      refetch();
+    } catch (error) {
+      console.error("Error deleting timeslot:", error);
+    }
+  };
+
+  // Filter timeslots for selected date
+  const filteredSlots = timeslots?.filter(slot => {
+    const slotDate = new Date(slot.start_time).toISOString().split("T")[0];
+    return slotDate === selectedDate;
+  }) || [];
+
+  // Group slots by time for better display
+  const groupedSlots: Record<string, TimeSlot[]> = filteredSlots.reduce((acc, slot) => {
+    const time = new Date(slot.start_time).toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    });
+    if (!acc[time]) {
+      acc[time] = [];
+    }
+    acc[time].push(slot);
+    return acc;
+  }, {} as Record<string, TimeSlot[]>);
+
+  if (doctorLoading) {
+    return (
+      <DashboardContainer>
+        <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "400px" }}>
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      </DashboardContainer>
     );
-  };
+  }
 
-  const filteredSlots = scheduleSlots.filter(
-    (slot) => slot.date === selectedDate
-  );
+  if (!currentDoctor) {
+    return (
+      <DashboardContainer>
+        <div className="alert alert-danger">
+          <i className="fas fa-exclamation-triangle me-2"></i>
+          Unable to load doctor information. Please try again.
+        </div>
+      </DashboardContainer>
+    );
+  }
 
   return (
     <DashboardContainer>
@@ -102,7 +126,7 @@ export default function ManageSchedule() {
         <div className="col-md-4">
           <div className="card">
             <div className="card-header">
-              <h5 className="mb-0">Add Time Slot</h5>
+              <h5 className="mb-0">Add Time Slots</h5>
             </div>
             <div className="card-body">
               <div className="mb-3">
@@ -119,65 +143,84 @@ export default function ManageSchedule() {
                   }
                 />
               </div>
-              <div className="mb-3">
-                <label htmlFor="slotTime" className="form-label">
-                  Time
-                </label>
-                <input
-                  type="time"
-                  className="form-control"
-                  id="slotTime"
-                  value={newSlot.time}
-                  onChange={(e) =>
-                    setNewSlot({ ...newSlot, time: e.target.value })
-                  }
-                />
+              <div className="row">
+                <div className="col-6 mb-3">
+                  <label htmlFor="startHour" className="form-label">
+                    Start Hour
+                  </label>
+                  <select
+                    className="form-select"
+                    id="startHour"
+                    value={newSlot.start_hour}
+                    onChange={(e) =>
+                      setNewSlot({ ...newSlot, start_hour: parseInt(e.target.value) })
+                    }
+                  >
+                    {Array.from({ length: 24 }, (_, i) => (
+                      <option key={i} value={i}>
+                        {i.toString().padStart(2, '0')}:00
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="col-6 mb-3">
+                  <label htmlFor="endHour" className="form-label">
+                    End Hour
+                  </label>
+                  <select
+                    className="form-select"
+                    id="endHour"
+                    value={newSlot.end_hour}
+                    onChange={(e) =>
+                      setNewSlot({ ...newSlot, end_hour: parseInt(e.target.value) })
+                    }
+                  >
+                    {Array.from({ length: 24 }, (_, i) => (
+                      <option key={i} value={i + 1}>
+                        {(i + 1).toString().padStart(2, '0')}:00
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
               <div className="mb-3">
-                <label htmlFor="slotStatus" className="form-label">
-                  Status
+                <label htmlFor="duration" className="form-label">
+                  Slot Duration (minutes)
                 </label>
                 <select
                   className="form-select"
-                  id="slotStatus"
-                  value={newSlot.status}
+                  id="duration"
+                  value={newSlot.duration_minutes}
                   onChange={(e) =>
-                    setNewSlot({
-                      ...newSlot,
-                      status: e.target.value as "available" | "blocked",
-                    })
+                    setNewSlot({ ...newSlot, duration_minutes: parseInt(e.target.value) })
                   }
                 >
-                  <option value="available">Available</option>
-                  <option value="blocked">Blocked</option>
+                  <option value={15}>15 minutes</option>
+                  <option value={30}>30 minutes</option>
+                  <option value={45}>45 minutes</option>
+                  <option value={60}>60 minutes</option>
                 </select>
               </div>
-              <button className="btn btn-primary w-100" onClick={addSlot}>
-                <i className="fas fa-plus me-2"></i>
-                Add Slot
+              <button
+                className="btn btn-primary w-100"
+                onClick={handleCreateSlots}
+                disabled={createTimeslotsMutation.isPending}
+              >
+                {createTimeslotsMutation.isPending ? (
+                  <>
+                    <span className="spinner-border spinner-border-sm me-2" role="status"></span>
+                    Creating...
+                  </>
+                ) : (
+                  <>
+                    <i className="fas fa-plus me-2"></i>
+                    Create Time Slots
+                  </>
+                )}
               </button>
-            </div>
-          </div>
-
-          <div className="card mt-4">
-            <div className="card-header">
-              <h5 className="mb-0">Quick Actions</h5>
-            </div>
-            <div className="card-body">
-              <div className="d-grid gap-2">
-                <button className="btn btn-outline-primary">
-                  <i className="fas fa-download me-2"></i>
-                  Export Schedule
-                </button>
-                <button className="btn btn-outline-success">
-                  <i className="fas fa-sync me-2"></i>
-                  Sync Calendar
-                </button>
-                <button className="btn btn-outline-warning">
-                  <i className="fas fa-clock me-2"></i>
-                  Set Availability
-                </button>
-              </div>
+              <small className="text-muted mt-2 d-block">
+                This will create {Math.floor((newSlot.end_hour - newSlot.start_hour) * 60 / newSlot.duration_minutes)} slots
+              </small>
             </div>
           </div>
         </div>
@@ -197,61 +240,80 @@ export default function ManageSchedule() {
               </div>
             </div>
             <div className="card-body">
-              {filteredSlots.length === 0 ? (
+              {timeslotsLoading ? (
+                <div className="text-center py-4">
+                  <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+                </div>
+              ) : error ? (
+                <div className="alert alert-warning">
+                  <i className="fas fa-exclamation-triangle me-2"></i>
+                  Error loading timeslots. Please try again.
+                </div>
+              ) : filteredSlots.length === 0 ? (
                 <p className="text-muted text-center py-4">
-                  No appointments scheduled for this date.
+                  No time slots scheduled for this date.
                 </p>
               ) : (
                 <div className="schedule-slots">
-                  {filteredSlots.map((slot) => (
-                    <div
-                      key={slot.id}
-                      className={`d-flex justify-content-between align-items-center p-3 mb-2 rounded ${
-                        slot.status === "scheduled"
-                          ? "bg-primary bg-opacity-10 border border-primary"
-                          : slot.status === "blocked"
-                          ? "bg-danger bg-opacity-10 border border-danger"
-                          : "bg-success bg-opacity-10 border border-success"
-                      }`}
-                    >
-                      <div>
-                        <strong>{slot.time}</strong>
-                        {slot.patientName && (
-                          <div className="text-muted">
-                            {slot.patientName} - {slot.type}
-                          </div>
-                        )}
-                        {slot.status === "available" && (
-                          <div className="text-success">Available</div>
-                        )}
-                        {slot.status === "blocked" && (
-                          <div className="text-danger">Blocked</div>
-                        )}
-                      </div>
-                      <div className="btn-group btn-group-sm">
-                        {slot.status === "available" && (
-                          <button
-                            className="btn btn-outline-warning"
-                            onClick={() => toggleSlotStatus(slot.id)}
-                          >
-                            <i className="fas fa-ban"></i>
-                          </button>
-                        )}
-                        {slot.status === "blocked" && (
-                          <button
-                            className="btn btn-outline-success"
-                            onClick={() => toggleSlotStatus(slot.id)}
-                          >
-                            <i className="fas fa-check"></i>
-                          </button>
-                        )}
-                        <button
-                          className="btn btn-outline-danger"
-                          onClick={() => removeSlot(slot.id)}
+                  {Object.entries(groupedSlots).sort().map(([time, slots]) => (
+                    <div key={time} className="mb-2">
+                      {slots.map((slot) => (
+                        <div
+                          key={slot.slot_id}
+                          className={`d-flex justify-content-between align-items-center p-3 mb-2 rounded ${slot.appointment_id
+                            ? "bg-primary bg-opacity-10 border border-primary"
+                            : !slot.is_available
+                              ? "bg-danger bg-opacity-10 border border-danger"
+                              : "bg-success bg-opacity-10 border border-success"
+                            }`}
                         >
-                          <i className="fas fa-trash"></i>
-                        </button>
-                      </div>
+                          <div>
+                            <strong>
+                              {new Date(slot.start_time).toLocaleTimeString('en-US', {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                hour12: true
+                              })} - {new Date(slot.end_time).toLocaleTimeString('en-US', {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                hour12: true
+                              })}
+                            </strong>
+                            {slot.appointment_id && slot.patient_name && (
+                              <div className="text-muted">
+                                {slot.patient_name} - {slot.appointment_type || 'Appointment'}
+                              </div>
+                            )}
+                            {!slot.appointment_id && (
+                              <div className={slot.is_available ? "text-success" : "text-danger"}>
+                                {slot.is_available ? "Available" : "Blocked"}
+                              </div>
+                            )}
+                          </div>
+                          <div className="btn-group btn-group-sm">
+                            {!slot.appointment_id && (
+                              <button
+                                className={`btn ${slot.is_available ? "btn-outline-warning" : "btn-outline-success"}`}
+                                onClick={() => handleToggleAvailability(slot)}
+                                disabled={updateTimeslotMutation.isPending}
+                                title={slot.is_available ? "Block this slot" : "Make slot available"}
+                              >
+                                <i className={`fas ${slot.is_available ? "fa-ban" : "fa-check"}`}></i>
+                              </button>
+                            )}
+                            <button
+                              className="btn btn-outline-danger"
+                              onClick={() => handleDeleteSlot(slot.slot_id)}
+                              disabled={deleteTimeslotMutation.isPending}
+                              title="Delete this slot"
+                            >
+                              <i className="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   ))}
                 </div>

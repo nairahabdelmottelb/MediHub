@@ -5,6 +5,8 @@ import "../../components/dashboard.css";
 import "../../styles/sidebar.css";
 import Sidebar from "../Sidebar";
 import type { DashboardPageInfo } from "~/types/DashboardPageInfo";
+import { useCurrentUser } from "~/api/queries/useCurrentUser";
+import { getFullName } from "~/utils/userUtils";
 
 // Pages mapping for the Doctor's Portal with enhanced metadata
 const doctorPages = [
@@ -23,12 +25,26 @@ const doctorPages = [
     description: "Manage your appointments",
   },
   {
+    name: "Manage Schedule",
+    path: "/doctor/manageSchedule",
+    icon: "clock",
+    bg: "/images/schedule.jpg",
+    description: "Create and manage your time slots",
+  },
+  {
     name: "Patients",
     path: "/doctor/patients",
     icon: "users",
     bg: "/images/patients.jpg",
     description: "Patient management",
     children: [
+      {
+        name: "Appointments",
+        path: "/doctor/appointments",
+        icon: "calendar-check",
+        bg: "/images/appointments.jpg",
+        description: "View and manage patient appointments",
+      },
       {
         name: "Medical Records",
         path: "/doctor/records",
@@ -80,9 +96,13 @@ export default function DocDashboardLayout({
   const [activeSection, setActiveSection] = useState<PageTitle>("Dashboard");
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const location = useLocation();
+  const { data: currentUser, isLoading } = useCurrentUser();
+
   const page = location.pathname.split("/").pop() as string;
   const currentPage = doctorPages.find((p) => p.path.includes(page));
   const bg = currentPage?.bg;
+
+  const displayName = currentUser ? `Dr. ${currentUser.last_name}` : "Dr. ...";
 
   // Update active section when route changes
   useEffect(() => {
@@ -93,9 +113,8 @@ export default function DocDashboardLayout({
 
   return (
     <div
-      className={`container-fluid home-page ${
-        isSidebarCollapsed ? "collapsed" : ""
-      }`}
+      className={`container-fluid home-page ${isSidebarCollapsed ? "collapsed" : ""
+        }`}
     >
       <div className="row">
         {/* Sidebar Navigation */}
@@ -120,9 +139,8 @@ export default function DocDashboardLayout({
               onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
             >
               <i
-                className={`fas fa-${
-                  isSidebarCollapsed ? "chevron-right" : "chevron-left"
-                }`}
+                className={`fas fa-${isSidebarCollapsed ? "chevron-right" : "chevron-left"
+                  }`}
               />
             </button>
           </div>
@@ -157,7 +175,7 @@ export default function DocDashboardLayout({
                     >
                       <i className="fas fa-user-md" />
                     </div>
-                    <span>Dr. Smith</span>
+                    <span>{displayName}</span>
                   </button>
                   <ul className="dropdown-menu dropdown-menu-end">
                     <li>
