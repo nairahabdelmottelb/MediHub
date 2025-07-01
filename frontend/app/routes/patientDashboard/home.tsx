@@ -33,6 +33,10 @@ export default function Home() {
             <i className="fas fa-file-medical me-2" />
             New lab results available
           </div>
+          <div className="alert alert-success">
+            <i className="fas fa-robot me-2" />
+            Need health advice? Ask MediBot using the chat button!
+          </div>
         </div>
       </div>
     </div>

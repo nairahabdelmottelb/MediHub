@@ -29,7 +29,7 @@ async def get_departments(current_user: Dict = Depends(get_current_user)):
             cursor.execute(
                 """
                 SELECT department_id, department_name
-                FROM departments
+                FROM DEPARTMENTS
                 ORDER BY department_id
                 """
             )
@@ -47,7 +47,7 @@ async def get_department(department_id: int, current_user: Dict = Depends(get_cu
             cursor.execute(
                 """
                 SELECT department_id, department_name
-                FROM departments
+                FROM DEPARTMENTS
                 WHERE department_id = %s
                 """,
                 (department_id,)
@@ -71,7 +71,7 @@ async def create_department(department: DepartmentCreate, current_user: Dict = D
         with conn.cursor() as cursor:
             # Check if department name already exists
             cursor.execute(
-                "SELECT department_id FROM departments WHERE department_name = %s",
+                "SELECT department_id FROM DEPARTMENTS WHERE department_name = %s",
                 (department.department_name,)
             )
             if cursor.fetchone():
@@ -83,7 +83,7 @@ async def create_department(department: DepartmentCreate, current_user: Dict = D
             # Insert new department
             cursor.execute(
                 """
-                INSERT INTO departments (department_name)
+                INSERT INTO DEPARTMENTS (department_name)
                 VALUES (%s)
                 """,
                 (department.department_name,)
@@ -96,7 +96,7 @@ async def create_department(department: DepartmentCreate, current_user: Dict = D
             cursor.execute(
                 """
                 SELECT department_id, department_name
-                FROM departments
+                FROM DEPARTMENTS
                 WHERE department_id = %s
                 """,
                 (department_id,)
@@ -118,7 +118,7 @@ async def update_department(
         with conn.cursor() as cursor:
             # Check if department exists
             cursor.execute(
-                "SELECT department_id FROM departments WHERE department_id = %s",
+                "SELECT department_id FROM DEPARTMENTS WHERE department_id = %s",
                 (department_id,)
             )
             if not cursor.fetchone():
@@ -132,7 +132,7 @@ async def update_department(
                 cursor.execute(
                     """
                     SELECT department_id 
-                    FROM departments 
+                    FROM DEPARTMENTS 
                     WHERE department_name = %s AND department_id != %s
                     """,
                     (department.department_name, department_id)
@@ -148,7 +148,7 @@ async def update_department(
                 cursor.execute(
                     """
                     SELECT department_id, department_name
-                    FROM departments
+                    FROM DEPARTMENTS
                     WHERE department_id = %s
                     """,
                     (department_id,)
@@ -158,7 +158,7 @@ async def update_department(
             # Update department
             cursor.execute(
                 """
-                UPDATE departments
+                UPDATE DEPARTMENTS
                 SET department_name = %s
                 WHERE department_id = %s
                 """,
@@ -169,7 +169,7 @@ async def update_department(
             cursor.execute(
                 """
                 SELECT department_id, department_name
-                FROM departments
+                FROM DEPARTMENTS
                 WHERE department_id = %s
                 """,
                 (department_id,)
@@ -187,7 +187,7 @@ async def delete_department(department_id: int, current_user: Dict = Depends(get
         with conn.cursor() as cursor:
             # Check if department exists
             cursor.execute(
-                "SELECT department_id FROM departments WHERE department_id = %s",
+                "SELECT department_id FROM DEPARTMENTS WHERE department_id = %s",
                 (department_id,)
             )
             if not cursor.fetchone():
@@ -198,7 +198,7 @@ async def delete_department(department_id: int, current_user: Dict = Depends(get
             
             # Check if department is being used by doctors
             cursor.execute(
-                "SELECT doctor_id FROM doctors WHERE department_id = %s LIMIT 1",
+                "SELECT doctor_id FROM DOCTORS WHERE department_id = %s LIMIT 1",
                 (department_id,)
             )
             if cursor.fetchone():
@@ -209,7 +209,7 @@ async def delete_department(department_id: int, current_user: Dict = Depends(get
             
             # Delete department
             cursor.execute(
-                "DELETE FROM departments WHERE department_id = %s",
+                "DELETE FROM DEPARTMENTS WHERE department_id = %s",
                 (department_id,)
             )
     

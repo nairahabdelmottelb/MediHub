@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../index";
 import { useCurrentDoctor } from "./useCurrentDoctor";
 import axios from "axios";
+import { getModelApiUrl, MODEL_API_ENDPOINTS } from "../../utils/modelApiConfig";
 
 export interface DoctorAppointment {
   appointment_id: number;
@@ -76,7 +77,7 @@ export const useSummarizeNotes = () => {
     mutationFn: async (notes: string): Promise<string> => {
       try {
         // Simulate API call to summarization service
-        const response = await axios.post('https://api.local/summarize', {
+        const response = await axios.post(getModelApiUrl(MODEL_API_ENDPOINTS.SUMMARIZE), {
           text: notes,
           type: 'medical_notes'
         });

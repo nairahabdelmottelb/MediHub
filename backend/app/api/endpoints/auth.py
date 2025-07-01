@@ -256,97 +256,120 @@ async def signup(user_data: UserSignup):
     """
     Register a new user with patient role and create a patient record.
     """
+    logger.info(f"Signup attempt for email: {user_data.email}")
+    
     # Use transaction to ensure changes are committed
-    with db.transaction() as conn:
-        with conn.cursor() as cursor:
-            # First, check what roles exist in the database
-            cursor.execute("SELECT role_id, role_name FROM roles")
-            roles = cursor.fetchall()
-            
-            # Find the patient role ID
-            patient_role_id = None
-            for role in roles:
-                if role['role_name'].lower() == 'patient':
-                    patient_role_id = role['role_id']
-                    break
-            
-            # If patient role doesn't exist, use the first available role
-            if patient_role_id is None and roles:
-                patient_role_id = roles[0]['role_id']
-            
-            # If no roles exist at all, we can't create a user
-            if patient_role_id is None:
-                raise HTTPException(
-                    status_code=500,
-                    detail="No roles defined in the database. Cannot create user."
+    try:
+        with db.transaction() as conn:
+            with conn.cursor() as cursor:
+                # First, check what roles exist in the database
+                cursor.execute("SELECT role_id, role_name FROM ROLES")
+                roles = cursor.fetchall()
+                logger.info(f"Available roles: {roles}")
+                
+                # Find the patient role ID
+                patient_role_id = None
+                for role in roles:
+                    if role['role_name'].lower() == 'patient':
+                        patient_role_id = role['role_id']
+                        break
+                
+                # If patient role doesn't exist, use the first available role
+                if patient_role_id is None and roles:
+                    patient_role_id = roles[0]['role_id']
+                    logger.warning(f"Patient role not found, using role_id: {patient_role_id}")
+                
+                # If no roles exist at all, we can't create a user
+                if patient_role_id is None:
+                    logger.error("No roles defined in the database")
+                    raise HTTPException(
+                        status_code=500,
+                        detail="No roles defined in the database. Cannot create user."
+                    )
+                
+                # Check if email already exists
+                cursor.execute(
+                    "SELECT user_id FROM USERS WHERE email = %s",
+                    (user_data.email,)
                 )
-            
-            # Check if email already exists
-            cursor.execute(
-                "SELECT user_id FROM USERS WHERE email = %s",
-                (user_data.email,)
-            )
-            if cursor.fetchone():
-                raise HTTPException(
-                    status_code=400,
-                    detail="Email already registered"
-                )
-            
-            try:
-                # Hash the password - with error handling
-                hashed_password = security.get_password_hash(user_data.password)
-            except Exception as e:
-                logger.error(f"Password hashing error: {str(e)}")
-                # Fallback to a simple hash if bcrypt fails
-                import hashlib
-                hashed_password = hashlib.sha256(user_data.password.encode()).hexdigest()
-            
-            # Insert new user with patient role
-            cursor.execute(
-                """
-                INSERT INTO USERS (email, password, first_name, last_name, role_id, phone)
-                VALUES (%s, %s, %s, %s, %s, %s)
-                """,
-                (
-                    user_data.email,
-                    hashed_password,
-                    user_data.first_name,
-                    user_data.last_name,
-                    patient_role_id,
-                    user_data.contact_number
-                )
-            )
-            
-            # Get the last inserted ID
-            user_id = cursor.lastrowid
-            
-            # Create a patient record with only the fields that exist in your schema
-            if user_data.blood_type:
+                if cursor.fetchone():
+                    logger.warning(f"Email already registered: {user_data.email}")
+                    raise HTTPException(
+                        status_code=400,
+                        detail="Email already registered"
+                    )
+                
+                try:
+                    # Hash the password - with error handling
+                    hashed_password = security.get_password_hash(user_data.password)
+                except Exception as e:
+                    logger.error(f"Password hashing error: {str(e)}")
+                    # Fallback to a simple hash if bcrypt fails
+                    import hashlib
+                    hashed_password = hashlib.sha256(user_data.password.encode()).hexdigest()
+                
+                # Insert new user with patient role
+                logger.info(f"Creating user with phone: {user_data.contact_number}")
                 cursor.execute(
                     """
-                    INSERT INTO PATIENTS (user_id, date_of_birth, gender, blood_type)
-                    VALUES (%s, %s, %s, %s)
+                    INSERT INTO USERS (email, password, first_name, last_name, role_id, phone)
+                    VALUES (%s, %s, %s, %s, %s, %s)
                     """,
                     (
-                        user_id,
-                        user_data.date_of_birth,
-                        user_data.gender,
-                        user_data.blood_type
+                        user_data.email,
+                        hashed_password,
+                        user_data.first_name,
+                        user_data.last_name,
+                        patient_role_id,
+                        user_data.contact_number
                     )
                 )
-            else:
-                cursor.execute(
-                    """
-                    INSERT INTO PATIENTS (user_id, date_of_birth, gender)
-                    VALUES (%s, %s, %s)
-                    """,
-                    (
-                        user_id,
-                        user_data.date_of_birth,
-                        user_data.gender
+                
+                # Get the last inserted ID
+                user_id = cursor.lastrowid
+                
+                # Normalize gender value to match database enum
+                gender_normalized = user_data.gender.capitalize()
+                if gender_normalized not in ['Male', 'Female', 'Other']:
+                    # Default to 'Other' if not recognized
+                    gender_normalized = 'Other'
+                
+                # Create a patient record with only the fields that exist in your schema
+                if user_data.blood_type:
+                    cursor.execute(
+                        """
+                        INSERT INTO PATIENTS (user_id, date_of_birth, gender, blood_type)
+                        VALUES (%s, %s, %s, %s)
+                        """,
+                        (
+                            user_id,
+                            user_data.date_of_birth,
+                            gender_normalized,
+                            user_data.blood_type
+                        )
                     )
-                )
-            
+                else:
+                    cursor.execute(
+                        """
+                        INSERT INTO PATIENTS (user_id, date_of_birth, gender)
+                        VALUES (%s, %s, %s)
+                        """,
+                        (
+                            user_id,
+                            user_data.date_of_birth,
+                            gender_normalized
+                        )
+                    )
+                
+                logger.info(f"Successfully created user {user_id} and patient record")
+                
+    except Exception as e:
+        logger.error(f"Signup error: {str(e)}")
+        raise HTTPException(
+            status_code=400,
+            detail=f"Registration failed: {str(e)}"
+        )
+    
     return {
         "user_id": user_id,
         "email": user_data.email,

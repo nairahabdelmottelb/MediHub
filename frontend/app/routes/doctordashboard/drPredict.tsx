@@ -1,25 +1,40 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useCurrentDoctor } from "~/api/queries/useCurrentDoctor";
 import axios from "axios";
+import { getModelApiUrl, MODEL_API_ENDPOINTS } from "~/utils/modelApiConfig";
 
 export default function DrPredict() {
   const { data: currentDoctor, isLoading: doctorLoading } = useCurrentDoctor();
   const [image, setImage] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [result, setResult] = useState<string>("");
+  const [resultImage, setResultImage] = useState<string | null>(null);
+  const [analysisDetails, setAnalysisDetails] = useState<any>(null);
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState(false);
+
+  // Cleanup function for image URLs to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      if (preview) {
+        URL.revokeObjectURL(preview);
+      }
+      if (resultImage) {
+        URL.revokeObjectURL(resultImage);
+      }
+    };
+  }, [preview, resultImage]);
 
   // Function to determine the correct API endpoint based on doctor's specialty
   const getApiEndpoint = (specialtyName: string): string => {
     const specialty = specialtyName.toLowerCase();
 
     if (specialty.includes('neurol')) {
-      return 'https://api.local/neurology';
+      return getModelApiUrl(MODEL_API_ENDPOINTS.NEUROLOGY);
     } else if (specialty.includes('oncol')) {
-      return 'https://api.local/oncology';
+      return getModelApiUrl(MODEL_API_ENDPOINTS.ONCOLOGY);
     } else if (specialty.includes('breast')) {
-      return 'https://api.local/breast';
+      return getModelApiUrl(MODEL_API_ENDPOINTS.BREAST);
     } else {
       // Throw error for unsupported specialties
       throw new Error(`Prediction model not available for ${specialtyName} specialty. Only Neurology, Oncology, and Breast specialties are supported.`);
@@ -28,6 +43,8 @@ export default function DrPredict() {
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setResult("");
+    setResultImage(null);
+    setAnalysisDetails(null);
     setError("");
     if (e.target.files && e.target.files[0]) {
       setImage(e.target.files[0]);
@@ -73,45 +90,74 @@ export default function DrPredict() {
       formData.append('doctor_id', currentDoctor.doctor_id.toString());
       formData.append('specialty', currentDoctor.spec_name);
 
-      // Make the API call
+      // Make the API call expecting an image response
       const response = await axios.post(apiEndpoint, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
-        timeout: 30000, // 30 second timeout
+        responseType: 'blob', // Important: expect binary data (image)
+        timeout: 60000, // 60 second timeout for ML processing
       });
 
-      console.log('Prediction response:', response.data);
+      console.log('Prediction response headers:', response.headers);
 
-      // Handle the response
-      if (response.data && response.data.prediction) {
-        setResult(`Predicted diagnosis: ${response.data.prediction}`);
-      } else if (response.data && response.data.result) {
-        setResult(`Predicted diagnosis: ${response.data.result}`);
-      } else if (response.data && response.data.diagnosis) {
-        setResult(`Predicted diagnosis: ${response.data.diagnosis}`);
-      } else {
-        setResult(`Analysis complete. Raw response: ${JSON.stringify(response.data)}`);
+      // Extract analysis results from response headers
+      const analysisResult = response.headers['x-analysis-result'] || '';
+      const riskLevel = response.headers['x-risk-level'] || '';
+      const tumorDetected = response.headers['x-tumor-detected'] || '';
+      const tumorType = response.headers['x-tumor-type'] || '';
+
+      // Create a URL for the result image
+      const imageUrl = URL.createObjectURL(response.data);
+      setResultImage(imageUrl);
+
+      // Set analysis details
+      setAnalysisDetails({
+        analysisResult,
+        riskLevel,
+        tumorDetected,
+        tumorType,
+      });
+
+      // Create a summary result message
+      let resultMessage = `Analysis completed successfully!`;
+      if (analysisResult) {
+        resultMessage += `\n${analysisResult}`;
       }
+      if (riskLevel) {
+        resultMessage += `\nRisk Level: ${riskLevel}`;
+      }
+      if (tumorDetected && tumorDetected !== 'false') {
+        resultMessage += `\nTumor Detected: ${tumorDetected}`;
+        if (tumorType && tumorType !== 'none') {
+          resultMessage += `\nTumor Type: ${tumorType}`;
+        }
+      }
+
+      setResult(resultMessage);
 
     } catch (err: any) {
       console.error('Prediction API error:', err);
 
       if (err.code === 'ECONNABORTED') {
-        setError("Request timed out. Please try again with a smaller image.");
+        setError("Request timed out. Please try again with a smaller image or check your connection.");
       } else if (err.response) {
         const status = err.response.status;
-        const errorMessage = err.response.data?.error || err.response.data?.message || 'Prediction service error';
 
         if (status === 404) {
           setError(`The diagnostic model for ${currentDoctor.spec_name} is not available. Please contact system administrator.`);
+        } else if (status === 503) {
+          setError(`The diagnostic model for ${currentDoctor.spec_name} is not loaded or healthy. Please try again later.`);
         } else if (status >= 500) {
           setError(`Server error (${status}): The prediction service is temporarily unavailable.`);
+        } else if (status === 400) {
+          setError("Invalid image file. Please upload a valid medical image.");
         } else {
+          const errorMessage = err.response.data?.detail || err.response.data?.error || err.response.data?.message || 'Unknown error';
           setError(`Failed to get prediction (${status}): ${errorMessage}`);
         }
       } else if (err.request) {
-        setError("Cannot connect to prediction service. Please check if the diagnostic models are running.");
+        setError("Cannot connect to prediction service. Please check if the diagnostic models are running and accessible.");
       } else {
         setError("Failed to get prediction. Please try again.");
       }
@@ -200,13 +246,84 @@ export default function DrPredict() {
                   </button>
                 </div>
               </form>
+
+              {/* Analysis Results */}
               {result && (
                 <div className="alert alert-success mt-3" role="alert">
-                  {result}
+                  <h6><i className="fas fa-check-circle me-2"></i>Analysis Results</h6>
+                  <pre style={{ whiteSpace: 'pre-line', fontSize: '0.9rem' }}>{result}</pre>
                 </div>
               )}
+
+              {/* Result Image */}
+              {resultImage && (
+                <div className="mt-3">
+                  <h6>Detailed Analysis Visualization:</h6>
+                  <div className="text-center">
+                    <img
+                      src={resultImage}
+                      alt="Analysis Result"
+                      style={{ maxWidth: "100%", height: "auto", border: "1px solid #ddd", borderRadius: "8px" }}
+                    />
+                  </div>
+
+                  {/* Download Link */}
+                  <div className="text-center mt-2">
+                    <a
+                      href={resultImage}
+                      download={`analysis_result_${Date.now()}.png`}
+                      className="btn btn-outline-primary btn-sm"
+                    >
+                      <i className="fas fa-download me-1"></i>
+                      Download Result
+                    </a>
+                  </div>
+                </div>
+              )}
+
+              {/* Analysis Details */}
+              {analysisDetails && (
+                <div className="mt-3">
+                  <h6>Analysis Details:</h6>
+                  <div className="row">
+                    {analysisDetails.analysisResult && (
+                      <div className="col-12 mb-2">
+                        <small className="text-muted">Classification:</small>
+                        <div className="fw-bold">{analysisDetails.analysisResult}</div>
+                      </div>
+                    )}
+                    {analysisDetails.riskLevel && (
+                      <div className="col-md-6 mb-2">
+                        <small className="text-muted">Risk Level:</small>
+                        <div className={`fw-bold ${analysisDetails.riskLevel.includes('HIGH') ? 'text-danger' :
+                            analysisDetails.riskLevel.includes('MODERATE') ? 'text-warning' :
+                              'text-success'
+                          }`}>
+                          {analysisDetails.riskLevel}
+                        </div>
+                      </div>
+                    )}
+                    {analysisDetails.tumorDetected && (
+                      <div className="col-md-6 mb-2">
+                        <small className="text-muted">Tumor Status:</small>
+                        <div className={`fw-bold ${analysisDetails.tumorDetected === 'true' ? 'text-danger' : 'text-success'}`}>
+                          {analysisDetails.tumorDetected === 'true' ? 'Detected' : 'Not Detected'}
+                        </div>
+                      </div>
+                    )}
+                    {analysisDetails.tumorType && analysisDetails.tumorType !== 'none' && (
+                      <div className="col-12 mb-2">
+                        <small className="text-muted">Tumor Type:</small>
+                        <div className="fw-bold text-info">{analysisDetails.tumorType}</div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
               {error && (
                 <div className="alert alert-danger mt-3" role="alert">
+                  <i className="fas fa-exclamation-triangle me-2"></i>
                   {error}
                 </div>
               )}

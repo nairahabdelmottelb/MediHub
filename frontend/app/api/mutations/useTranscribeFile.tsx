@@ -1,5 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
+import { getModelApiUrl, MODEL_API_ENDPOINTS } from "../../utils/modelApiConfig";
 
 export interface TranscriptionRequest {
   file: File;
@@ -7,8 +8,8 @@ export interface TranscriptionRequest {
 
 export interface TranscriptionResponse {
   text: string;
-  summary: string;
-  keyPoints: string[];
+  summary?: string;
+  keyPoints?: string[];
   timestamp: string;
   confidence?: number;
   duration?: number;
@@ -25,14 +26,33 @@ export const useTranscribeFile = () => {
         formData.append("language", "en"); // Default to English
         formData.append("format", "detailed"); // Request detailed response with summary and key points
 
-        const response = await axios.post("https://api.local/transcriptions", formData, {
+        const response = await axios.post(getModelApiUrl(MODEL_API_ENDPOINTS.TRANSCRIPTIONS), formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
           timeout: 120000, // 2 minutes timeout for file processing
         });
 
-        return response.data;
+        // Ensure the response has the required fields
+        const data = response.data;
+        if (!data || typeof data !== 'object') {
+          throw new Error('Invalid API response format');
+        }
+
+        // Normalize the response to match our interface
+        const normalizedResponse: TranscriptionResponse = {
+          text: data.text || data.transcription || '',
+          summary: data.summary || 'Summary not available',
+          keyPoints: Array.isArray(data.keyPoints) ? data.keyPoints :
+            Array.isArray(data.key_points) ? data.key_points :
+              [],
+          timestamp: data.timestamp || new Date().toLocaleString(),
+          confidence: data.confidence || undefined,
+          duration: data.duration || undefined,
+          language: data.language || 'en'
+        };
+
+        return normalizedResponse;
       } catch (error) {
         console.error("Transcription API error:", error);
 

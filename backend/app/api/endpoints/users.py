@@ -74,6 +74,46 @@ async def get_current_user_info(current_user: Dict = Depends(get_current_user)):
         "phone": current_user.get("phone", "")
     }
 
+@router.get("/me/patient", response_model=Dict)
+async def get_current_user_patient_info(current_user: Dict = Depends(get_current_user)):
+    """
+    Get patient information for the currently authenticated user.
+    Only accessible by users with patient role.
+    """
+    if current_user.get("role_name", "").lower() != "patient":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="This endpoint is only accessible by patients"
+        )
+    
+    with db.get_db() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(
+                """
+                SELECT patient_id, date_of_birth, gender, blood_type, insurance_id, data_anonym_flag
+                FROM PATIENTS
+                WHERE user_id = %s
+                """,
+                (current_user["user_id"],)
+            )
+            patient = cursor.fetchone()
+            
+            if not patient:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Patient record not found for current user"
+                )
+    
+    return {
+        "patient_id": patient["patient_id"],
+        "user_id": current_user["user_id"],
+        "date_of_birth": patient["date_of_birth"],
+        "gender": patient["gender"],
+        "blood_type": patient["blood_type"],
+        "insurance_id": patient["insurance_id"],
+        "data_anonym_flag": patient["data_anonym_flag"]
+    }
+
 @router.get("/", response_model=List[Dict])
 async def get_users(current_user: Dict = Depends(get_current_user)):
     """
@@ -92,8 +132,8 @@ async def get_users(current_user: Dict = Depends(get_current_user)):
             cursor.execute(
                 """
                 SELECT u.user_id, u.email, u.first_name, u.last_name, r.role_name
-                FROM users u
-                JOIN roles r ON u.role_id = r.role_id
+                FROM USERS u
+                JOIN ROLES r ON u.role_id = r.role_id
                 """
             )
             users = cursor.fetchall()
@@ -117,8 +157,8 @@ async def get_user(user_id: int, current_user: Dict = Depends(get_current_user))
             cursor.execute(
                 """
                 SELECT u.user_id, u.email, u.first_name, u.last_name, r.role_name
-                FROM users u
-                JOIN roles r ON u.role_id = r.role_id
+                FROM USERS u
+                JOIN ROLES r ON u.role_id = r.role_id
                 WHERE u.user_id = %s
                 """,
                 (user_id,)
@@ -152,7 +192,7 @@ async def create_user(user: UserCreate, current_user: Dict = Depends(get_current
         with conn.cursor() as cursor:
             # Check if email already exists
             cursor.execute(
-                "SELECT user_id FROM users WHERE email = %s",
+                "SELECT user_id FROM USERS WHERE email = %s",
                 (user.email,)
             )
             if cursor.fetchone():
@@ -163,7 +203,7 @@ async def create_user(user: UserCreate, current_user: Dict = Depends(get_current
             
             # Check if role exists
             cursor.execute(
-                "SELECT role_id, role_name FROM roles WHERE role_id = %s",
+                "SELECT role_id, role_name FROM ROLES WHERE role_id = %s",
                 (user.role_id,)
             )
             role = cursor.fetchone()
@@ -240,7 +280,7 @@ async def create_user(user: UserCreate, current_user: Dict = Depends(get_current
             # Insert new user
             cursor.execute(
                 """
-                INSERT INTO users (email, password, first_name, last_name, phone, role_id)
+                INSERT INTO USERS (email, password, first_name, last_name, phone, role_id)
                 VALUES (%s, %s, %s, %s, %s, %s)
                 """,
                 (
@@ -260,7 +300,7 @@ async def create_user(user: UserCreate, current_user: Dict = Depends(get_current
             if is_doctor:
                 cursor.execute(
                     """
-                    INSERT INTO doctors (user_id, spec_id, department_id, years_of_exp)
+                    INSERT INTO DOCTORS (user_id, spec_id, department_id, years_of_exp)
                     VALUES (%s, %s, %s, %s)
                     """,
                     (
@@ -308,8 +348,8 @@ async def create_user(user: UserCreate, current_user: Dict = Depends(get_current
                 """
                 SELECT u.user_id, u.email, u.first_name, u.last_name, 
                        u.phone, u.role_id, r.role_name
-                FROM users u
-                JOIN roles r ON u.role_id = r.role_id
+                FROM USERS u
+                JOIN ROLES r ON u.role_id = r.role_id
                 WHERE u.user_id = %s
                 """,
                 (user_id,)
@@ -331,7 +371,7 @@ async def update_user(
         with conn.cursor() as cursor:
             # Check if user exists
             cursor.execute(
-                "SELECT user_id FROM users WHERE user_id = %s",
+                "SELECT user_id FROM USERS WHERE user_id = %s",
                 (user_id,)
             )
             if not cursor.fetchone():
@@ -343,7 +383,7 @@ async def update_user(
             # Check if email already exists (if provided)
             if user.email:
                 cursor.execute(
-                    "SELECT user_id FROM users WHERE email = %s AND user_id != %s",
+                    "SELECT user_id FROM USERS WHERE email = %s AND user_id != %s",
                     (user.email, user_id)
                 )
                 if cursor.fetchone():
@@ -355,7 +395,7 @@ async def update_user(
             # Check if role exists (if provided)
             if user.role_id:
                 cursor.execute(
-                    "SELECT role_id FROM roles WHERE role_id = %s",
+                    "SELECT role_id FROM ROLES WHERE role_id = %s",
                     (user.role_id,)
                 )
                 if not cursor.fetchone():
@@ -394,8 +434,8 @@ async def update_user(
                     """
                     SELECT u.user_id, u.email, u.first_name, u.last_name, 
                            u.phone, u.role_id, r.role_name
-                    FROM users u
-                    JOIN roles r ON u.role_id = r.role_id
+                    FROM USERS u
+                    JOIN ROLES r ON u.role_id = r.role_id
                     WHERE u.user_id = %s
                     """,
                     (user_id,)
@@ -408,7 +448,7 @@ async def update_user(
             # Update user
             cursor.execute(
                 f"""
-                UPDATE users
+                UPDATE USERS
                 SET {", ".join(update_fields)}
                 WHERE user_id = %s
                 """,
@@ -420,8 +460,8 @@ async def update_user(
                 """
                 SELECT u.user_id, u.email, u.first_name, u.last_name, 
                        u.phone, u.role_id, r.role_name
-                FROM users u
-                JOIN roles r ON u.role_id = r.role_id
+                FROM USERS u
+                JOIN ROLES r ON u.role_id = r.role_id
                 WHERE u.user_id = %s
                 """,
                 (user_id,)
@@ -439,7 +479,7 @@ async def delete_user(user_id: int, current_user: Dict = Depends(get_current_adm
         with conn.cursor() as cursor:
             # Check if user exists
             cursor.execute(
-                "SELECT user_id FROM users WHERE user_id = %s",
+                "SELECT user_id FROM USERS WHERE user_id = %s",
                 (user_id,)
             )
             if not cursor.fetchone():
@@ -450,7 +490,7 @@ async def delete_user(user_id: int, current_user: Dict = Depends(get_current_adm
             
             # Delete user
             cursor.execute(
-                "DELETE FROM users WHERE user_id = %s",
+                "DELETE FROM USERS WHERE user_id = %s",
                 (user_id,)
             )
     
@@ -465,7 +505,7 @@ async def get_doctor_role_id(current_user: Dict = Depends(get_current_user)):
     with db.get_db() as conn:
         with conn.cursor() as cursor:
             cursor.execute(
-                "SELECT role_id FROM roles WHERE LOWER(role_name) = 'doctor'"
+                "SELECT role_id FROM ROLES WHERE LOWER(role_name) = 'doctor'"
             )
             role = cursor.fetchone()
     
@@ -488,7 +528,7 @@ async def get_doctor_reference_data(current_user: Dict = Depends(get_current_use
         with conn.cursor() as cursor:
             # Get doctor role ID
             cursor.execute(
-                "SELECT role_id FROM roles WHERE LOWER(role_name) = 'doctor'"
+                "SELECT role_id FROM ROLES WHERE LOWER(role_name) = 'doctor'"
             )
             role = cursor.fetchone()
             doctor_role_id = role["role_id"] if role else None
@@ -520,11 +560,11 @@ async def get_patient_role_id(current_user: Dict = Depends(get_current_user)):
     with db.get_db() as conn:
         with conn.cursor() as cursor:
             cursor.execute(
-                "SELECT role_id FROM roles WHERE LOWER(role_name) = 'patient'"
+                "SELECT role_id FROM ROLES WHERE LOWER(role_name) = 'patient'"
             )
             role = cursor.fetchone()
     
     if not role:
         return {"message": "Patient role not found in the database"}
     
-    return {"role_id": role["role_id"], "role_name": "patient"} 
+    return {"role_id": role["role_id"], "role_name": "patient"}

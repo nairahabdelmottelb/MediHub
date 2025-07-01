@@ -39,7 +39,7 @@ async def get_roles(current_user: Dict = Depends(get_current_user)):
             cursor.execute(
                 """
                 SELECT role_id, role_name
-                FROM roles
+                FROM ROLES
                 ORDER BY role_id
                 """
             )
@@ -57,7 +57,7 @@ async def get_role(role_id: int, current_user: Dict = Depends(get_current_user))
             cursor.execute(
                 """
                 SELECT role_id, role_name
-                FROM roles
+                FROM ROLES
                 WHERE role_id = %s
                 """,
                 (role_id,)
@@ -81,7 +81,7 @@ async def create_role(role: RoleCreate, current_user: Dict = Depends(get_current
         with conn.cursor() as cursor:
             # Check if role name already exists
             cursor.execute(
-                "SELECT role_id FROM roles WHERE role_name = %s",
+                "SELECT role_id FROM ROLES WHERE role_name = %s",
                 (role.role_name,)
             )
             if cursor.fetchone():
@@ -93,7 +93,7 @@ async def create_role(role: RoleCreate, current_user: Dict = Depends(get_current
             # Insert new role
             cursor.execute(
                 """
-                INSERT INTO roles (role_name)
+                INSERT INTO ROLES (role_name)
                 VALUES (%s)
                 """,
                 (role.role_name,)
@@ -106,7 +106,7 @@ async def create_role(role: RoleCreate, current_user: Dict = Depends(get_current
             cursor.execute(
                 """
                 SELECT role_id, role_name
-                FROM roles
+                FROM ROLES
                 WHERE role_id = %s
                 """,
                 (role_id,)
@@ -128,7 +128,7 @@ async def update_role(
         with conn.cursor() as cursor:
             # Check if role exists
             cursor.execute(
-                "SELECT role_id FROM roles WHERE role_id = %s",
+                "SELECT role_id FROM ROLES WHERE role_id = %s",
                 (role_id,)
             )
             if not cursor.fetchone():
@@ -140,7 +140,7 @@ async def update_role(
             # Check if new role name already exists (if provided)
             if role.role_name:
                 cursor.execute(
-                    "SELECT role_id FROM roles WHERE role_name = %s AND role_id != %s",
+                    "SELECT role_id FROM ROLES WHERE role_name = %s AND role_id != %s",
                     (role.role_name, role_id)
                 )
                 if cursor.fetchone():
@@ -153,7 +153,7 @@ async def update_role(
             if role.role_name is not None:
                 cursor.execute(
                     """
-                    UPDATE roles
+                    UPDATE ROLES
                     SET role_name = %s
                     WHERE role_id = %s
                     """,
@@ -164,7 +164,7 @@ async def update_role(
             cursor.execute(
                 """
                 SELECT role_id, role_name
-                FROM roles
+                FROM ROLES
                 WHERE role_id = %s
                 """,
                 (role_id,)
@@ -182,7 +182,7 @@ async def delete_role(role_id: int, current_user: Dict = Depends(get_current_adm
         with conn.cursor() as cursor:
             # Check if role exists
             cursor.execute(
-                "SELECT role_id FROM roles WHERE role_id = %s",
+                "SELECT role_id FROM ROLES WHERE role_id = %s",
                 (role_id,)
             )
             if not cursor.fetchone():
@@ -193,7 +193,7 @@ async def delete_role(role_id: int, current_user: Dict = Depends(get_current_adm
             
             # Check if role is in use
             cursor.execute(
-                "SELECT COUNT(*) as count FROM users WHERE role_id = %s",
+                "SELECT COUNT(*) as count FROM USERS WHERE role_id = %s",
                 (role_id,)
             )
             result = cursor.fetchone()
@@ -205,7 +205,7 @@ async def delete_role(role_id: int, current_user: Dict = Depends(get_current_adm
             
             # Delete role
             cursor.execute(
-                "DELETE FROM roles WHERE role_id = %s",
+                "DELETE FROM ROLES WHERE role_id = %s",
                 (role_id,)
             )
     
