@@ -45,7 +45,24 @@ export default function DrTranscriptions() {
 
     try {
       const result = await transcribeMutation.mutateAsync({ file });
-      setTranscriptionResults((prev) => [result, ...prev]);
+
+      // Validate the result before adding it to state
+      if (!result || typeof result !== 'object') {
+        throw new Error('Invalid response from transcription service');
+      }
+
+      // Ensure required fields exist
+      const validatedResult: TranscriptionResponse = {
+        text: result.text || 'Transcription not available',
+        summary: result.summary || 'Summary not available',
+        keyPoints: Array.isArray(result.keyPoints) ? result.keyPoints : [],
+        timestamp: result.timestamp || new Date().toLocaleString(),
+        confidence: result.confidence,
+        duration: result.duration,
+        language: result.language
+      };
+
+      setTranscriptionResults((prev) => [validatedResult, ...prev]);
       setFile(null);
 
       // Reset the file input
@@ -67,13 +84,15 @@ ${result.duration ? `Duration: ${result.duration} seconds` : ''}
 ${result.language ? `Language: ${result.language}` : ''}
 
 SUMMARY:
-${result.summary}
+${result.summary || 'Summary not available'}
 
 KEY POINTS:
-${result.keyPoints.map(point => `• ${point}`).join('\n')}
+${result.keyPoints && Array.isArray(result.keyPoints) && result.keyPoints.length > 0
+        ? result.keyPoints.map(point => `• ${point}`).join('\n')
+        : '• No key points available'}
 
 FULL TRANSCRIPTION:
-${result.text}
+${result.text || 'Transcription not available'}
 `;
 
     const blob = new Blob([content], { type: 'text/plain' });
@@ -208,20 +227,29 @@ ${result.text}
                       <i className="fas fa-clipboard-list me-2"></i>
                       Summary
                     </h5>
-                    <p className="card-text">{result.summary}</p>
+                    <p className="card-text">
+                      {result.summary || 'Summary not available for this transcription.'}
+                    </p>
 
                     <h5 className="card-title mt-4">
                       <i className="fas fa-list-ul me-2"></i>
                       Key Points
                     </h5>
-                    <ul className="list-group list-group-flush">
-                      {result.keyPoints.map((point, i) => (
-                        <li key={i} className="list-group-item d-flex align-items-center">
-                          <i className="fas fa-check-circle text-success me-2"></i>
-                          {point}
-                        </li>
-                      ))}
-                    </ul>
+                    {result.keyPoints && Array.isArray(result.keyPoints) && result.keyPoints.length > 0 ? (
+                      <ul className="list-group list-group-flush">
+                        {result.keyPoints.map((point, i) => (
+                          <li key={i} className="list-group-item d-flex align-items-center">
+                            <i className="fas fa-check-circle text-success me-2"></i>
+                            {point}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <div className="alert alert-info">
+                        <i className="fas fa-info-circle me-2"></i>
+                        No key points available for this transcription.
+                      </div>
+                    )}
 
                     <h5 className="card-title mt-4">
                       <i className="fas fa-file-audio me-2"></i>

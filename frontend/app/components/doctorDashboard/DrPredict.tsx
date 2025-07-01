@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useCurrentDoctor } from "~/api/queries/useCurrentDoctor";
 import axios from "axios";
+import { getModelApiUrl, MODEL_API_ENDPOINTS } from "~/utils/modelApiConfig";
 
 export default function DrPredict() {
   const { data: currentDoctor, isLoading: doctorLoading } = useCurrentDoctor();
@@ -15,11 +16,11 @@ export default function DrPredict() {
     const specialty = specialtyName.toLowerCase();
 
     if (specialty.includes('neurol')) {
-      return 'https://api.local/neurology';
+      return getModelApiUrl(MODEL_API_ENDPOINTS.NEUROLOGY);
     } else if (specialty.includes('oncol')) {
-      return 'https://api.local/oncology';
+      return getModelApiUrl(MODEL_API_ENDPOINTS.ONCOLOGY);
     } else if (specialty.includes('breast')) {
-      return 'https://api.local/breast';
+      return getModelApiUrl(MODEL_API_ENDPOINTS.BREAST);
     } else {
       // Throw error for unsupported specialties
       throw new Error(`Prediction model not available for ${specialtyName} specialty. Only Neurology, Oncology, and Breast specialties are supported.`);

@@ -730,4 +730,104 @@ async def delete_patient_medication(
     return {
         "medication_id": medication_id,
         "message": "Medication deleted successfully"
-    } 
+    }
+
+@router.delete("/{patient_id}", response_model=Dict)
+async def delete_patient(
+    patient_id: int,
+    current_user: Dict = Depends(get_current_admin)
+):
+    """
+    Delete a patient and all associated records (admin only).
+    This will cascade delete all related data.
+    """
+    logger.info(f"Admin {current_user.get('user_id')} attempting to delete patient {patient_id}")
+    
+    with db.get_db() as conn:
+        with conn.cursor() as cursor:
+            # First, check if patient exists
+            cursor.execute(
+                "SELECT patient_id, user_id FROM PATIENTS WHERE patient_id = %s",
+                (patient_id,)
+            )
+            patient = cursor.fetchone()
+            
+            if not patient:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Patient not found"
+                )
+            
+            user_id = patient['user_id']
+            
+            try:
+                # Delete in order to respect foreign key constraints
+                # 1. Delete chatbot logs
+                cursor.execute(
+                    "DELETE FROM CHATBOT_LOGS WHERE patient_id = %s",
+                    (patient_id,)
+                )
+                
+                # 2. Delete patient allergies
+                cursor.execute(
+                    "DELETE FROM PATIENT_ALLERGIES WHERE patient_id = %s", 
+                    (patient_id,)
+                )
+                
+                # 3. Delete patient medications
+                cursor.execute(
+                    "DELETE FROM PATIENT_MEDS WHERE patient_id = %s",
+                    (patient_id,)
+                )
+                
+                # 4. Delete billing records (and payments cascade through billing)
+                cursor.execute(
+                    "DELETE FROM BILLING WHERE patient_id = %s",
+                    (patient_id,)
+                )
+                
+                # 5. Delete diagnosis AI records (feedback will cascade)
+                cursor.execute(
+                    "DELETE FROM DIAGNOSIS_AI WHERE patient_id = %s",
+                    (patient_id,)
+                )
+                
+                # 6. Delete medical records
+                cursor.execute(
+                    "DELETE FROM MEDICAL_RECORDS WHERE patient_id = %s",
+                    (patient_id,)
+                )
+                
+                # 7. Delete appointments
+                cursor.execute(
+                    "DELETE FROM APPOINTMENTS WHERE patient_id = %s",
+                    (patient_id,)
+                )
+                
+                # 8. Delete patient record
+                cursor.execute(
+                    "DELETE FROM PATIENTS WHERE patient_id = %s",
+                    (patient_id,)
+                )
+                
+                # 9. Finally, delete user record
+                cursor.execute(
+                    "DELETE FROM USERS WHERE user_id = %s",
+                    (user_id,)
+                )
+                
+                conn.commit()
+                logger.info(f"Patient {patient_id} and all associated records deleted successfully")
+                
+            except Exception as e:
+                conn.rollback()
+                logger.error(f"Error deleting patient {patient_id}: {str(e)}")
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail=f"Error deleting patient: {str(e)}"
+                )
+    
+    return {
+        "patient_id": patient_id,
+        "message": "Patient and all associated records deleted successfully"
+    }

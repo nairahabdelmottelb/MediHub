@@ -1,8 +1,6 @@
 DROP DATABASE IF EXISTS medihub;
 
-CREATE DATABASE medihub
-    DEFAULT CHARACTER SET = 'utf8mb4';
-
+CREATE DATABASE medihub DEFAULT CHARACTER SET = 'utf8mb4';
 
 USE medihub;
 
@@ -36,10 +34,11 @@ CREATE TABLE USERS (
     email VARCHAR(100) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     phone VARCHAR(20),
+    address TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     role_id INT NOT NULL,
     consent_timestamp DATETIME,
-    FOREIGN KEY (role_id) REFERENCES ROLES(role_id)
+    FOREIGN KEY (role_id) REFERENCES ROLES (role_id)
 );
 
 CREATE TABLE PATIENTS (
@@ -47,11 +46,20 @@ CREATE TABLE PATIENTS (
     user_id INT NOT NULL UNIQUE,
     date_of_birth DATE NOT NULL,
     gender ENUM('Male', 'Female', 'Other') NOT NULL,
-    blood_type ENUM('A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'),
+    blood_type ENUM(
+        'A+',
+        'A-',
+        'B+',
+        'B-',
+        'AB+',
+        'AB-',
+        'O+',
+        'O-'
+    ),
     insurance_id INT,
     data_anonym_flag BOOLEAN DEFAULT FALSE,
-    FOREIGN KEY (user_id) REFERENCES USERS(user_id),
-    FOREIGN KEY (insurance_id) REFERENCES INSURANCE(insurance_id)
+    FOREIGN KEY (user_id) REFERENCES USERS (user_id),
+    FOREIGN KEY (insurance_id) REFERENCES INSURANCE (insurance_id)
 );
 
 CREATE TABLE DOCTORS (
@@ -60,9 +68,9 @@ CREATE TABLE DOCTORS (
     spec_id INT NOT NULL,
     department_id INT NOT NULL,
     years_of_exp INT,
-    FOREIGN KEY (user_id) REFERENCES USERS(user_id),
-    FOREIGN KEY (spec_id) REFERENCES SPECIALIZATIONS(spec_id),
-    FOREIGN KEY (department_id) REFERENCES DEPARTMENTS(department_id)
+    FOREIGN KEY (user_id) REFERENCES USERS (user_id),
+    FOREIGN KEY (spec_id) REFERENCES SPECIALIZATIONS (spec_id),
+    FOREIGN KEY (department_id) REFERENCES DEPARTMENTS (department_id)
 );
 
 CREATE TABLE MANAGEMENT (
@@ -70,8 +78,8 @@ CREATE TABLE MANAGEMENT (
     user_id INT NOT NULL UNIQUE,
     department_id INT NOT NULL,
     perm_level VARCHAR(50),
-    FOREIGN KEY (user_id) REFERENCES USERS(user_id),
-    FOREIGN KEY (department_id) REFERENCES DEPARTMENTS(department_id)
+    FOREIGN KEY (user_id) REFERENCES USERS (user_id),
+    FOREIGN KEY (department_id) REFERENCES DEPARTMENTS (department_id)
 );
 
 CREATE TABLE DOCTOR_CALENDAR (
@@ -79,9 +87,8 @@ CREATE TABLE DOCTOR_CALENDAR (
     doctor_id INT NOT NULL,
     availability BOOLEAN DEFAULT TRUE,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (doctor_id) REFERENCES DOCTORS(doctor_id)
+    FOREIGN KEY (doctor_id) REFERENCES DOCTORS (doctor_id)
 );
-
 
 CREATE TABLE DOCTOR_SCHEDULE (
     schedule_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -90,7 +97,7 @@ CREATE TABLE DOCTOR_SCHEDULE (
     start_time TIME NOT NULL,
     end_time TIME NOT NULL,
     is_available BOOLEAN DEFAULT TRUE,
-    FOREIGN KEY (doctor_id) REFERENCES DOCTORS(doctor_id)
+    FOREIGN KEY (doctor_id) REFERENCES DOCTORS (doctor_id)
 );
 
 CREATE TABLE TIMESLOTS (
@@ -99,7 +106,7 @@ CREATE TABLE TIMESLOTS (
     start_time DATETIME NOT NULL,
     end_time DATETIME NOT NULL,
     is_available BOOLEAN DEFAULT TRUE,
-    FOREIGN KEY (calendar_id) REFERENCES DOCTOR_CALENDAR(calendar_id)
+    FOREIGN KEY (calendar_id) REFERENCES DOCTOR_CALENDAR (calendar_id)
 );
 
 CREATE TABLE APPOINTMENTS (
@@ -108,12 +115,16 @@ CREATE TABLE APPOINTMENTS (
     doctor_id INT NOT NULL,
     slot_id INT NOT NULL,
     appointment_date DATETIME NOT NULL,
-    status ENUM('Scheduled', 'Completed', 'Cancelled') NOT NULL,
+    status ENUM(
+        'Scheduled',
+        'Completed',
+        'Cancelled'
+    ) NOT NULL,
     notes TEXT,
     priority_flag BOOLEAN DEFAULT FALSE,
-    FOREIGN KEY (patient_id) REFERENCES PATIENTS(patient_id),
-    FOREIGN KEY (doctor_id) REFERENCES DOCTORS(doctor_id),
-    FOREIGN KEY (slot_id) REFERENCES TIMESLOTS(slot_id)
+    FOREIGN KEY (patient_id) REFERENCES PATIENTS (patient_id),
+    FOREIGN KEY (doctor_id) REFERENCES DOCTORS (doctor_id),
+    FOREIGN KEY (slot_id) REFERENCES TIMESLOTS (slot_id)
 );
 
 CREATE TABLE MEDICAL_RECORDS (
@@ -125,9 +136,9 @@ CREATE TABLE MEDICAL_RECORDS (
     prescriptions TEXT,
     lab_results TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (patient_id) REFERENCES PATIENTS(patient_id),
-    FOREIGN KEY (doctor_id) REFERENCES DOCTORS(doctor_id),
-    FOREIGN KEY (appointment_id) REFERENCES APPOINTMENTS(appointment_id)
+    FOREIGN KEY (patient_id) REFERENCES PATIENTS (patient_id),
+    FOREIGN KEY (doctor_id) REFERENCES DOCTORS (doctor_id),
+    FOREIGN KEY (appointment_id) REFERENCES APPOINTMENTS (appointment_id)
 );
 
 CREATE TABLE AI_MODELS (
@@ -148,9 +159,9 @@ CREATE TABLE DIAGNOSIS_AI (
     predictive_diagnosis TEXT,
     confidence_score FLOAT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (patient_id) REFERENCES PATIENTS(patient_id),
-    FOREIGN KEY (doctor_id) REFERENCES DOCTORS(doctor_id),
-    FOREIGN KEY (model_id) REFERENCES AI_MODELS(model_id)
+    FOREIGN KEY (patient_id) REFERENCES PATIENTS (patient_id),
+    FOREIGN KEY (doctor_id) REFERENCES DOCTORS (doctor_id),
+    FOREIGN KEY (model_id) REFERENCES AI_MODELS (model_id)
 );
 
 CREATE TABLE DIAGNOSIS_FEEDBACK (
@@ -159,16 +170,16 @@ CREATE TABLE DIAGNOSIS_FEEDBACK (
     doctor_rating INT,
     correction_notes TEXT,
     feedback_timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (diagnosis_id) REFERENCES DIAGNOSIS_AI(diagnosis_id)
+    FOREIGN KEY (diagnosis_id) REFERENCES DIAGNOSIS_AI (diagnosis_id)
 );
 
 CREATE TABLE BILLING (
     billing_id INT PRIMARY KEY AUTO_INCREMENT,
     patient_id INT NOT NULL,
-    amount DECIMAL(10,2) NOT NULL,
+    amount DECIMAL(10, 2) NOT NULL,
     status ENUM('Pending', 'Paid', 'Overdue') NOT NULL,
     payment_date DATE,
-    FOREIGN KEY (patient_id) REFERENCES PATIENTS(patient_id)
+    FOREIGN KEY (patient_id) REFERENCES PATIENTS (patient_id)
 );
 
 CREATE TABLE PAYMENTS (
@@ -178,7 +189,7 @@ CREATE TABLE PAYMENTS (
     payment_method VARCHAR(50),
     timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
     gateway_response TEXT,
-    FOREIGN KEY (billing_id) REFERENCES BILLING(billing_id)
+    FOREIGN KEY (billing_id) REFERENCES BILLING (billing_id)
 );
 
 CREATE TABLE PATIENT_ALLERGIES (
@@ -186,7 +197,7 @@ CREATE TABLE PATIENT_ALLERGIES (
     patient_id INT NOT NULL,
     allergy_name VARCHAR(100) NOT NULL,
     severity ENUM('Mild', 'Moderate', 'Severe'),
-    FOREIGN KEY (patient_id) REFERENCES PATIENTS(patient_id)
+    FOREIGN KEY (patient_id) REFERENCES PATIENTS (patient_id)
 );
 
 CREATE TABLE PATIENT_MEDS (
@@ -194,7 +205,7 @@ CREATE TABLE PATIENT_MEDS (
     patient_id INT NOT NULL,
     medication_name VARCHAR(100) NOT NULL,
     dosage VARCHAR(50),
-    FOREIGN KEY (patient_id) REFERENCES PATIENTS(patient_id)
+    FOREIGN KEY (patient_id) REFERENCES PATIENTS (patient_id)
 );
 
 CREATE TABLE PERMISSIONS (
@@ -210,7 +221,7 @@ CREATE TABLE AUDIT_LOGS (
     target_entity VARCHAR(50),
     timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
     ip_address VARCHAR(45),
-    FOREIGN KEY (actor_id) REFERENCES USERS(user_id)
+    FOREIGN KEY (actor_id) REFERENCES USERS (user_id)
 );
 
 CREATE TABLE NOTIFICATIONS (
@@ -220,7 +231,7 @@ CREATE TABLE NOTIFICATIONS (
     content TEXT,
     sent_status BOOLEAN DEFAULT FALSE,
     delivery_time DATETIME,
-    FOREIGN KEY (user_id) REFERENCES USERS(user_id)
+    FOREIGN KEY (user_id) REFERENCES USERS (user_id)
 );
 
 CREATE TABLE CHAT_MESSAGES (
@@ -232,8 +243,8 @@ CREATE TABLE CHAT_MESSAGES (
     is_urgent BOOLEAN DEFAULT FALSE,
     read_status BOOLEAN DEFAULT FALSE,
     message_type ENUM('Text', 'Image', 'File'),
-    FOREIGN KEY (sender_id) REFERENCES USERS(user_id),
-    FOREIGN KEY (receiver_id) REFERENCES USERS(user_id)
+    FOREIGN KEY (sender_id) REFERENCES USERS (user_id),
+    FOREIGN KEY (receiver_id) REFERENCES USERS (user_id)
 );
 
 CREATE TABLE CHATBOT_LOGS (
@@ -242,6 +253,6 @@ CREATE TABLE CHATBOT_LOGS (
     symptoms TEXT,
     doctor_id INT,
     timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (patient_id) REFERENCES PATIENTS(patient_id),
-    FOREIGN KEY (doctor_id) REFERENCES DOCTORS(doctor_id)
+    FOREIGN KEY (patient_id) REFERENCES PATIENTS (patient_id),
+    FOREIGN KEY (doctor_id) REFERENCES DOCTORS (doctor_id)
 );

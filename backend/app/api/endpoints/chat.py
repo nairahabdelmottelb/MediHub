@@ -97,7 +97,7 @@ async def get_contacts(current_user: Dict = Depends(get_current_user)):
             cursor.execute(
                 """
                 SELECT u.user_id, u.first_name, u.last_name, u.email
-                FROM users u
+                FROM USERS u
                 WHERE u.user_id != %s
                 ORDER BY u.first_name, u.last_name
                 """,
@@ -180,7 +180,7 @@ async def send_message(message: MessageCreate, current_user: Dict = Depends(get_
         with conn.cursor() as cursor:
             # Verify receiver exists
             cursor.execute(
-                "SELECT user_id FROM users WHERE user_id = %s",
+                "SELECT user_id FROM USERS WHERE user_id = %s",
                 (message.receiver_id,)
             )
             if not cursor.fetchone():

@@ -714,7 +714,7 @@ async def create_doctor(doctor: DoctorCreate, current_user: Dict = Depends(get_c
         with conn.cursor() as cursor:
             # Check if email already exists
             cursor.execute(
-                "SELECT user_id FROM users WHERE email = %s",
+                "SELECT user_id FROM USERS WHERE email = %s",
                 (doctor.email,)
             )
             if cursor.fetchone():
@@ -728,7 +728,7 @@ async def create_doctor(doctor: DoctorCreate, current_user: Dict = Depends(get_c
             
             # Get doctor role_id
             cursor.execute(
-                "SELECT role_id FROM roles WHERE role_name = 'Doctor'"
+                "SELECT role_id FROM ROLES WHERE role_name = 'Doctor'"
             )
             role_result = cursor.fetchone()
             if not role_result:
@@ -741,10 +741,10 @@ async def create_doctor(doctor: DoctorCreate, current_user: Dict = Depends(get_c
             # Insert user
             cursor.execute(
                 """
-                INSERT INTO users (
+                INSERT INTO USERS (
                     email, password, first_name, last_name, 
-                    role_id, phone_number, address
-                ) VALUES (%s, %s, %s, %s, %s, %s, %s)
+                    role_id, phone
+                ) VALUES (%s, %s, %s, %s, %s, %s)
                 """,
                 (
                     doctor.email,
@@ -753,24 +753,63 @@ async def create_doctor(doctor: DoctorCreate, current_user: Dict = Depends(get_c
                     doctor.last_name,
                     doctor_role_id,
                     doctor.phone_number,
-                    doctor.address
                 )
             )
             
             # Get the new user ID
             user_id = cursor.lastrowid
             
+            # Get specialty ID from specialty name
+            cursor.execute(
+                "SELECT spec_id FROM SPECIALIZATIONS WHERE spec_name = %s",
+                (doctor.specialty,)
+            )
+            spec_result = cursor.fetchone()
+            if not spec_result:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Specialty '{doctor.specialty}' not found"
+                )
+            spec_id = spec_result["spec_id"]
+            
+            # Use provided department_id or get the first available department
+            if doctor.department_id:
+                # Verify the department exists
+                cursor.execute(
+                    "SELECT department_id FROM DEPARTMENTS WHERE department_id = %s",
+                    (doctor.department_id,)
+                )
+                dept_result = cursor.fetchone()
+                if not dept_result:
+                    raise HTTPException(
+                        status_code=400,
+                        detail=f"Department with ID {doctor.department_id} not found"
+                    )
+                department_id = doctor.department_id
+            else:
+                # Get the first available department as fallback
+                cursor.execute(
+                    "SELECT department_id FROM DEPARTMENTS LIMIT 1"
+                )
+                dept_result = cursor.fetchone()
+                if not dept_result:
+                    raise HTTPException(
+                        status_code=500,
+                        detail="No departments found"
+                    )
+                department_id = dept_result["department_id"]
+            
             # Now create the doctor record
             cursor.execute(
                 """
-                INSERT INTO doctors (
-                    user_id, specialty, qualifications, years_of_experience
+                INSERT INTO DOCTORS (
+                    user_id, spec_id, department_id, years_of_exp
                 ) VALUES (%s, %s, %s, %s)
                 """,
                 (
                     user_id,
-                    doctor.specialty,
-                    doctor.qualifications,
+                    spec_id,
+                    department_id,
                     doctor.years_of_experience
                 )
             )
@@ -783,10 +822,13 @@ async def create_doctor(doctor: DoctorCreate, current_user: Dict = Depends(get_c
                 """
                 SELECT 
                     d.doctor_id, u.user_id, u.email, u.first_name, u.last_name,
-                    u.phone_number, u.address, d.specialty, d.qualifications,
-                    d.years_of_experience, d.created_at, d.updated_at
-                FROM doctors d
-                JOIN users u ON d.user_id = u.user_id
+                    u.phone, d.years_of_exp,
+                    s.spec_id, s.spec_name,
+                    dep.department_id, dep.department_name
+                FROM DOCTORS d
+                JOIN USERS u ON d.user_id = u.user_id
+                JOIN SPECIALIZATIONS s ON d.spec_id = s.spec_id
+                JOIN DEPARTMENTS dep ON d.department_id = dep.department_id
                 WHERE d.doctor_id = %s
                 """,
                 (doctor_id,)
@@ -795,3 +837,305 @@ async def create_doctor(doctor: DoctorCreate, current_user: Dict = Depends(get_c
             new_doctor = cursor.fetchone()
     
     return new_doctor 
+
+@router.put("/{doctor_id}", response_model=DoctorResponse)
+async def update_doctor(doctor_id: int, doctor: DoctorUpdate, current_user: Dict = Depends(get_current_admin)):
+    """
+    Update an existing doctor.
+    Only admin users can update doctors.
+    """
+    with db.transaction() as conn:
+        with conn.cursor() as cursor:
+            # Check if doctor exists
+            cursor.execute(
+                """
+                SELECT d.doctor_id, d.user_id, u.email 
+                FROM DOCTORS d
+                JOIN USERS u ON d.user_id = u.user_id
+                WHERE d.doctor_id = %s
+                """,
+                (doctor_id,)
+            )
+            existing_doctor = cursor.fetchone()
+            if not existing_doctor:
+                raise HTTPException(
+                    status_code=404,
+                    detail="Doctor not found"
+                )
+            
+            user_id = existing_doctor["user_id"]
+            
+            # Check if email is being changed and if it's already taken
+            if doctor.email and doctor.email != existing_doctor["email"]:
+                cursor.execute(
+                    "SELECT user_id FROM USERS WHERE email = %s AND user_id != %s",
+                    (doctor.email, user_id)
+                )
+                if cursor.fetchone():
+                    raise HTTPException(
+                        status_code=400,
+                        detail="Email already registered"
+                    )
+            
+            # Update user information
+            user_updates = []
+            user_params = []
+            
+            if doctor.first_name:
+                user_updates.append("first_name = %s")
+                user_params.append(doctor.first_name)
+            if doctor.last_name:
+                user_updates.append("last_name = %s")
+                user_params.append(doctor.last_name)
+            if doctor.email:
+                user_updates.append("email = %s")
+                user_params.append(doctor.email)
+            if doctor.phone_number is not None:
+                user_updates.append("phone = %s")
+                user_params.append(doctor.phone_number)
+            if doctor.password:
+                hashed_password = security.get_password_hash(doctor.password)
+                user_updates.append("password = %s")
+                user_params.append(hashed_password)
+            
+            if user_updates:
+                user_params.append(user_id)
+                cursor.execute(
+                    f"UPDATE USERS SET {', '.join(user_updates)} WHERE user_id = %s",
+                    user_params
+                )
+            
+            # Update doctor-specific information
+            doctor_updates = []
+            doctor_params = []
+            
+            if doctor.specialty:
+                # Get specialty ID from specialty name
+                cursor.execute(
+                    "SELECT spec_id FROM SPECIALIZATIONS WHERE spec_name = %s",
+                    (doctor.specialty,)
+                )
+                spec_result = cursor.fetchone()
+                if not spec_result:
+                    raise HTTPException(
+                        status_code=400,
+                        detail=f"Specialty '{doctor.specialty}' not found"
+                    )
+                doctor_updates.append("spec_id = %s")
+                doctor_params.append(spec_result["spec_id"])
+            
+            if doctor.department_id:
+                # Verify the department exists
+                cursor.execute(
+                    "SELECT department_id FROM DEPARTMENTS WHERE department_id = %s",
+                    (doctor.department_id,)
+                )
+                dept_result = cursor.fetchone()
+                if not dept_result:
+                    raise HTTPException(
+                        status_code=400,
+                        detail=f"Department with ID {doctor.department_id} not found"
+                    )
+                doctor_updates.append("department_id = %s")
+                doctor_params.append(doctor.department_id)
+            
+            if doctor.years_of_experience is not None:
+                doctor_updates.append("years_of_exp = %s")
+                doctor_params.append(doctor.years_of_experience)
+            
+            if doctor_updates:
+                doctor_params.append(doctor_id)
+                cursor.execute(
+                    f"UPDATE DOCTORS SET {', '.join(doctor_updates)} WHERE doctor_id = %s",
+                    doctor_params
+                )
+            
+            # Return the updated doctor information
+            cursor.execute(
+                """
+                SELECT 
+                    d.doctor_id, u.user_id, u.email, u.first_name, u.last_name,
+                    u.phone, d.years_of_exp,
+                    s.spec_id, s.spec_name,
+                    dep.department_id, dep.department_name
+                FROM DOCTORS d
+                JOIN USERS u ON d.user_id = u.user_id
+                JOIN SPECIALIZATIONS s ON d.spec_id = s.spec_id
+                JOIN DEPARTMENTS dep ON d.department_id = dep.department_id
+                WHERE d.doctor_id = %s
+                """,
+                (doctor_id,)
+            )
+            
+            updated_doctor = cursor.fetchone()
+            return updated_doctor
+
+@router.delete("/{doctor_id}")
+async def delete_doctor(doctor_id: int, current_user: Dict = Depends(get_current_admin)):
+    """
+    Delete a doctor and their associated user account.
+    Only admin users can delete doctors.
+    """
+    with db.transaction() as conn:
+        with conn.cursor() as cursor:
+            # Check if doctor exists and get user_id
+            cursor.execute(
+                "SELECT user_id FROM DOCTORS WHERE doctor_id = %s",
+                (doctor_id,)
+            )
+            doctor = cursor.fetchone()
+            if not doctor:
+                raise HTTPException(
+                    status_code=404,
+                    detail="Doctor not found"
+                )
+            
+            user_id = doctor["user_id"]
+            
+            # Check if doctor has any appointments
+            cursor.execute(
+                "SELECT COUNT(*) as appointment_count FROM APPOINTMENTS WHERE doctor_id = %s",
+                (doctor_id,)
+            )
+            appointment_result = cursor.fetchone()
+            if appointment_result and appointment_result["appointment_count"] > 0:
+                raise HTTPException(
+                    status_code=400,
+                    detail="Cannot delete doctor with existing appointments. Please transfer or cancel appointments first."
+                )
+            
+            # Delete doctor record first (foreign key constraint)
+            cursor.execute(
+                "DELETE FROM DOCTORS WHERE doctor_id = %s",
+                (doctor_id,)
+            )
+            
+            # Delete user record
+            cursor.execute(
+                "DELETE FROM USERS WHERE user_id = %s",
+                (user_id,)
+            )
+            
+            return {"message": "Doctor deleted successfully"}
+
+@router.get("/{doctor_id}/patients/medications")
+async def get_doctor_patients_medications(
+    doctor_id: int,
+    current_user: Dict = Depends(get_current_user)
+):
+    """
+    Get all medications for patients that have appointments with this doctor.
+    Only the doctor themselves or an admin can access this endpoint.
+    """
+    # Check if user is the doctor or an admin
+    is_authorized = False
+    if current_user["role_name"] == "admin":
+        is_authorized = True
+    elif current_user["role_name"] == "doctor":
+        # Check if current user is the doctor
+        with db.get_db() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(
+                    """
+                    SELECT user_id FROM DOCTORS
+                    WHERE doctor_id = %s
+                    """,
+                    (doctor_id,)
+                )
+                doctor = cursor.fetchone()
+                if doctor and doctor["user_id"] == current_user["user_id"]:
+                    is_authorized = True
+    
+    if not is_authorized:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to view medications for this doctor's patients"
+        )
+    
+    with db.get_db() as conn:
+        with conn.cursor() as cursor:
+            # First, verify this doctor exists and current user has access
+            cursor.execute(
+                """
+                SELECT d.doctor_id, u.user_id 
+                FROM DOCTORS d
+                JOIN USERS u ON d.user_id = u.user_id
+                WHERE d.doctor_id = %s
+                """,
+                (doctor_id,)
+            )
+            doctor_check = cursor.fetchone()
+            
+            if not doctor_check:
+                raise HTTPException(
+                    status_code=404,
+                    detail="Doctor not found"
+                )
+            
+            # Additional security check: ensure current user matches the doctor
+            if current_user["role_name"] == "doctor" and doctor_check["user_id"] != current_user["user_id"]:
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="You can only view medications for your own patients"
+                )
+            
+            # Get medications ONLY for patients who have appointments with THIS specific doctor
+            cursor.execute(
+                """
+                SELECT DISTINCT 
+                    pm.medication_id,
+                    pm.patient_id,
+                    pm.medication_name,
+                    pm.dosage,
+                    u.first_name as patient_first_name,
+                    u.last_name as patient_last_name,
+                    u.email as patient_email,
+                    p.date_of_birth,
+                    p.gender,
+                    p.blood_type,
+                    MAX(a.appointment_date) as last_appointment,
+                    a.status as appointment_status
+                FROM PATIENT_MEDS pm
+                JOIN PATIENTS p ON pm.patient_id = p.patient_id
+                JOIN USERS u ON p.user_id = u.user_id
+                JOIN APPOINTMENTS a ON p.patient_id = a.patient_id
+                WHERE a.doctor_id = %s 
+                  AND pm.patient_id IN (
+                      SELECT DISTINCT patient_id 
+                      FROM APPOINTMENTS 
+                      WHERE doctor_id = %s
+                  )
+                GROUP BY pm.medication_id, pm.patient_id, pm.medication_name, pm.dosage,
+                         u.first_name, u.last_name, u.email, p.date_of_birth, p.gender, p.blood_type, a.status
+                ORDER BY u.last_name, u.first_name, pm.medication_name
+                """,
+                (doctor_id, doctor_id)
+            )
+            medications = cursor.fetchall()
+            
+            # Get doctor info for context
+            cursor.execute(
+                """
+                SELECT d.doctor_id, u.first_name, u.last_name, 
+                       u.email, s.spec_name, dep.department_name
+                FROM DOCTORS d
+                JOIN USERS u ON d.user_id = u.user_id
+                JOIN SPECIALIZATIONS s ON d.spec_id = s.spec_id
+                JOIN DEPARTMENTS dep ON d.department_id = dep.department_id
+                WHERE d.doctor_id = %s
+                """,
+                (doctor_id,)
+            )
+            doctor_info = cursor.fetchone()
+            
+            if not doctor_info:
+                raise HTTPException(
+                    status_code=404,
+                    detail="Doctor not found"
+                )
+    
+    return {
+        "doctor": doctor_info,
+        "medications": medications,
+        "total_medications": len(medications)
+    }

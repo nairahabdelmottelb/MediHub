@@ -135,7 +135,6 @@
 }
 
 .user-message {
-    background: var(--primary-blue);
     color: white;
     border-radius: 1rem;
     padding: 1rem;

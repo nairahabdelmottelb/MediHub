@@ -62,7 +62,7 @@ async def get_specializations(current_user: Dict = Depends(get_current_user)):
             cursor.execute(
                 """
                 SELECT spec_id, spec_name
-                FROM specializations
+                FROM SPECIALIZATIONS
                 ORDER BY spec_name
                 """
             )
@@ -109,7 +109,7 @@ async def get_specialization(specialization_id: int, current_user: Dict = Depend
             cursor.execute(
                 """
                 SELECT spec_id, spec_name
-                FROM specializations
+                FROM SPECIALIZATIONS
                 WHERE spec_id = %s
                 """,
                 (specialization_id,)
@@ -127,8 +127,8 @@ async def get_specialization(specialization_id: int, current_user: Dict = Depend
                 """
                 SELECT d.doctor_id, d.user_id, u.first_name, u.last_name, u.email,
                        d.license_number, d.department_id, dept.department_name
-                FROM doctors d
-                JOIN users u ON d.user_id = u.user_id
+                FROM DOCTORS d
+                JOIN USERS u ON d.user_id = u.user_id
                 JOIN departments dept ON d.department_id = dept.department_id
                 WHERE d.spec_id = %s
                 """,
@@ -166,7 +166,7 @@ async def create_specialization(specialization: SpecializationCreate, current_us
             with conn.cursor() as cursor:
                 # Check if specialization name already exists
                 cursor.execute(
-                    "SELECT spec_id FROM specializations WHERE spec_name = %s",
+                    "SELECT spec_id FROM SPECIALIZATIONS WHERE spec_name = %s",
                     (specialization.spec_name,)
                 )
                 if cursor.fetchone():
@@ -178,7 +178,7 @@ async def create_specialization(specialization: SpecializationCreate, current_us
                 # Insert new specialization
                 cursor.execute(
                     """
-                    INSERT INTO specializations (spec_name)
+                    INSERT INTO SPECIALIZATIONS (spec_name)
                     VALUES (%s)
                     """,
                     (specialization.spec_name,)
@@ -190,7 +190,7 @@ async def create_specialization(specialization: SpecializationCreate, current_us
                 cursor.execute(
                     """
                     SELECT spec_id, spec_name
-                    FROM specializations
+                    FROM SPECIALIZATIONS
                     WHERE spec_id = %s
                     """,
                     (spec_id,)
@@ -244,7 +244,7 @@ async def update_specialization(
             with conn.cursor() as cursor:
                 # Check if specialization exists
                 cursor.execute(
-                    "SELECT spec_id FROM specializations WHERE spec_id = %s",
+                    "SELECT spec_id FROM SPECIALIZATIONS WHERE spec_id = %s",
                     (specialization_id,)
                 )
                 if not cursor.fetchone():
@@ -258,7 +258,7 @@ async def update_specialization(
                     cursor.execute(
                         """
                         SELECT spec_id 
-                        FROM specializations 
+                        FROM SPECIALIZATIONS 
                         WHERE spec_name = %s AND spec_id != %s
                         """,
                         (specialization.spec_name, specialization_id)
@@ -274,7 +274,7 @@ async def update_specialization(
                     cursor.execute(
                         """
                         SELECT spec_id, spec_name
-                        FROM specializations
+                        FROM SPECIALIZATIONS
                         WHERE spec_id = %s
                         """,
                         (specialization_id,)
@@ -284,7 +284,7 @@ async def update_specialization(
                 # Update specialization
                 cursor.execute(
                     """
-                    UPDATE specializations
+                    UPDATE SPECIALIZATIONS
                     SET spec_name = %s
                     WHERE spec_id = %s
                     """,
@@ -295,7 +295,7 @@ async def update_specialization(
                 cursor.execute(
                     """
                     SELECT spec_id, spec_name
-                    FROM specializations
+                    FROM SPECIALIZATIONS
                     WHERE spec_id = %s
                     """,
                     (specialization_id,)
@@ -343,7 +343,7 @@ async def delete_specialization(
         with conn.cursor() as cursor:
             # Check if specialization exists
             cursor.execute(
-                "SELECT spec_id FROM specializations WHERE spec_id = %s",
+                "SELECT spec_id FROM SPECIALIZATIONS WHERE spec_id = %s",
                 (specialization_id,)
             )
             if not cursor.fetchone():
@@ -354,7 +354,7 @@ async def delete_specialization(
             
             # Check if specialization is being used by doctors
             cursor.execute(
-                "SELECT doctor_id FROM doctors WHERE spec_id = %s LIMIT 1",
+                "SELECT doctor_id FROM DOCTORS WHERE spec_id = %s LIMIT 1",
                 (specialization_id,)
             )
             if cursor.fetchone():
@@ -365,7 +365,7 @@ async def delete_specialization(
             
             # Delete specialization
             cursor.execute(
-                "DELETE FROM specializations WHERE spec_id = %s",
+                "DELETE FROM SPECIALIZATIONS WHERE spec_id = %s",
                 (specialization_id,)
             )
     

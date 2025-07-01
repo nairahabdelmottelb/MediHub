@@ -10,6 +10,7 @@ class DoctorBase(BaseModel):
     phone_number: Optional[str] = None
     address: Optional[str] = None
     specialty: str
+    department_id: Optional[int] = None
     qualifications: str
     years_of_experience: int
 
@@ -25,6 +26,7 @@ class DoctorUpdate(BaseModel):
     phone_number: Optional[str] = None
     address: Optional[str] = None
     specialty: Optional[str] = None
+    department_id: Optional[int] = None
     qualifications: Optional[str] = None
     years_of_experience: Optional[int] = None
     password: Optional[str] = Field(None, min_length=8)
@@ -36,10 +38,9 @@ class DoctorResponse(BaseModel):
     email: EmailStr
     first_name: str
     last_name: str
-    phone_number: Optional[str] = None
-    address: Optional[str] = None
-    specialty: str
-    qualifications: str
-    years_of_experience: int
-    created_at: Optional[datetime] = None
-    updated_at: Optional[datetime] = None 
+    phone: Optional[str] = None
+    years_of_exp: int
+    spec_id: int
+    spec_name: str
+    department_id: int
+    department_name: str 

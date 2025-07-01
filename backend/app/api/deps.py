@@ -37,8 +37,8 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
                 """
                 SELECT u.user_id, u.email, u.first_name, u.last_name, 
                        u.phone, u.role_id, r.role_name
-                FROM users u
-                JOIN roles r ON u.role_id = r.role_id
+                FROM USERS u
+                JOIN ROLES r ON u.role_id = r.role_id
                 WHERE u.user_id = %s
                 """,
                 (user_id,)
@@ -81,7 +81,7 @@ async def get_current_doctor(current_user = Depends(get_current_user)):
             cursor.execute(
                 """
                 SELECT doctor_id
-                FROM doctors
+                FROM DOCTORS
                 WHERE user_id = %s
                 """,
                 (current_user["user_id"],)
@@ -116,7 +116,7 @@ async def get_current_patient(current_user = Depends(get_current_user)):
             cursor.execute(
                 """
                 SELECT patient_id
-                FROM patients
+                FROM PATIENTS
                 WHERE user_id = %s
                 """,
                 (current_user["user_id"],)
@@ -161,7 +161,7 @@ async def get_current_active_doctor(current_user: dict = Depends(get_current_act
         with conn.cursor() as cursor:
             cursor.execute(
                 """
-                SELECT * FROM doctors
+                SELECT * FROM DOCTORS
                 WHERE user_id = %s
                 """,
                 (current_user["user_id"],)
@@ -193,7 +193,7 @@ async def get_current_active_patient(current_user: dict = Depends(get_current_ac
         with conn.cursor() as cursor:
             cursor.execute(
                 """
-                SELECT * FROM patients
+                SELECT * FROM PATIENTS
                 WHERE user_id = %s
                 """,
                 (current_user["user_id"],)
